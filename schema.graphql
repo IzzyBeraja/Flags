@@ -9,6 +9,7 @@ type Link {
 }
 
 type Mutation {
+  """Creates a post"""
   create_post(description: String!, url: String!): Link!
 
   """Deletes a post"""
@@ -19,5 +20,6 @@ type Mutation {
 }
 
 type Query {
+  """Returns all posts"""
   feed: [Link!]!
 }
