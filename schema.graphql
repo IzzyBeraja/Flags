@@ -9,7 +9,13 @@ type Link {
 }
 
 type Mutation {
-  post(description: String!, url: String!): Link!
+  create_post(description: String!, url: String!): Link!
+
+  """Deletes a post"""
+  delete_post(id: String!): Link!
+
+  """Updates a post"""
+  update_post(description: String, id: String!, url: String): Link!
 }
 
 type Query {
