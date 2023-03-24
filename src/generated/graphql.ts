@@ -50,13 +50,14 @@ export type MutationUpdate_PostArgs = {
 export type Query = {
   __typename?: 'Query';
   get_posts: Array<Link>;
+  get_users: Array<User>;
 };
 
 export type User = {
   __typename?: 'User';
   email: Scalars['String'];
   id: Scalars['ID'];
-  links: Array<User>;
+  links: Array<Link>;
   name: Scalars['String'];
 };
 
@@ -166,12 +167,13 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   get_posts?: Resolver<Array<ResolversTypes['Link']>, ParentType, ContextType>;
+  get_users?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
 };
 
 export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  links?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
+  links?: Resolver<Array<ResolversTypes['Link']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
