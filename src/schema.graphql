@@ -1,0 +1,23 @@
+type Query {
+  get_posts: [Link!]!
+}
+
+type Mutation {
+  create_post(description: String!, url: String!): Link!
+  delete_post(id: ID!): Link!
+  update_post(description: String, id: ID!, url: String): Link!
+}
+
+type User {
+  email: String!
+  id: ID!
+  links: [User!]!
+  name: String!
+}
+
+type Link {
+  createdBy: User
+  description: String!
+  id: ID!
+  url: String!
+}

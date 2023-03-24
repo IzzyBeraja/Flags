@@ -1,11 +1,13 @@
 import { ApolloServer } from "apollo-server";
 
 import { context } from "./context";
-import { schema } from "./schema";
+import { resolvers } from "./resolvers";
+import { typeDefs } from "./schema";
 
 export const server = new ApolloServer({
   context,
-  schema,
+  resolvers,
+  typeDefs,
 });
 
 const port = process.env["PORT"] || 4000;

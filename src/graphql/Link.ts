@@ -1,97 +1,62 @@
-import { extendType, nonNull, objectType, stringArg } from "nexus";
+import { IResolvers } from "@graphql-tools/utils";
 
-export const Link = objectType({
-  definition(t) {
-    t.nonNull.id("id");
-    t.nonNull.string("url");
-    t.nonNull.string("description");
-    t.field("createdBy", {
-      resolve: (parent, _, context) => {
-        return context.prisma.link
-          .findUnique({ where: { id: parent.id } })
-          .createdBy();
-      },
-      type: "User",
-    });
-  },
-  name: "Link",
-});
+import { Context } from "../context";
+import { MutationResolvers, QueryResolvers } from "../generated/graphql";
 
-export const linkQuery = extendType({
-  definition(t) {
-    t.nonNull.list.nonNull.field("feed", {
-      description: "Returns all posts",
-      resolve: (_, __, context) => context.prisma.link.findMany(),
-      type: "Link",
-    });
-  },
-  type: "Query",
-});
+const get_posts: QueryResolvers["get_posts"] = async (
+  _parent,
+  _args,
+  context: Context
+) => context.prisma.link.findMany();
 
-export const createPostMutation = extendType({
-  definition(t) {
-    t.nonNull.field("create_post", {
-      args: {
-        description: nonNull(stringArg()),
-        url: nonNull(stringArg()),
-      },
-      description: "Creates a post",
-      resolve: (_, args, context) => {
-        return context.prisma.link.create({
-          data: {
-            description: args.description,
-            url: args.url,
-          },
-        });
-      },
-      type: "Link",
-    });
-  },
-  type: "Mutation",
-});
+const create_post: MutationResolvers["create_post"] = async (
+  _parent,
+  args,
+  context: Context
+) => {
+  return await context.prisma.link.create({
+    data: {
+      description: args.description,
+      url: args.url,
+    },
+  });
+};
 
-export const updatePostMutation = extendType({
-  definition(t) {
-    t.nonNull.field("update_post", {
-      args: {
-        description: stringArg(),
-        id: nonNull(stringArg()),
-        url: stringArg(),
-      },
-      description: "Updates a post",
-      resolve: (_, args, context) => {
-        return context.prisma.link.update({
-          data: {
-            ...(args.description != null && { description: args.description }),
-            ...(args.url != null && { url: args.url }),
-          },
-          where: {
-            id: args.id,
-          },
-        });
-      },
-      type: "Link",
-    });
-  },
-  type: "Mutation",
-});
+const update_post: MutationResolvers["update_post"] = async (
+  _parent,
+  args,
+  context: Context
+) => {
+  return await context.prisma.link.update({
+    data: {
+      ...(args.description != null && { description: args.description }),
+      ...(args.url != null && { url: args.url }),
+    },
+    where: {
+      id: args.id,
+    },
+  });
+};
 
-export const deletePostMutation = extendType({
-  definition(t) {
-    t.nonNull.field("delete_post", {
-      args: {
-        id: nonNull(stringArg()),
-      },
-      description: "Deletes a post",
-      resolve: (_, args, context) => {
-        return context.prisma.link.delete({
-          where: {
-            id: args.id,
-          },
-        });
-      },
-      type: "Link",
-    });
+const delete_post: MutationResolvers["delete_post"] = async (
+  _parent,
+  args,
+  context: Context
+) => {
+  return await context.prisma.link.delete({
+    where: {
+      id: args.id,
+    },
+  });
+};
+
+export const resolvers: IResolvers = {
+  Mutation: {
+    create_post,
+    delete_post,
+    update_post,
   },
-  type: "Mutation",
-});
+  Query: {
+    get_posts,
+  },
+};

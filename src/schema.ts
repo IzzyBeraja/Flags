@@ -1,16 +1,12 @@
-import { makeSchema } from "nexus";
+import { DocumentNode } from "graphql";
+import { gql } from "graphql-tag";
 
-import * as types from "./graphql";
+import { readFileSync } from "fs";
 import { join } from "path";
 
-export const schema = makeSchema({
-  contextType: {
-    export: "Context",
-    module: join(process.cwd(), "./src/context.ts"),
-  },
-  outputs: {
-    schema: join(process.cwd(), "schema.graphql"),
-    typegen: join(process.cwd(), "nexus-typegen.ts"),
-  },
-  types,
-});
+const schemaPath = join(__dirname, "schema.graphql");
+const schemaContent = readFileSync(schemaPath, "utf8");
+
+export const typeDefs: DocumentNode = gql`
+  ${schemaContent}
+`;
