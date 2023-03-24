@@ -1,15 +1,25 @@
 import { extendType, nonNull, objectType, stringArg } from "nexus";
 
+import { Context } from "./../context";
+
 export const Link = objectType({
   definition(t) {
     t.nonNull.id("id");
     t.nonNull.string("url");
     t.nonNull.string("description");
+    t.field("createdBy", {
+      resolve: (parent, _, context: Context) => {
+        return context.prisma.link
+          .findUnique({ where: { id: parent.id } })
+          .createdBy();
+      },
+      type: "User",
+    });
   },
   name: "Link",
 });
 
-export const Query = extendType({
+export const linkQuery = extendType({
   definition(t) {
     t.nonNull.list.nonNull.field("feed", {
       description: "Returns all posts",
