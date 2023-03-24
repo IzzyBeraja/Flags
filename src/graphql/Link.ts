@@ -1,14 +1,12 @@
 import { extendType, nonNull, objectType, stringArg } from "nexus";
 
-import { Context } from "./../context";
-
 export const Link = objectType({
   definition(t) {
     t.nonNull.id("id");
     t.nonNull.string("url");
     t.nonNull.string("description");
     t.field("createdBy", {
-      resolve: (parent, _, context: Context) => {
+      resolve: (parent, _, context) => {
         return context.prisma.link
           .findUnique({ where: { id: parent.id } })
           .createdBy();

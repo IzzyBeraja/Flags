@@ -3,6 +3,7 @@
 
 
 type Link {
+  createdBy: User
   description: String!
   id: ID!
   url: String!
@@ -22,4 +23,11 @@ type Mutation {
 type Query {
   """Returns all posts"""
   feed: [Link!]!
+}
+
+type User {
+  email: String!
+  id: ID!
+  links: [User!]!
+  name: String!
 }
