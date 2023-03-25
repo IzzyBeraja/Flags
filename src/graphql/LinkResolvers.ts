@@ -50,7 +50,7 @@ const delete_post: MutationResolvers["delete_post"] = async (
   });
 };
 
-export const resolvers: IResolvers = {
+const resolvers: IResolvers = {
   Mutation: {
     create_post,
     delete_post,
@@ -60,3 +60,5 @@ export const resolvers: IResolvers = {
     get_posts,
   },
 };
+
+export default resolvers;

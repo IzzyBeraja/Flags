@@ -14,8 +14,10 @@ const get_users: QueryResolvers["get_users"] = async (
     },
   });
 
-export const resolvers: IResolvers = {
+const resolvers: IResolvers = {
   Query: {
     get_users,
   },
 };
+
+export default resolvers;
