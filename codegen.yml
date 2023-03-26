@@ -7,5 +7,4 @@ generates:
       contextType: "../../src/context#Context"
     plugins:
       - "typescript"
-      - "typescript-operations"
       - "typescript-resolvers"

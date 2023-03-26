@@ -36,7 +36,7 @@
     "graphql-tag": "^2.12.6"
   },
   "scripts": {
-    "dev": "nodemon --watch src --exec \"tsc --outDir dist && node --es-module-specifier-resolution=node dist/index.js\"",
+    "dev": "nodemon --watch src --exec \"tsc --outDir dist && node --es-module-specifier-resolution=node dist/index.js\" -e ts",
     "migrate": "npx prisma migrate dev --name",
     "genSchemaTypes": "npx graphql-codegen --config codegen.yml",
     "genPrisma": "npx prisma generate",
