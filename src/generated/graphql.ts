@@ -1,4 +1,5 @@
 import { GraphQLResolveInfo } from 'graphql';
+import { Context } from '../../src/context';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -151,7 +152,7 @@ export type ResolversParentTypes = {
   User: User;
 };
 
-export type LinkResolvers<ContextType = any, ParentType extends ResolversParentTypes['Link'] = ResolversParentTypes['Link']> = {
+export type LinkResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Link'] = ResolversParentTypes['Link']> = {
   createdBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
@@ -159,18 +160,18 @@ export type LinkResolvers<ContextType = any, ParentType extends ResolversParentT
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+export type MutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   create_post?: Resolver<ResolversTypes['Link'], ParentType, ContextType, RequireFields<MutationCreate_PostArgs, 'description' | 'url'>>;
   delete_post?: Resolver<ResolversTypes['Link'], ParentType, ContextType, RequireFields<MutationDelete_PostArgs, 'id'>>;
   update_post?: Resolver<ResolversTypes['Link'], ParentType, ContextType, RequireFields<MutationUpdate_PostArgs, 'id'>>;
 };
 
-export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   get_posts?: Resolver<Array<ResolversTypes['Link']>, ParentType, ContextType>;
   get_users?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
 };
 
-export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
+export type UserResolvers<ContextType = Context, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   links?: Resolver<Array<ResolversTypes['Link']>, ParentType, ContextType>;
@@ -178,7 +179,7 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type Resolvers<ContextType = any> = {
+export type Resolvers<ContextType = Context> = {
   Link?: LinkResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;

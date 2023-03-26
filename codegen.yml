@@ -2,6 +2,10 @@ overwrite: true
 schema: "./src/graphql/schema.graphql"
 generates:
   src/generated/graphql.ts:
+    config:
+      # Relative to src/generated/graphql.ts
+      contextType: "../../src/context#Context"
     plugins:
       - "typescript"
+      - "typescript-operations"
       - "typescript-resolvers"
