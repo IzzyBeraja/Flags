@@ -6,10 +6,12 @@
   "author": "Izzy Beraja",
   "license": "MIT",
   "private": true,
+  "type": "module",
   "devDependencies": {
     "@graphql-codegen/cli": "^3.2.2",
     "@graphql-codegen/typescript": "^3.0.2",
     "@graphql-codegen/typescript-resolvers": "^3.1.1",
+    "@types/node": "^18.15.10",
     "@typescript-eslint/eslint-plugin": "^5.55.0",
     "@typescript-eslint/parser": "^5.55.0",
     "eslint": "^8.36.0",
@@ -23,10 +25,10 @@
     "prettier": "^2.8.4",
     "prisma": "^4.11.0",
     "ts-node": "^10.9.1",
-    "ts-node-dev": "^2.0.0",
     "typescript": "^5.0.2"
   },
   "dependencies": {
+    "@apollo/server": "^4.5.0",
     "@graphql-tools/utils": "^9.2.1",
     "@prisma/client": "^4.11.0",
     "apollo-server": "^3.12.0",
@@ -34,7 +36,7 @@
     "graphql-tag": "^2.12.6"
   },
   "scripts": {
-    "dev": "ts-node-dev --transpile-only --no-notify --exit-child src/index.ts",
+    "dev": "nodemon --watch src --exec \"tsc --outDir dist && node --es-module-specifier-resolution=node dist/index.js\"",
     "migrate": "npx prisma migrate dev --name",
     "genSchemaTypes": "npx graphql-codegen --config codegen.yml",
     "genPrisma": "npx prisma generate",
