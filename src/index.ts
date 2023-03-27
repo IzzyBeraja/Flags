@@ -1,19 +1,32 @@
 import { ApolloServer } from "@apollo/server";
-import { startStandaloneServer } from "@apollo/server/standalone";
+import { expressMiddleware } from "@apollo/server/express4";
+import bodyParser from "body-parser";
+import cors from "cors";
+import express from "express";
 
-import { context } from "./context";
+import { Context, context } from "./context";
 import { resolvers } from "./resolvers/resolvers";
 import { typeDefs } from "./schema";
+import http from "http";
 
-export const server = new ApolloServer({
+const app = express();
+
+const httpServer = http.createServer(app);
+
+export const server = new ApolloServer<Context>({
   resolvers,
   typeDefs,
 });
 
-const port = Number.parseInt(process.env["PORT"] ?? "4000");
-const { url } = await startStandaloneServer(server, {
-  context,
-  listen: { port },
-});
+await server.start();
 
-console.log(`🚀 Server ready at ${url}`);
+app.use(
+  "/",
+  cors<cors.CorsRequest>(),
+  bodyParser.json(),
+  expressMiddleware(server, { context })
+);
+
+const port = Number.parseInt(process.env["PORT"] ?? "4000");
+await new Promise<void>(resolve => httpServer.listen(port, resolve));
+console.log(`🚀 Server ready at http://localhost:4000`);
