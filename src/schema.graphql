@@ -17,7 +17,7 @@ type User {
 }
 
 type Link {
-  createdBy: User
+  createdBy: User!
   description: String!
   id: ID!
   url: String!

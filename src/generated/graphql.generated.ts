@@ -1,4 +1,5 @@
 import { GraphQLResolveInfo } from 'graphql';
+import { Link as LinkModel, User as UserModel } from '.prisma/client';
 import { Context } from '../../src/context';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
@@ -17,7 +18,7 @@ export type Scalars = {
 
 export type Link = {
   __typename?: 'Link';
-  createdBy?: Maybe<User>;
+  createdBy: User;
   description: Scalars['String'];
   id: Scalars['ID'];
   url: Scalars['String'];
@@ -134,26 +135,26 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
-  Link: ResolverTypeWrapper<Link>;
+  Link: ResolverTypeWrapper<LinkModel>;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']>;
-  User: ResolverTypeWrapper<User>;
+  User: ResolverTypeWrapper<UserModel>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Boolean: Scalars['Boolean'];
   ID: Scalars['ID'];
-  Link: Link;
+  Link: LinkModel;
   Mutation: {};
   Query: {};
   String: Scalars['String'];
-  User: User;
+  User: UserModel;
 };
 
 export type LinkResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Link'] = ResolversParentTypes['Link']> = {
-  createdBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  createdBy?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;

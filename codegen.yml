@@ -1,10 +1,13 @@
 overwrite: true
-schema: "./src/graphql/schema.graphql"
+schema: ./src/schema.graphql
 generates:
-  src/generated/graphql.ts:
+  src/generated/graphql.generated.ts:
     config:
-      # Relative to src/generated/graphql.ts
-      contextType: "../../src/context#Context"
+      # Relative to src/generated/graphql.generated.ts
+      contextType: ../../src/context#Context
+      mappers:
+        Link: .prisma/client#Link as LinkModel
+        User: .prisma/client#User as UserModel
     plugins:
       - "typescript"
       - "typescript-resolvers"

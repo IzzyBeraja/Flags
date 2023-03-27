@@ -1,17 +1,14 @@
 import { IResolvers } from "@graphql-tools/utils";
 
-import { Context } from "../context";
-import { QueryResolvers } from "../generated/graphql";
+import { QueryResolvers } from "../generated/graphql.generated";
 
 const get_users: QueryResolvers["get_users"] = async (
   _parent,
   _args,
-  context: Context
+  context
 ) =>
   context.prisma.user.findMany({
-    include: {
-      links: true,
-    },
+    include: { links: true },
   });
 
 const resolvers: IResolvers = {
