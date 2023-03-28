@@ -1,9 +1,9 @@
-import { IResolvers } from "@graphql-tools/utils";
-
 import {
   MutationResolvers,
   QueryResolvers,
 } from "../generated/graphql.generated";
+
+import { IResolvers } from "@graphql-tools/utils";
 
 const get_posts: QueryResolvers["get_posts"] = async (
   _parent,
@@ -58,6 +58,17 @@ const delete_post: MutationResolvers["delete_post"] = async (
 };
 
 const resolvers: IResolvers = {
+  Link: {
+    createdBy: async (parent, _args, context) => {
+      return await context.prisma.link
+        .findUnique({
+          where: {
+            id: parent.id,
+          },
+        })
+        .createdBy();
+    },
+  },
   Mutation: {
     create_post,
     delete_post,

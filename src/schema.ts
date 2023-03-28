@@ -1,7 +1,6 @@
+import { readFileSync } from "fs";
 import { DocumentNode } from "graphql";
 import { gql } from "graphql-tag";
-
-import { readFileSync } from "fs";
 import { join } from "path";
 
 const schemaPath = join(process.cwd(), "src/schema.graphql");

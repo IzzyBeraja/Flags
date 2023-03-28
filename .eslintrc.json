@@ -36,15 +36,11 @@
     "import/order": [
       "error",
       {
-        "groups": ["internal", "external"],
-        "pathGroups": [
-          {
-            "pattern": "@/**",
-            "group": "internal",
-            "position": "before"
-          }
+        "groups": [
+          "type",
+          ["sibling", "parent"],
+          ["builtin", "external", "internal"]
         ],
-        "pathGroupsExcludedImportTypes": ["type"],
         "alphabetize": {
           "order": "asc",
           "caseInsensitive": true
