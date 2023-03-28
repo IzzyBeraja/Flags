@@ -4,7 +4,7 @@ Here are a list of things to do:
 
 ## Security
 
-- [ ] Setup cors
+- [x] Setup cors
 - [ ] Setup csrfprevention
 - [ ] Password hashing (bcrypt)
 - [ ] Rate limiting
