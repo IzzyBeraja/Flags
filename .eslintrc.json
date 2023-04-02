@@ -54,5 +54,13 @@
       { "caseSensitive": true, "natural": true, "minKeys": 2 }
     ],
     "sort-keys-fix/sort-keys-fix": "error"
-  }
+  },
+  "overrides": [
+    {
+      "files": ["*.d.ts"],
+      "rules": {
+        "no-unused-vars": "off"
+      }
+    }
+  ]
 }

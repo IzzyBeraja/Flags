@@ -1,15 +1,13 @@
-import { PrismaClient } from "@prisma/client";
+import prismaMiddleware from "./middleware/prisma.middleware";
+import router from "./routes/router";
+
 import express from "express";
 
 const app = express();
-export const prisma = new PrismaClient();
 
-app.get("/user", async (_req, res) => {
-  const data = await prisma.user.findMany({
-    include: { links: true },
-  });
-  res.json(data);
-});
+app.use(express.json());
+app.use(prismaMiddleware);
+app.use("/api", router);
 
 const port = Number.parseInt(process.env["PORT"] ?? "4000");
 app.listen(port, () =>
