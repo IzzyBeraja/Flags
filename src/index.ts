@@ -1,30 +1,17 @@
-import type { Context } from "./context";
+import { PrismaClient } from "@prisma/client";
+import express from "express";
 
-import { context } from "./context";
-import { resolvers } from "./resolvers/resolvers";
-import { typeDefs } from "./schema";
+const app = express();
+export const prisma = new PrismaClient();
 
-import { ApolloServer } from "@apollo/server";
-import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
-import { koaMiddleware } from "@as-integrations/koa";
-import cors from "@koa/cors";
-import http from "http";
-import Koa from "koa";
-import bodyParser from "koa-bodyparser";
-
-const app = new Koa();
-const httpServer = http.createServer(app.callback());
-
-export const server = new ApolloServer<Context>({
-  plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
-  resolvers,
-  typeDefs,
+app.get("/user", async (_req, res) => {
+  const data = await prisma.user.findMany({
+    include: { links: true },
+  });
+  res.json(data);
 });
 
-await server.start();
-
-app.use(cors()).use(bodyParser()).use(koaMiddleware(server, { context }));
-
 const port = Number.parseInt(process.env["PORT"] ?? "4000");
-await new Promise<void>(resolve => httpServer.listen(port, resolve));
-console.log(`🚀 Server ready at http://localhost:4000`);
+app.listen(port, () =>
+  console.log(`Starting server on http://localhost:${port}`)
+);
