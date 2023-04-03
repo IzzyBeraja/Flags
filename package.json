@@ -42,5 +42,6 @@
     "start": "nodemon --exec ts-node src/index.ts",
     "build": "tsc",
     "lint": "eslint --fix --ext .ts src"
-  }
+  },
+  "packageManager": "yarn@3.5.0"
 }
