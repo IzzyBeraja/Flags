@@ -10,7 +10,11 @@
     "node": true
   },
   "plugins": ["import", "prettier", "sort-keys-fix", "@typescript-eslint"],
-  "extends": ["eslint:recommended", "prettier"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "prettier"
+  ],
   "rules": {
     "prettier/prettier": [
       "error",
@@ -53,7 +57,14 @@
       "asc",
       { "caseSensitive": true, "natural": true, "minKeys": 2 }
     ],
-    "sort-keys-fix/sort-keys-fix": "error"
+    "sort-keys-fix/sort-keys-fix": "error",
+    "@typescript-eslint/consistent-type-imports": [
+      "error",
+      {
+        "prefer": "type-imports",
+        "disallowTypeAnnotations": true
+      }
+    ]
   },
   "overrides": [
     {

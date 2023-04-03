@@ -39,6 +39,7 @@
     "genPrisma": "npx prisma generate",
     "prismaStudio": "npx prisma studio",
     "start": "nodemon --exec ts-node src/index.ts",
-    "build": "tsc"
+    "build": "tsc",
+    "lint": "eslint --fix --ext .ts src"
   }
 }
