@@ -1,5 +1,5 @@
 import { sessionName } from "./../middleware/session.middleware";
-import { BAD_REQUEST, CREATED, OK } from "../errors/errorCodes";
+import { BAD_REQUEST, CREATED, OK, UNAUTHORIZED } from "../errors/errorCodes";
 import { validate } from "../validation/requestValidation";
 
 import { Prisma } from "@prisma/client";
@@ -11,17 +11,23 @@ const router = express.Router();
 const saltRounds = 10;
 
 router.get("/", async (req, res) => {
-  const data = await req.prisma.user.findMany({
-    include: { links: true },
+  if (req.session.userId == null) {
+    return res
+      .status(UNAUTHORIZED)
+      .send("You need to be logged in to access this route");
+  }
+
+  const user = await req.prisma.user.findUnique({
+    where: { id: req.session.userId },
   });
-  res.json(data);
+  return res.status(OK).json({ ...user, password: undefined });
 });
 
 router.post(
   "/register",
   validate([
     body("email", "A valid email is required").isEmail(),
-    body("name", "A valid name is required"),
+    body("name", "A valid name is required").isAlphanumeric(),
     body("password", "A valid password is required").isLength({ min: 6 }),
   ]),
   async (req, res) => {
@@ -36,7 +42,7 @@ router.post(
         },
       });
 
-      req.session.usedId = createdUser.id;
+      req.session.userId = createdUser.id;
 
       return res.status(CREATED).json({ ...createdUser, password: undefined });
     } catch (err) {
@@ -61,7 +67,7 @@ router.post(
     body("password", "A valid password is required").isLength({ min: 6 }),
   ]),
   async (req, res) => {
-    if (req.session.usedId != null) {
+    if (req.session.userId != null) {
       return res.status(BAD_REQUEST).send("You are already logged in");
     }
 
@@ -84,7 +90,7 @@ router.post(
       return res.status(BAD_REQUEST).send("Bad email and password combination");
     }
 
-    req.session.usedId = user.id;
+    req.session.userId = user.id;
     return res.status(OK).send("Login successful");
   }
 );
