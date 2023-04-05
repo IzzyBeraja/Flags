@@ -1,14 +1,12 @@
 import { sessionName } from "./../middleware/session.middleware";
 import { BAD_REQUEST, CREATED, OK, UNAUTHORIZED } from "../errors/errorCodes";
+import { createUser, getUser } from "../queries/User.queries";
 import { validate } from "../validation/requestValidation";
 
-import { Prisma } from "@prisma/client";
-import bcrypt from "bcrypt";
 import express from "express";
 import { body } from "express-validator";
 
 const router = express.Router();
-const saltRounds = 10;
 
 router.get("/", async (req, res) => {
   if (req.session.userId == null) {
@@ -31,32 +29,15 @@ router.post(
     body("password", "A valid password is required").isLength({ min: 6 }),
   ]),
   async (req, res) => {
-    const hashedPassword = await bcrypt.hash(req.body["password"], saltRounds);
+    const createUserRequest = await createUser(req.prisma, {
+      email: req.body["email"].toLowerCase(),
+      name: req.body["name"],
+      password: req.body["password"],
+    });
 
-    try {
-      const createdUser = await req.prisma.user.create({
-        data: {
-          email: req.body["email"].toLowerCase(),
-          name: req.body["name"],
-          password: hashedPassword,
-        },
-      });
-
-      req.session.userId = createdUser.id;
-
-      return res.status(CREATED).json({ ...createdUser, password: undefined });
-    } catch (err) {
-      if (
-        err instanceof Prisma.PrismaClientKnownRequestError &&
-        err.code === "P2002"
-      ) {
-        return res
-          .status(BAD_REQUEST)
-          .send("A account with that email already exists");
-      }
-
-      return res.status(BAD_REQUEST).send("Something else went wrong");
-    }
+    return createUserRequest.success
+      ? res.status(CREATED).json(createUserRequest.createdUser)
+      : res.status(BAD_REQUEST).send(createUserRequest.error);
   }
 );
 
@@ -71,36 +52,28 @@ router.post(
       return res.status(BAD_REQUEST).send("You are already logged in");
     }
 
-    const user = await req.prisma.user.findUnique({
-      where: {
-        email: req.body["email"].toLowerCase(),
-      },
-    });
-
-    if (user == null) {
-      return res.status(BAD_REQUEST).send("No user with that email found");
-    }
-
-    const passwordMatch = await bcrypt.compare(
-      req.body["password"],
-      user.password
+    const getUserRequest = await getUser(
+      req.prisma,
+      req.body["email"].toLowerCase(),
+      req.body["password"]
     );
 
-    if (!passwordMatch) {
-      return res.status(BAD_REQUEST).send("Bad email and password combination");
+    if (getUserRequest.success) {
+      req.session.userId = getUserRequest.user.id;
+      return res.status(OK).send("Login successful");
     }
 
-    req.session.userId = user.id;
-    return res.status(OK).send("Login successful");
+    return res.status(BAD_REQUEST).send(getUserRequest.error);
   }
 );
 
-router.post("/logout", async (req, res) => {
+router.post("/logout", (req, res) => {
   if (req.session == null) {
     return res.status(BAD_REQUEST).send("You are not logged in");
   }
 
-  return req.session.destroy(err => {
+  //> TODO - Modify this to use async/await
+  req.session.destroy(err => {
     if (err) {
       console.error(err);
       return res.status(BAD_REQUEST).send("Something went wrong");
@@ -109,5 +82,6 @@ router.post("/logout", async (req, res) => {
     res.clearCookie(sessionName);
     return res.status(OK).send("Logout successful");
   });
+  return;
 });
 export default router;
