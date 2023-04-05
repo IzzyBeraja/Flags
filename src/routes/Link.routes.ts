@@ -1,5 +1,5 @@
 import { CREATED, NOT_FOUND, OK } from "../errors/errorCodes";
-import { validate } from "../validation/requestValidation";
+import { validate } from "../validation/validateRequest";
 
 import express from "express";
 import { body } from "express-validator";

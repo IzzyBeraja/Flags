@@ -1,7 +1,7 @@
 import { sessionName } from "./../middleware/session.middleware";
 import { BAD_REQUEST, CREATED, OK, UNAUTHORIZED } from "../errors/errorCodes";
 import { createUser, getUser } from "../queries/User.queries";
-import { validate } from "../validation/requestValidation";
+import { validate } from "../validation/validateRequest";
 
 import express from "express";
 import { body } from "express-validator";
@@ -68,7 +68,7 @@ router.post(
 );
 
 router.post("/logout", (req, res) => {
-  if (req.session == null) {
+  if (req.session.userId == null) {
     return res.status(BAD_REQUEST).send("You are not logged in");
   }
 
