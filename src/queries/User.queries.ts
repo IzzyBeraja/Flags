@@ -1,5 +1,7 @@
 import type { PrismaClient, User } from "@prisma/client";
 
+import { exclude } from "./QueryFunctions";
+
 import { Prisma } from "@prisma/client";
 import bcrypt from "bcrypt";
 
@@ -22,29 +24,33 @@ export async function createUser(
   const hashedPassword = await bcrypt.hash(newUser.password, SALT_ROUNDS);
 
   try {
-    const { password: _, ...createdUser } = await prisma.user.create({
+    const createUserRequest = await prisma.user.create({
       data: { ...newUser, password: hashedPassword },
     });
 
-    return {
-      createdUser,
-      success: true,
-    };
+    const createdUser = exclude(createUserRequest, ["password"]);
+
+    return { createdUser, success: true };
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      return {
-        error: error.message,
-        success: false,
-      };
+      return { error: error.message, success: false };
     }
-    return {
-      error: "Something went wrong",
-      success: false,
-    };
+    return { error: "Something went wrong", success: false };
   }
 }
 
-export async function getUser(
+export async function getUser(prisma: PrismaClient, userId: string) {
+  const user = await prisma.user.findFirst({
+    where: {
+      id: userId,
+    },
+  });
+
+  return user && exclude(user, ["password"]);
+}
+
+//> TODO - Find a better name for this
+export async function loginUser(
   prisma: PrismaClient,
   email: string,
   password: string

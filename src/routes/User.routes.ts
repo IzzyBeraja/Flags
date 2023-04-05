@@ -1,6 +1,6 @@
 import { sessionName } from "./../middleware/session.middleware";
 import { BAD_REQUEST, CREATED, OK, UNAUTHORIZED } from "../errors/errorCodes";
-import { createUser, getUser } from "../queries/User.queries";
+import { createUser, loginUser } from "../queries/User.queries";
 import { validate } from "../validation/validateRequest";
 
 import express from "express";
@@ -52,7 +52,7 @@ router.post(
       return res.status(BAD_REQUEST).send("You are already logged in");
     }
 
-    const getUserRequest = await getUser(
+    const getUserRequest = await loginUser(
       req.prisma,
       req.body["email"].toLowerCase(),
       req.body["password"]
