@@ -1,4 +1,5 @@
-import { BAD_REQUEST, CREATED } from "../errors/errorCodes";
+import { sessionName } from "./../middleware/session.middleware";
+import { BAD_REQUEST, CREATED, OK } from "../errors/errorCodes";
 import { validate } from "../validation/requestValidation";
 
 import { Prisma } from "@prisma/client";
@@ -35,6 +36,8 @@ router.post(
         },
       });
 
+      req.session.usedId = createdUser.id;
+
       return res.status(CREATED).json({ ...createdUser, password: undefined });
     } catch (err) {
       if (
@@ -51,4 +54,54 @@ router.post(
   }
 );
 
+router.post(
+  "/login",
+  validate([
+    body("email", "A valid email is required").isEmail(),
+    body("password", "A valid password is required").isLength({ min: 6 }),
+  ]),
+  async (req, res) => {
+    if (req.session.usedId != null) {
+      return res.status(BAD_REQUEST).send("You are already logged in");
+    }
+
+    const user = await req.prisma.user.findUnique({
+      where: {
+        email: req.body["email"].toLowerCase(),
+      },
+    });
+
+    if (user == null) {
+      return res.status(BAD_REQUEST).send("No user with that email found");
+    }
+
+    const passwordMatch = await bcrypt.compare(
+      req.body["password"],
+      user.password
+    );
+
+    if (!passwordMatch) {
+      return res.status(BAD_REQUEST).send("Bad email and password combination");
+    }
+
+    req.session.usedId = user.id;
+    return res.status(OK).send("Login successful");
+  }
+);
+
+router.post("/logout", async (req, res) => {
+  if (req.session == null) {
+    return res.status(BAD_REQUEST).send("You are not logged in");
+  }
+
+  return req.session.destroy(err => {
+    if (err) {
+      console.error(err);
+      return res.status(BAD_REQUEST).send("Something went wrong");
+    }
+
+    res.clearCookie(sessionName);
+    return res.status(OK).send("Logout successful");
+  });
+});
 export default router;

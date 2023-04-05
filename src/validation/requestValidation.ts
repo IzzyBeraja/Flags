@@ -12,6 +12,6 @@ export function validate(validations: ValidationChain[]) {
       return next();
     }
 
-    res.status(400).json({ errors: errors.array() });
+    return res.status(400).json({ errors: errors.array() });
   };
 }
