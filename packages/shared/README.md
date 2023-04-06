@@ -1,3 +1,3 @@
-# Flags Frontend
+# Flags Shared
 
 Information to be added
