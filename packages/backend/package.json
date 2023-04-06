@@ -1,5 +1,5 @@
 {
-  "name": "flags",
+  "name": "flags-backend",
   "version": "1.0.0",
   "description": "Provides flags for users based on vraious criteria which can allow and disallow features, actions, etc.",
   "main": "index.js",
