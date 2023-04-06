@@ -1,0 +1,7 @@
+{
+  "name": "frontend",
+  "version": "0.1.0",
+  "private": true,
+  "main": "index.js",
+  "packageManager": "yarn@3.5.0"
+}

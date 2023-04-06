@@ -1,0 +1,6 @@
+{
+  "name": "shared",
+  "version": "0.0.0",
+  "license": "MIT",
+  "packageManager": "yarn@3.5.0"
+}
