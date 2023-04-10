@@ -1,0 +1,2 @@
+/prisma/migrations/*  linguist-generated
+*.generated.ts        linguist-generated
