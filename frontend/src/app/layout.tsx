@@ -1,9 +1,4 @@
-import "./globals.css";
-
-export const metadata = {
-  description: "An easy way to handle all of your flags",
-  title: "Flags",
-};
+import RootStyleRegistry from "./emotion";
 
 export default function RootLayout({
   children,
@@ -11,8 +6,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html lang="en-US">
+      <head />
+      <body>
+        <RootStyleRegistry>{children}</RootStyleRegistry>
+      </body>
     </html>
   );
 }
