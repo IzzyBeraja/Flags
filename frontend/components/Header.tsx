@@ -9,8 +9,10 @@ import {
 } from "@mantine/core";
 import Link from "next/link";
 
+export type LinkType = { link: string; label: string };
+
 type Props = {
-  links: Array<{ link: string; label: string }>;
+  links: Array<LinkType>;
 };
 
 export default function Header({ links }: Props) {
@@ -24,9 +26,9 @@ export default function Header({ links }: Props) {
 
   return (
     <MantineHeader height={60}>
-      <Container className={classes.container}>
-        <Text fz="xl">Flags Logo</Text>
-        <Group>{linkElements}</Group>
+      <Container fluid className={classes.container}>
+        <Text fz="xl">🚩 Flags</Text>
+        <Group className={classes.links}>{linkElements}</Group>
       </Container>
     </MantineHeader>
   );
