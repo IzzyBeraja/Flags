@@ -27,7 +27,7 @@ export default function SideBar() {
   ];
 
   return (
-    <Navbar>
+    <Navbar width={{ base: "12rem" }} p="md">
       <FlagList flags={flags} />
     </Navbar>
   );
