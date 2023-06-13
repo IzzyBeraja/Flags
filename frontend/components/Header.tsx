@@ -1,11 +1,11 @@
 "use client";
 
 import {
-  Container,
-  Header as MantineHeader,
+  Container as M_Container,
   createStyles,
-  Text,
-  Group,
+  Header as M_Header,
+  Text as M_Text,
+  Group as M_Group,
 } from "@mantine/core";
 import Link from "next/link";
 
@@ -25,12 +25,12 @@ export default function Header({ links }: Props) {
   ));
 
   return (
-    <MantineHeader height={60}>
-      <Container fluid className={classes.container}>
-        <Text fz="xl">🚩 Flags</Text>
-        <Group className={classes.links}>{linkElements}</Group>
-      </Container>
-    </MantineHeader>
+    <M_Header height={60}>
+      <M_Container fluid className={classes.container}>
+        <M_Text fz="xl">🚩 Flags</M_Text>
+        <M_Group className={classes.links}>{linkElements}</M_Group>
+      </M_Container>
+    </M_Header>
   );
 }
 

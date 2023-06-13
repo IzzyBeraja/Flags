@@ -1,4 +1,9 @@
-import { Group, UnstyledButton, Text, Tooltip } from "@mantine/core";
+import {
+  Group as M_Group,
+  UnstyledButton as M_UnstyledButton,
+  Text as M_Text,
+  Tooltip as M_Tooltip,
+} from "@mantine/core";
 
 export type StatusType = "pass" | "fail" | "disabled";
 export type FlagType = {
@@ -31,13 +36,13 @@ export default function FlagItem({
   };
 
   return (
-    <Tooltip label={description}>
-      <UnstyledButton onClick={() => onClick(id)}>
-        <Group spacing="xs">
-          <Text>{statusIcon()}</Text>
-          <Text>{name}</Text>
-        </Group>
-      </UnstyledButton>
-    </Tooltip>
+    <M_Tooltip label={description}>
+      <M_UnstyledButton onClick={() => onClick(id)}>
+        <M_Group spacing="xs">
+          <M_Text>{statusIcon()}</M_Text>
+          <M_Text>{name}</M_Text>
+        </M_Group>
+      </M_UnstyledButton>
+    </M_Tooltip>
   );
 }

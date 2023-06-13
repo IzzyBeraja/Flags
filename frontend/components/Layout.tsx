@@ -1,7 +1,6 @@
-import Header from "./Header";
-import SideBar from "./SideBar";
-
-import { AppShell } from "@mantine/core";
+import Header from "@components/Header";
+import NavBar from "@components/NavBar";
+import { AppShell as M_AppShell } from "@mantine/core";
 
 type Props = {
   children: React.ReactNode;
@@ -15,8 +14,8 @@ export default function Layout({ children }: Props) {
   ];
 
   return (
-    <AppShell header={<Header links={links} />} navbar={<SideBar />}>
+    <M_AppShell header={<Header links={links} />} navbar={<NavBar />}>
       {children}
-    </AppShell>
+    </M_AppShell>
   );
 }

@@ -1,7 +1,6 @@
 import type { FlagType } from "./FlagItem";
 
-import FlagItem from "./FlagItem";
-
+import FlagItem from "@components/FlagItem";
 import { createStyles } from "@mantine/core";
 
 type Props = {

@@ -1,8 +1,7 @@
-import type { FlagType } from "./FlagItem";
+import type { FlagType } from "@components/FlagItem";
 
-import FlagList from "./FlagList";
-
-import { Navbar } from "@mantine/core";
+import FlagList from "@components/FlagList";
+import { Navbar as M_NavBar } from "@mantine/core";
 
 export default function SideBar() {
   const flags: Array<FlagType> = [
@@ -27,8 +26,11 @@ export default function SideBar() {
   ];
 
   return (
-    <Navbar width={{ base: "12rem" }} p="md">
-      <FlagList flags={flags} />
-    </Navbar>
+    <M_NavBar width={{ base: "15rem" }} p="md">
+      <M_NavBar.Section grow>
+        <FlagList flags={flags} />
+      </M_NavBar.Section>
+      <M_NavBar.Section>User Information</M_NavBar.Section>
+    </M_NavBar>
   );
 }
