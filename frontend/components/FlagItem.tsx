@@ -6,14 +6,14 @@ import {
 } from "@mantine/core";
 
 export type StatusType = "pass" | "fail" | "disabled";
-export type FlagType = {
+export type FlagData = {
   id: string;
   name: string;
   description: string;
   status: StatusType;
 };
 
-type Props = FlagType & {
+type Props = FlagData & {
   onClick: (id: string) => void;
 };
 

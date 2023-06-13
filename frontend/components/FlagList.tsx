@@ -1,10 +1,10 @@
-import type { FlagType } from "./FlagItem";
+import type { FlagData } from "./FlagItem";
 
 import FlagItem from "@components/FlagItem";
 import { createStyles } from "@mantine/core";
 
 type Props = {
-  flags: Array<FlagType>;
+  flags: Array<FlagData>;
 };
 
 export default function FlagList({ flags }: Props) {

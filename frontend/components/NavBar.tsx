@@ -1,10 +1,10 @@
-import type { FlagType } from "@components/FlagItem";
+import type { FlagData } from "@components/FlagItem";
 
 import FlagList from "@components/FlagList";
 import { Navbar as M_NavBar } from "@mantine/core";
 
 export default function SideBar() {
-  const flags: Array<FlagType> = [
+  const flags: Array<FlagData> = [
     {
       description: "flag1 description",
       id: "1",
