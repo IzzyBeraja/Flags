@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Container as M_Container,
   createStyles,
