@@ -47,7 +47,6 @@ export default function SideBar() {
   const { pathname } = useRouter();
   const theme = useMantineTheme();
 
-  console.log(pathname);
   return (
     <M_NavBar width={{ base: "15rem" }} p="md">
       <M_NavBar.Section grow>
