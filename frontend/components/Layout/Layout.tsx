@@ -7,14 +7,8 @@ type Props = {
 };
 
 export default function Layout({ children }: Props) {
-  const links = [
-    { label: "Home", link: "/" },
-    { label: "About", link: "/about" },
-    { label: "Flags", link: "/flags" },
-  ];
-
   return (
-    <M_AppShell header={<Header links={links} />} navbar={<NavBar />}>
+    <M_AppShell header={<Header />} navbar={<NavBar />}>
       {children}
     </M_AppShell>
   );
