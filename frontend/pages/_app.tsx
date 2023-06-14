@@ -1,7 +1,7 @@
 import type { ColorScheme } from "@mantine/core";
 import type { AppProps, AppContext } from "next/app";
 
-import Layout from "@components/Layout";
+import Layout from "@components/Layout/Layout";
 import { ColorSchemeProvider, MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import { getCookie, setCookie } from "cookies-next";

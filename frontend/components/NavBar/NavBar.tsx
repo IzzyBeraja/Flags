@@ -1,4 +1,4 @@
-import NavBarItem from "@components/NavBarItem";
+import NavBarItem from "@components/NavBarItem/NavBarItem";
 import { Navbar as M_NavBar } from "@mantine/core";
 import { ReportAnalytics } from "tabler-icons-react";
 

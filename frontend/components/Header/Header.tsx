@@ -1,4 +1,4 @@
-import ColorSchemeToggle from "./ColorSchemeToggle";
+import ColorSchemeToggle from "../ColorSchemeToggle/ColorSchemeToggle";
 
 import {
   Container as M_Container,
