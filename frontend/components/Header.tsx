@@ -1,3 +1,5 @@
+import ColorSchemeToggle from "./ColorSchemeToggle";
+
 import {
   Container as M_Container,
   createStyles,
@@ -27,6 +29,7 @@ export default function Header({ links }: Props) {
       <M_Container fluid className={classes.container}>
         <M_Text fz="xl">🚩 Flags</M_Text>
         <M_Group className={classes.links}>{linkElements}</M_Group>
+        <ColorSchemeToggle />
       </M_Container>
     </M_Header>
   );
