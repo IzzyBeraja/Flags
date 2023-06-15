@@ -1,6 +1,13 @@
 import FlowDiagram from "@components/FlowDiagram/FlowDiagram";
 import { Accordion, Grid, NavLink, TextInput } from "@mantine/core";
-import { Adjustments, Check, Search, TestPipe, X } from "tabler-icons-react";
+import {
+  Adjustments,
+  AlertTriangle,
+  Check,
+  Search,
+  TestPipe,
+  X,
+} from "tabler-icons-react";
 
 const projects = [
   {
@@ -16,6 +23,10 @@ const projects = [
       {
         name: "Invest in CGI",
         status: "fail",
+      },
+      {
+        name: "Deal with Aliens",
+        status: "error",
       },
     ],
     name: "Development",
@@ -55,9 +66,11 @@ export default function Home() {
                 label={name}
                 icon={
                   status === "pass" ? (
-                    <Check size="1rem" color={"green"} />
+                    <Check size="1.5rem" color={"green"} />
+                  ) : status === "error" ? (
+                    <AlertTriangle size="1.5rem" color={"yellow"} />
                   ) : (
-                    <X size="1rem" color={"red"} />
+                    <X size="1.5rem" color={"red"} />
                   )
                 }
               />
