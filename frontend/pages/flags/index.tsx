@@ -1,13 +1,6 @@
 import FlowDiagram from "@components/FlowDiagram/FlowDiagram";
 import { Accordion, Grid, NavLink, TextInput } from "@mantine/core";
-import {
-  Adjustments,
-  AlertTriangle,
-  Check,
-  Search,
-  TestPipe,
-  X,
-} from "tabler-icons-react";
+import { Adjustments, Search, TestPipe } from "tabler-icons-react";
 
 const projects = [
   {
@@ -60,20 +53,8 @@ export default function Home() {
         />
         {projects.map(({ name, flags }) => (
           <NavLink key={name} label={name}>
-            {flags.map(({ name, status }) => (
-              <NavLink
-                key={name}
-                label={name}
-                icon={
-                  status === "pass" ? (
-                    <Check size="1.5rem" color={"green"} />
-                  ) : status === "error" ? (
-                    <AlertTriangle size="1.5rem" color={"yellow"} />
-                  ) : (
-                    <X size="1.5rem" color={"red"} />
-                  )
-                }
-              />
+            {flags.map(({ name }) => (
+              <NavLink key={name} label={name} />
             ))}
           </NavLink>
         ))}
