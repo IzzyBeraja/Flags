@@ -1,5 +1,9 @@
+import type { Flag } from "@customTypes/nodeTypes";
+import type { Connection, Edge, EdgeChange, NodeChange } from "reactflow";
+
 import FlowDiagram from "@components/FlowDiagram/FlowDiagram";
 import { Accordion, Grid, NavLink, TextInput } from "@mantine/core";
+import { useCallback, useState } from "react";
 import { Adjustments, Search, TestPipe } from "tabler-icons-react";
 
 const projects = [
@@ -44,6 +48,25 @@ const projects = [
 ];
 
 export default function Home() {
+  //> This will be the initial state of the flag
+  //> Updates to the flag and flow will be separate so less data is passed around
+  //> I need to understand better how to handle the state of the diagram
+  const [currentFlag, _setcurrentFlag] = useState<Flag[]>([]);
+
+  const onNodesChange = useCallback(
+    (nodeChanges: NodeChange[]) => console.log(nodeChanges),
+    []
+  );
+  const onEdgesChange = useCallback(
+    (edgeChanges: EdgeChange[]) => console.log(edgeChanges),
+    []
+  );
+
+  const onConnect = useCallback(
+    (connection: Edge | Connection) => console.log(connection),
+    []
+  );
+
   return (
     <Grid style={{ height: "100%" }}>
       <Grid.Col span={2}>
@@ -60,7 +83,12 @@ export default function Home() {
         ))}
       </Grid.Col>
       <Grid.Col span="auto">
-        <FlowDiagram />
+        <FlowDiagram
+          flags={currentFlag}
+          onConnect={onConnect}
+          onEdgesChange={onEdgesChange}
+          onNodesChange={onNodesChange}
+        />
       </Grid.Col>
       <Grid.Col span={2}>
         <Accordion multiple defaultValue={["Testing"]}>

@@ -1,22 +1,84 @@
 import "reactflow/dist/style.css";
 
-import type { FlowNode, CustomNodeTypes } from "@customTypes/nodeTypes";
-import type { Connection, Edge } from "reactflow";
+import type { FlowNode, CustomNodeTypes, Flag } from "@customTypes/nodeTypes";
+import type { Connection, Edge, EdgeChange, NodeChange } from "reactflow";
 
 import CardNode from "@components/CardNode/CardNode";
-import { FlowNodeType } from "@customTypes/nodeTypes";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import ReactFlow, {
   Background,
   BackgroundVariant,
   Controls,
   addEdge,
-  useEdgesState,
-  useNodesState,
+  applyEdgeChanges,
+  applyNodeChanges,
 } from "reactflow";
-import { BrandAndroid, BrandApple, Rocket } from "tabler-icons-react";
 
-const initialNodes: FlowNode[] = [
+type Props = {
+  flags: Flag[];
+  onNodesChange: (nodes: NodeChange[]) => void;
+  onEdgesChange: (edges: EdgeChange[]) => void;
+  onConnect: (connection: Edge | Connection) => void;
+};
+
+export default function FlowDiagram({
+  onNodesChange,
+  onEdgesChange,
+  onConnect,
+}: Props) {
+  const nodeType = useMemo<CustomNodeTypes>(
+    () => ({ card: CardNode, dropdown: CardNode }),
+    []
+  );
+
+  const [nodes, setNodes] = useState<FlowNode[]>([]);
+  const [edges, setEdges] = useState<Edge[]>([]);
+
+  const handleNodesChange = useCallback(
+    (nodeChanges: NodeChange[]) => {
+      onNodesChange(nodeChanges);
+      setNodes(newNodes => applyNodeChanges(nodeChanges, newNodes));
+    },
+    [setNodes]
+  );
+  const handleEdgesChange = useCallback(
+    (edgeChanges: EdgeChange[]) => {
+      onEdgesChange(edgeChanges);
+      setEdges(newEdges => applyEdgeChanges(edgeChanges, newEdges));
+    },
+    [setEdges]
+  );
+
+  const handleConnect = useCallback(
+    (connection: Edge | Connection) => {
+      onConnect(connection);
+      setEdges(eds => addEdge(connection, eds));
+    },
+    [setEdges]
+  );
+
+  return (
+    <main style={{ height: "100%", width: "100%" }}>
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        nodeTypes={nodeType}
+        onNodesChange={handleNodesChange}
+        onEdgesChange={handleEdgesChange}
+        onConnect={handleConnect}
+        fitView
+      >
+        <Background color="#666" variant={BackgroundVariant.Dots} gap={40} />
+        <Controls />
+      </ReactFlow>
+    </main>
+  );
+}
+
+//? This is how the data needs to be structured after the node data is passed
+//? I'll need to figure out how to set the positions for each of the nodes automatically
+/**
+ * const initialNodes: FlowNode[] = [
   {
     data: { label: "Start", options: ["Android", "iOS"] },
     id: "1",
@@ -49,36 +111,4 @@ const initialEdges = [
   { id: "e1-2", source: "1", target: "2", type: "step" },
   { id: "e1-3", source: "1", target: "3", type: "step" },
 ];
-
-export default function FlowDiagram() {
-  const [nodes, _setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-
-  const onConnect = useCallback(
-    (connection: Edge | Connection) =>
-      setEdges(edgeArr => addEdge({ ...connection, animated: true }, edgeArr)),
-    [setEdges]
-  );
-
-  const nodeType = useMemo<CustomNodeTypes>(
-    () => ({ card: CardNode, dropdown: CardNode }),
-    [initialNodes]
-  );
-
-  return (
-    <main style={{ height: "100%", width: "100%" }}>
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        nodeTypes={nodeType}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        fitView
-      >
-        <Background color="#666" variant={BackgroundVariant.Dots} gap={40} />
-        <Controls />
-      </ReactFlow>
-    </main>
-  );
-}
+ */

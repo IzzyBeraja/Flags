@@ -8,7 +8,16 @@ export enum FlowNodeType {
   Dropdown = "dropdown",
 }
 
+export type Flag = {
+  id: string;
+} & FlagData;
+
+export type FlagData =
+  | { data: CardData; type: FlowNodeType.Card }
+  | { data: DropdownData; type: FlowNodeType.Dropdown };
+
 export type FlowNode =
+  | Node<CardData> // Default Node type
   | Node<CardData, FlowNodeType.Card>
   | Node<DropdownData, FlowNodeType.Dropdown>;
 
