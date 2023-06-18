@@ -1,9 +1,10 @@
 import "reactflow/dist/style.css";
 
+import type { FlowNode, CustomNodeTypes } from "@customTypes/nodeTypes";
 import type { Connection, Edge } from "reactflow";
-import type { Icon } from "tabler-icons-react";
 
-import FlagNode from "@components/FlagNode/FlagNode";
+import CardNode from "@components/CardNode/CardNode";
+import { FlowNodeType } from "@customTypes/nodeTypes";
 import { useCallback, useMemo } from "react";
 import ReactFlow, {
   Background,
@@ -15,25 +16,12 @@ import ReactFlow, {
 } from "reactflow";
 import { BrandAndroid, BrandApple, Rocket } from "tabler-icons-react";
 
-type NodeData = {
-  data: {
-    icon?: Icon;
-    label: string;
-  };
-  id: string;
-  position: {
-    x: number;
-    y: number;
-  };
-  type: string;
-};
-
-const initialNodes: NodeData[] = [
+const initialNodes: FlowNode[] = [
   {
-    data: { label: "Start" },
+    data: { label: "Start", options: ["Android", "iOS"] },
     id: "1",
     position: { x: 50, y: 0 },
-    type: "flagNode",
+    type: FlowNodeType.Dropdown,
   },
   {
     data: {
@@ -42,19 +30,19 @@ const initialNodes: NodeData[] = [
     },
     id: "2",
     position: { x: 100, y: 150 },
-    type: "flagNode",
+    type: FlowNodeType.Card,
   },
   {
     data: { icon: BrandApple, label: "Device is iOS" },
     id: "3",
     position: { x: -100, y: 150 },
-    type: "flagNode",
+    type: FlowNodeType.Card,
   },
   {
     data: { icon: Rocket, label: "Launch Rocket" },
     id: "4",
     position: { x: 0, y: 300 },
-    type: "flagNode",
+    type: FlowNodeType.Card,
   },
 ];
 const initialEdges = [
@@ -72,7 +60,10 @@ export default function FlowDiagram() {
     [setEdges]
   );
 
-  const nodeType = useMemo(() => ({ flagNode: FlagNode }), [initialNodes]);
+  const nodeType = useMemo<CustomNodeTypes>(
+    () => ({ card: CardNode, dropdown: CardNode }),
+    [initialNodes]
+  );
 
   return (
     <main style={{ height: "100%", width: "100%" }}>

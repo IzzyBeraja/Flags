@@ -3,24 +3,28 @@ import type { Icon } from "tabler-icons-react";
 import { ActionIcon, Card, Group, Text } from "@mantine/core";
 import { Handle, Position } from "reactflow";
 
-type Props = {
-  data: {
-    label: string;
-    icon?: Icon;
-  };
+export type CardData = {
+  label: string;
+  icon?: Icon;
 };
 
-export default function FlagNode({ data }: Props) {
+type Props = {
+  data: CardData;
+};
+
+export default function CardNode({ data }: Props) {
+  const { label, icon: Icon } = data;
+
   return (
     <>
       <Card shadow="sm" withBorder maw="15rem">
         <Group position="center" spacing="sm">
-          {data.icon != null && (
+          {Icon != null && (
             <ActionIcon variant="outline" color="green">
-              <data.icon />
+              <Icon />
             </ActionIcon>
           )}
-          <Text weight={500}>{data.label}</Text>
+          <Text weight={500}>{label}</Text>
         </Group>
       </Card>
       <Handle

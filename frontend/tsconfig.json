@@ -12,6 +12,7 @@
     "plugins": [{ "name": "next" }],
     "paths": {
       "@components/*": ["./components/*"],
+      "@customTypes/*": ["./customTypes/*"],
       "@/*": ["./*"]
     }
   },
