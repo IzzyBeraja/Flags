@@ -1,9 +1,17 @@
-import type { Flag } from "@customTypes/nodeTypes";
-import type { Connection, Edge, EdgeChange, NodeChange } from "reactflow";
+import type { FlowNode } from "@customTypes/nodeTypes";
 
 import FlowDiagram from "@components/FlowDiagram/FlowDiagram";
 import { Accordion, Grid, NavLink, TextInput } from "@mantine/core";
 import { useCallback, useState } from "react";
+import {
+  addEdge,
+  applyEdgeChanges,
+  applyNodeChanges,
+  type Connection,
+  type Edge,
+  type EdgeChange,
+  type NodeChange,
+} from "reactflow";
 import { Adjustments, Search, TestPipe } from "tabler-icons-react";
 
 const projects = [
@@ -51,20 +59,28 @@ export default function Home() {
   //> This will be the initial state of the flag
   //> Updates to the flag and flow will be separate so less data is passed around
   //> I need to understand better how to handle the state of the diagram
-  const [currentFlag, _setcurrentFlag] = useState<Flag[]>([]);
+  const [nodes, setNodes] = useState<FlowNode[]>([]);
+  const [edges, setEdges] = useState<Edge[]>([]);
 
   const onNodesChange = useCallback(
-    (nodeChanges: NodeChange[]) => console.log(nodeChanges),
-    []
+    (nodeChanges: NodeChange[]) => {
+      setNodes(currNodes => applyNodeChanges(nodeChanges, currNodes));
+    },
+    [setNodes]
   );
+
   const onEdgesChange = useCallback(
-    (edgeChanges: EdgeChange[]) => console.log(edgeChanges),
-    []
+    (edgeChanges: EdgeChange[]) => {
+      setEdges(currEdges => applyEdgeChanges(edgeChanges, currEdges));
+    },
+    [setEdges]
   );
 
   const onConnect = useCallback(
-    (connection: Edge | Connection) => console.log(connection),
-    []
+    (connection: Edge | Connection) => {
+      setEdges(eds => addEdge(connection, eds));
+    },
+    [setEdges]
   );
 
   return (
@@ -84,7 +100,8 @@ export default function Home() {
       </Grid.Col>
       <Grid.Col span="auto">
         <FlowDiagram
-          flags={currentFlag}
+          nodes={nodes}
+          edges={edges}
           onConnect={onConnect}
           onEdgesChange={onEdgesChange}
           onNodesChange={onNodesChange}
