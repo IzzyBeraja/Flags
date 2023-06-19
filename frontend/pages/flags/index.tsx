@@ -1,7 +1,9 @@
+import type { Project } from "@components/FlagNav/FlagNav";
 import type { FlowNode } from "@customTypes/nodeTypes";
 
+import FlagNav from "@components/FlagNav/FlagNav";
 import FlowDiagram from "@components/FlowDiagram/FlowDiagram";
-import { Accordion, Grid, NavLink, TextInput } from "@mantine/core";
+import { Accordion, Grid } from "@mantine/core";
 import { useCallback, useState } from "react";
 import {
   addEdge,
@@ -12,9 +14,9 @@ import {
   type EdgeChange,
   type NodeChange,
 } from "reactflow";
-import { Adjustments, Search, TestPipe } from "tabler-icons-react";
+import { Adjustments, TestPipe } from "tabler-icons-react";
 
-const projects = [
+const projects: Project[] = [
   {
     flags: [
       {
@@ -86,17 +88,7 @@ export default function Home() {
   return (
     <Grid style={{ height: "100%" }}>
       <Grid.Col span={2}>
-        <TextInput
-          placeholder="Search for flags"
-          icon={<Search size="1rem" />}
-        />
-        {projects.map(({ name, flags }) => (
-          <NavLink key={name} label={name}>
-            {flags.map(({ name }) => (
-              <NavLink key={name} label={name} />
-            ))}
-          </NavLink>
-        ))}
+        <FlagNav projects={projects} />
       </Grid.Col>
       <Grid.Col span="auto">
         <FlowDiagram
