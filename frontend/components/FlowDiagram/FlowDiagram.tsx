@@ -3,7 +3,9 @@ import "reactflow/dist/style.css";
 import type { FlowNode, CustomNodeTypes } from "@customTypes/nodeTypes";
 import type { Connection, Edge, EdgeChange, NodeChange } from "reactflow";
 
+import ActionBar from "@components/ActionBar/ActionBar";
 import CardNode from "@components/CardNode/CardNode";
+import { Divider } from "@mantine/core";
 import { useCallback, useMemo } from "react";
 import ReactFlow, {
   Background,
@@ -18,6 +20,7 @@ type Props = {
   onNodesChange: (nodes: NodeChange[]) => void;
   onEdgesChange: (edges: EdgeChange[]) => void;
   onConnect: (connection: Edge | Connection) => void;
+  onNewNode: () => void;
 };
 
 //? How will I be handling the coloring of the nodes and edges?
@@ -29,6 +32,7 @@ export default function FlowDiagram({
   onNodesChange,
   onEdgesChange,
   onConnect,
+  onNewNode,
 }: Props) {
   const nodeType = useMemo<CustomNodeTypes>(
     () => ({
@@ -51,8 +55,26 @@ export default function FlowDiagram({
     onConnect(connection);
   }, []);
 
+  const onMoveHandler = useCallback(() => {
+    console.log("Move");
+  }, []);
+
+  const onPaneHandler = useCallback(() => {
+    console.log("Pan");
+  }, []);
+
+  const onAddNodeHandler = useCallback(() => {
+    onNewNode();
+  }, []);
+
   return (
-    <main style={{ height: "100%", width: "100%" }}>
+    <>
+      <ActionBar
+        onAddNode={onAddNodeHandler}
+        onPan={onPaneHandler}
+        onMove={onMoveHandler}
+      />
+      <Divider />
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -71,6 +93,6 @@ export default function FlowDiagram({
         <Background color="#666" variant={BackgroundVariant.Dots} gap={40} />
         <Controls />
       </ReactFlow>
-    </main>
+    </>
   );
 }

@@ -78,18 +78,31 @@ export default function FlagsRoute() {
     [setEdges]
   );
 
+  let num = 0;
+
+  const onNewNode = useCallback(() => {
+    const newNode: FlowNode = {
+      data: { label: "New Node" },
+      id: `new-node${num++}`,
+      position: { x: 0, y: 0 },
+      type: "card",
+    };
+    setNodes(currNodes => currNodes.concat(newNode));
+  }, []);
+
   return (
     <Grid style={{ height: "100%" }}>
       <Grid.Col span={2}>
         <FlagNav projects={projects} />
       </Grid.Col>
-      <Grid.Col span="auto">
+      <Grid.Col span="auto" display="flex" style={{ flexDirection: "column" }}>
         <FlowDiagram
           nodes={nodes}
           edges={edges}
           onConnect={onConnect}
           onEdgesChange={onEdgesChange}
           onNodesChange={onNodesChange}
+          onNewNode={onNewNode}
         />
       </Grid.Col>
       <Grid.Col span={2}>
