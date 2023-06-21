@@ -1,15 +1,21 @@
 import type { Icon } from "tabler-icons-react";
 
 import { Button, Card } from "@mantine/core";
-import { HandStop, Maximize, Pointer, SquarePlus } from "tabler-icons-react";
+import {
+  ArrowGuide,
+  HandStop,
+  Maximize,
+  Pointer,
+  SquarePlus,
+} from "tabler-icons-react";
 
-type ActionBarItemValue = "move" | "new-node" | "pan" | "fit";
+export type ActionType = "move" | "newNode" | "pan" | "fit" | "newEdge";
 
 type ActionBarItem = {
   icon: Icon;
   name: string;
   onClick: () => void;
-  value: ActionBarItemValue;
+  value: ActionType;
 };
 
 type Props = {
@@ -17,7 +23,8 @@ type Props = {
   onPan: () => void;
   onMove: () => void;
   onFitView: () => void;
-  selected?: ActionBarItemValue;
+  onAddEdge: () => void;
+  selected?: ActionType;
   compact?: boolean;
 };
 
@@ -26,15 +33,16 @@ export default function ActionBar({
   onPan,
   onMove,
   onFitView,
+  onAddEdge,
   selected,
-  compact,
+  compact = true,
 }: Props) {
   const items: ActionBarItem[] = [
     {
       icon: SquarePlus,
       name: "New Node",
       onClick: onAddNode,
-      value: "new-node",
+      value: "newNode",
     },
     {
       icon: Pointer,
@@ -47,6 +55,12 @@ export default function ActionBar({
       name: "Pan",
       onClick: onPan,
       value: "pan",
+    },
+    {
+      icon: ArrowGuide,
+      name: "Connect",
+      onClick: onAddEdge,
+      value: "newEdge",
     },
     {
       icon: Maximize,
@@ -63,7 +77,7 @@ export default function ActionBar({
           key={name}
           radius="md"
           variant={selected === value ? "light" : "subtle"}
-          leftIcon={compact || <Icon size="1.5rem" />}
+          leftIcon={!compact && <Icon size="1.5rem" />}
           onClick={onClick}
         >
           {compact ? <Icon size="1.5rem" /> : name}

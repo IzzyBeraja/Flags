@@ -1,3 +1,4 @@
+import type { ActionType } from "@components/ActionBar/ActionBar";
 import type { FlowNode, CustomNodeTypes } from "@customTypes/nodeTypes";
 import type { Connection, Edge, EdgeChange, NodeChange } from "reactflow";
 
@@ -35,6 +36,7 @@ export default function FlowDiagram({
   onNewNode,
 }: Props) {
   const { fitView } = useReactFlow();
+  const [action, setAction] = useState<ActionType>("move");
   const [moveType, setMoveType] = useState<MoveType>("move");
 
   const nodeType = useMemo<CustomNodeTypes>(
@@ -60,6 +62,7 @@ export default function FlowDiagram({
 
   const onMoveHandler = useCallback(() => {
     setMoveType("move");
+    setAction("move");
 
     //! This is a hacky way to change cursor!
     //! Seems like only option with ReactFlow library
@@ -70,6 +73,7 @@ export default function FlowDiagram({
 
   const onPaneHandler = useCallback(() => {
     setMoveType("pan");
+    setAction("pan");
 
     //! This is a hacky way to change cursor!
     //! Seems like only option with ReactFlow library
@@ -80,11 +84,17 @@ export default function FlowDiagram({
 
   const onAddNodeHandler = useCallback(() => {
     onNewNode();
+    setAction("newNode");
   }, []);
 
   const onFitViewHandler = useCallback(() => {
     fitView();
   }, [nodes, edges]);
+
+  const onAddEdgeHandler = useCallback(() => {
+    console.log("Add connection");
+    setAction("newEdge");
+  }, []);
 
   return (
     <>
@@ -109,7 +119,9 @@ export default function FlowDiagram({
             onAddNode={onAddNodeHandler}
             onPan={onPaneHandler}
             onMove={onMoveHandler}
+            onAddEdge={onAddEdgeHandler}
             onFitView={onFitViewHandler}
+            selected={action}
           />
         </Panel>
         <Background color="#666" variant={BackgroundVariant.Dots} gap={40} />
