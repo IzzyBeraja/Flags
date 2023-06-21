@@ -1,11 +1,9 @@
-import "reactflow/dist/style.css";
-
 import type { FlowNode, CustomNodeTypes } from "@customTypes/nodeTypes";
 import type { Connection, Edge, EdgeChange, NodeChange } from "reactflow";
 
 import ActionBar from "@components/ActionBar/ActionBar";
 import CardNode from "@components/CardNode/CardNode";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import ReactFlow, {
   Background,
   BackgroundVariant,
@@ -23,7 +21,6 @@ type Props = {
   onEdgesChange: (edges: EdgeChange[]) => void;
   onConnect: (connection: Edge | Connection) => void;
   onNewNode: () => void;
-  moveType: MoveType;
 };
 
 //? How will I be handling the coloring of the nodes and edges?
@@ -36,9 +33,9 @@ export default function FlowDiagram({
   onEdgesChange,
   onConnect,
   onNewNode,
-  moveType,
 }: Props) {
   const { fitView } = useReactFlow();
+  const [moveType, setMoveType] = useState<MoveType>("move");
 
   const nodeType = useMemo<CustomNodeTypes>(
     () => ({
@@ -62,11 +59,23 @@ export default function FlowDiagram({
   }, []);
 
   const onMoveHandler = useCallback(() => {
-    console.log("Move");
+    setMoveType("move");
+
+    //! This is a hacky way to change cursor!
+    //! Seems like only option with ReactFlow library
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const cssProp: any = document.querySelector(":root");
+    cssProp.style.setProperty("--pointer-option", "default");
   }, []);
 
   const onPaneHandler = useCallback(() => {
-    console.log("Pan");
+    setMoveType("pan");
+
+    //! This is a hacky way to change cursor!
+    //! Seems like only option with ReactFlow library
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const cssProp: any = document.querySelector(":root");
+    cssProp.style.setProperty("--pointer-option", "grab");
   }, []);
 
   const onAddNodeHandler = useCallback(() => {
@@ -94,7 +103,6 @@ export default function FlowDiagram({
         connectionLineType={ConnectionLineType.Step}
         panOnDrag={moveType === "pan" || [1]}
         deleteKeyCode={["Delete", "Backspace"]}
-        style={{ cursor: "crosshair" }}
       >
         <Panel position="bottom-center">
           <ActionBar

@@ -1,0 +1,17 @@
+/*
+ * This file is used to override the default reactflow styles. 
+ * I'm not a fan of how hacky this is, but what can you do?
+*/
+@import "reactflow/dist/style.css";
+
+:root {
+  --pointer-option: default;
+}
+
+.react-flow__pane {
+  cursor: var(--pointer-option) !important;
+}
+
+.react-flow__node {
+  cursor: var(--pointer-option) !important;
+}

@@ -103,7 +103,6 @@ export default function FlagsRoute() {
       <Grid.Col span="auto" display="flex" style={{ flexDirection: "column" }}>
         <ReactFlowProvider>
           <FlowDiagram
-            moveType="pan"
             nodes={nodes}
             edges={edges}
             onConnect={onConnect}
