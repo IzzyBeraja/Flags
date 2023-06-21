@@ -5,14 +5,16 @@ import type { Connection, Edge, EdgeChange, NodeChange } from "reactflow";
 
 import ActionBar from "@components/ActionBar/ActionBar";
 import CardNode from "@components/CardNode/CardNode";
-import { Divider } from "@mantine/core";
 import { useCallback, useMemo } from "react";
 import ReactFlow, {
   Background,
   BackgroundVariant,
   ConnectionLineType,
-  Controls,
+  Panel,
+  useReactFlow,
 } from "reactflow";
+
+type MoveType = "pan" | "move";
 
 type Props = {
   nodes: FlowNode[];
@@ -21,6 +23,7 @@ type Props = {
   onEdgesChange: (edges: EdgeChange[]) => void;
   onConnect: (connection: Edge | Connection) => void;
   onNewNode: () => void;
+  moveType: MoveType;
 };
 
 //? How will I be handling the coloring of the nodes and edges?
@@ -33,7 +36,10 @@ export default function FlowDiagram({
   onEdgesChange,
   onConnect,
   onNewNode,
+  moveType,
 }: Props) {
+  const { fitView } = useReactFlow();
+
   const nodeType = useMemo<CustomNodeTypes>(
     () => ({
       card: CardNode,
@@ -67,14 +73,12 @@ export default function FlowDiagram({
     onNewNode();
   }, []);
 
+  const onFitViewHandler = useCallback(() => {
+    fitView();
+  }, [nodes, edges]);
+
   return (
     <>
-      <ActionBar
-        onAddNode={onAddNodeHandler}
-        onPan={onPaneHandler}
-        onMove={onMoveHandler}
-      />
-      <Divider />
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -88,10 +92,19 @@ export default function FlowDiagram({
         snapGrid={[4, 4]}
         defaultEdgeOptions={{ type: "step" }}
         connectionLineType={ConnectionLineType.Step}
+        panOnDrag={moveType === "pan" || [1]}
         deleteKeyCode={["Delete", "Backspace"]}
+        style={{ cursor: "crosshair" }}
       >
+        <Panel position="bottom-center">
+          <ActionBar
+            onAddNode={onAddNodeHandler}
+            onPan={onPaneHandler}
+            onMove={onMoveHandler}
+            onFitView={onFitViewHandler}
+          />
+        </Panel>
         <Background color="#666" variant={BackgroundVariant.Dots} gap={40} />
-        <Controls />
       </ReactFlow>
     </>
   );

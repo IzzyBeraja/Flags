@@ -7,7 +7,12 @@ import FlagNav from "@components/FlagNav/FlagNav";
 import FlowDiagram from "@components/FlowDiagram/FlowDiagram";
 import { Grid } from "@mantine/core";
 import { useCallback, useState } from "react";
-import { addEdge, applyEdgeChanges, applyNodeChanges } from "reactflow";
+import {
+  ReactFlowProvider,
+  addEdge,
+  applyEdgeChanges,
+  applyNodeChanges,
+} from "reactflow";
 
 const projects: Project[] = [
   {
@@ -96,14 +101,17 @@ export default function FlagsRoute() {
         <FlagNav projects={projects} />
       </Grid.Col>
       <Grid.Col span="auto" display="flex" style={{ flexDirection: "column" }}>
-        <FlowDiagram
-          nodes={nodes}
-          edges={edges}
-          onConnect={onConnect}
-          onEdgesChange={onEdgesChange}
-          onNodesChange={onNodesChange}
-          onNewNode={onNewNode}
-        />
+        <ReactFlowProvider>
+          <FlowDiagram
+            moveType="pan"
+            nodes={nodes}
+            edges={edges}
+            onConnect={onConnect}
+            onEdgesChange={onEdgesChange}
+            onNodesChange={onNodesChange}
+            onNewNode={onNewNode}
+          />
+        </ReactFlowProvider>
       </Grid.Col>
       <Grid.Col span={2}>
         <FlagAccordion />
