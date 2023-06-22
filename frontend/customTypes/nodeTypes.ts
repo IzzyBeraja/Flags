@@ -1,5 +1,5 @@
-import type { CardData } from "@components/CardNode/CardNode";
-import type { DropdownData } from "@components/DropdownNode/DropdownNode";
+import type { CardData } from "@components/Nodes/CardNode/CardNode";
+import type { DropdownData } from "@components/Nodes/DropdownNode/DropdownNode";
 import type { ComponentType } from "react";
 import type { Node, NodeProps } from "reactflow";
 

@@ -3,7 +3,7 @@ import type { FlowNode, CustomNodeTypes } from "@customTypes/nodeTypes";
 import type { Connection, Edge, EdgeChange, NodeChange } from "reactflow";
 
 import ActionBar from "@components/ActionBar/ActionBar";
-import CardNode from "@components/CardNode/CardNode";
+import CardNode from "@components/Nodes/CardNode/CardNode";
 import { useCallback, useMemo, useState } from "react";
 import ReactFlow, {
   Background,
