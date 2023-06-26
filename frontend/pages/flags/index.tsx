@@ -62,6 +62,13 @@ export default function FlagsRoute() {
   const [nodes, setNodes] = useState<FlowNode[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
 
+  const results: Record<string, boolean> = {
+    node1: true,
+    node2: false,
+    node3: true,
+    node4: false,
+  };
+
   const onNodesChange = useCallback(
     (nodeChanges: NodeChange[]) => {
       setNodes(currNodes => applyNodeChanges(nodeChanges, currNodes));
@@ -87,11 +94,15 @@ export default function FlagsRoute() {
 
   const onNewNode = useCallback(() => {
     const newNode: FlowNode = {
-      data: { label: "New Node" },
-      id: `new-node${num++}`,
+      data: {
+        label: `Node ${num}`,
+        status: results[`node${num}`] ? "pass" : "fail",
+      },
+      id: `node${num}`,
       position: { x: 0, y: 0 },
       type: "card",
     };
+    num++;
     setNodes(currNodes => currNodes.concat(newNode));
   }, []);
 
