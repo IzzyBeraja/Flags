@@ -111,6 +111,7 @@ export default function FlowDiagram({
         snapGrid={[4, 4]}
         defaultEdgeOptions={{ type: "step" }}
         connectionLineType={ConnectionLineType.Step}
+        nodesDraggable={moveType === "move"}
         panOnDrag={moveType === "pan" || [1]}
         deleteKeyCode={["Delete", "Backspace"]}
       >
