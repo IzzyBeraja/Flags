@@ -1,5 +1,3 @@
-import "@styles/reactFlow.css";
-
 import type { ColorScheme } from "@mantine/core";
 import type { AppProps, AppContext } from "next/app";
 
@@ -10,6 +8,8 @@ import { getCookie, setCookie } from "cookies-next";
 import NextApp from "next/app";
 import Head from "next/head";
 import { useState } from "react";
+
+import { emotionCache } from "@/emotionCache";
 
 type Props = AppProps & {
   currColorScheme: ColorScheme;
@@ -42,6 +42,7 @@ export default function App({ Component, pageProps, currColorScheme }: Props) {
         toggleColorScheme={toggleColorScheme}
       >
         <MantineProvider
+          emotionCache={emotionCache}
           theme={{ colorScheme }}
           withGlobalStyles
           withNormalizeCSS

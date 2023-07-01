@@ -1,3 +1,5 @@
+import "reactflow/dist/base.css";
+
 import type { ActionType } from "@components/ActionBar/ActionBar";
 import type { FlowNode, CustomNodeTypes } from "@customTypes/nodeTypes";
 import type { Connection, Edge, EdgeChange, NodeChange } from "reactflow";
@@ -8,7 +10,6 @@ import { useCallback, useMemo, useState } from "react";
 import ReactFlow, {
   Background,
   BackgroundVariant,
-  ConnectionLineType,
   Panel,
   useReactFlow,
 } from "reactflow";
@@ -109,8 +110,6 @@ export default function FlowDiagram({
         fitView
         snapToGrid
         snapGrid={[4, 4]}
-        defaultEdgeOptions={{ type: "step" }}
-        connectionLineType={ConnectionLineType.Step}
         nodesDraggable={moveType === "move"}
         panOnDrag={moveType === "pan" || [1]}
         deleteKeyCode={["Delete", "Backspace"]}

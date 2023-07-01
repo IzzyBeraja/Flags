@@ -5,13 +5,19 @@ import {
   Card,
   Group,
   Text,
+  Box,
+  createStyles,
   rem,
-  useMantineTheme,
 } from "@mantine/core";
-import { useCallback } from "react";
 import { Handle, Position } from "reactflow";
 
-export type Status = "pass" | "fail" | "error";
+export type Status = keyof typeof StatusColor;
+
+enum StatusColor {
+  pass,
+  fail,
+  error,
+}
 
 export type CardData = {
   label: string;
@@ -21,36 +27,18 @@ export type CardData = {
 
 type Props = {
   data: CardData;
-  selected?: boolean;
-  showHandles?: boolean;
 };
 
-export default function CardNode({ data, selected, showHandles }: Props) {
+export default function CardNode({ data }: Props) {
   const { label, icon: Icon, status = "error" } = data;
-  const theme = useMantineTheme();
-
-  const getColor = useCallback(
-    (status: Status) => {
-      if (selected) return theme.colors.blue[7];
-
-      switch (status) {
-        case "pass":
-          return theme.colors.green[6];
-        case "fail":
-          return theme.colors.red[6];
-        case "error":
-          return theme.colors.gray[4];
-      }
-    },
-    [theme, selected]
-  );
+  const { classes, cx } = useStyles();
 
   return (
-    <div>
+    <Box>
       <Card
         shadow="sm"
         maw="15rem"
-        sx={() => ({ border: `${rem(1)} solid ${getColor(status)}` })}
+        className={cx(classes.container, classes[status])}
       >
         <Group position="center" spacing="sm">
           {Icon != null && (
@@ -61,34 +49,44 @@ export default function CardNode({ data, selected, showHandles }: Props) {
           <Text weight={500}>{label}</Text>
         </Group>
       </Card>
-      {showHandles && (
-        <>
-          <Handle
-            style={{
-              backgroundColor: "white",
-              border: `${rem(2)} solid ${theme.colors.blue[7]}`,
-              height: ".75rem",
-              left: "calc(50%)",
-              top: "calc(0% - .375rem)",
-              width: ".75rem",
-            }}
-            type="target"
-            position={Position.Top}
-          />
-          <Handle
-            style={{
-              backgroundColor: "white",
-              border: `${rem(2)} solid ${theme.colors.blue[7]}`,
-              height: ".75rem",
-              left: "calc(50%)",
-              top: "calc(100% - .375rem)",
-              width: ".75rem",
-            }}
-            type="source"
-            position={Position.Bottom}
-          />
-        </>
-      )}
-    </div>
+      <Handle
+        type="target"
+        position={Position.Top}
+        className={cx(classes.handle, classes.handleTop)}
+      />
+      <Handle
+        className={cx(classes.handle, classes.handleBottom)}
+        type="source"
+        position={Position.Bottom}
+      />
+    </Box>
   );
 }
+
+const useStyles = createStyles(theme => ({
+  container: {
+    borderStyle: "solid",
+    borderWidth: rem(1),
+  },
+  error: {
+    borderColor: theme.colors.gray[4],
+  },
+  fail: {
+    borderColor: theme.colors.red[6],
+  },
+  handle: {
+    backgroundColor: "white",
+    border: `${rem(2)} solid ${theme.colors.blue[7]}`,
+    height: ".75rem",
+    width: ".75rem",
+  },
+  handleBottom: {
+    bottom: "-.375rem",
+  },
+  handleTop: {
+    top: "-.375rem",
+  },
+  pass: {
+    borderColor: theme.colors.green[6],
+  },
+}));
