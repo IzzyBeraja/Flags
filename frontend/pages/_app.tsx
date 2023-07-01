@@ -1,3 +1,5 @@
+import "@styles/reactFlow.css";
+
 import type { ColorScheme } from "@mantine/core";
 import type { AppProps, AppContext } from "next/app";
 

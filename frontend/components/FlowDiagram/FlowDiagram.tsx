@@ -1,5 +1,3 @@
-import "reactflow/dist/base.css";
-
 import type { ActionType } from "@components/ActionBar/ActionBar";
 import type { FlowNode, CustomNodeTypes } from "@customTypes/nodeTypes";
 import type { Connection, Edge, EdgeChange, NodeChange } from "reactflow";
