@@ -30,9 +30,10 @@ export type CardData = {
 
 type Props = {
   data: CardData;
+  selected: boolean;
 };
 
-export default function CardNode({ data }: Props) {
+export default function CardNode({ data, selected }: Props) {
   const {
     label,
     icon: Icon,
@@ -42,6 +43,8 @@ export default function CardNode({ data }: Props) {
     showHandles = false,
   } = data;
   const { classes, cx } = useStyles();
+
+  const displayHandles = showHandles || selected;
 
   return (
     <Box>
@@ -65,19 +68,19 @@ export default function CardNode({ data }: Props) {
         className={cx(
           classes.handle,
           classes.handleTop,
-          (inputDisabled || !showHandles) && classes.handleDisabled
+          (inputDisabled || !displayHandles) && classes.handleDisabled
         )}
-        isConnectable={!inputDisabled && showHandles}
+        isConnectable={!inputDisabled && displayHandles}
       />
       <Handle
         className={cx(
           classes.handle,
           classes.handleBottom,
-          (outputDisabled || !showHandles) && classes.handleDisabled
+          (outputDisabled || !displayHandles) && classes.handleDisabled
         )}
         type="source"
         position={Position.Bottom}
-        isConnectable={!outputDisabled && showHandles}
+        isConnectable={!outputDisabled && displayHandles}
       />
     </Box>
   );
@@ -95,21 +98,20 @@ const useStyles = createStyles(theme => ({
     borderColor: theme.colors.red[6],
   },
   handle: {
-    backgroundColor: "white",
-    border: `${rem(2)} solid ${theme.colors.blue[7]}`,
-    height: ".75rem",
-    width: ".75rem",
+    backgroundColor: theme.colors.blue[7],
+    border: `.01em solid ${theme.colors.gray[0]}`,
+    height: ".5rem",
+    width: ".5rem",
   },
   handleBottom: {
-    bottom: "-.375rem",
-    cursor: "wait",
+    bottom: "-.75rem",
   },
   handleDisabled: {
     cursor: "default !important", // Has to be important due to connectionIndicator specificity
     opacity: 0, // Can't use display none because react-flow determines edge position this way
   },
   handleTop: {
-    top: "-.375rem",
+    top: "-.75rem",
   },
   pass: {
     borderColor: theme.colors.green[6],
