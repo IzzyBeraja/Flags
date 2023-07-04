@@ -120,7 +120,6 @@ export default function FlagsRoute() {
   );
 
   const onNodeUpdate = useCallback((updatedNode: FlowNode) => {
-    console.log(updatedNode);
     setNodes(currNodes =>
       currNodes.map(node => (node.id === updatedNode.id ? updatedNode : node))
     );

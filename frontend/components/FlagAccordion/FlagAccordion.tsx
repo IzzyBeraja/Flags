@@ -1,8 +1,7 @@
 import type { FlowNode } from "@customTypes/nodeTypes";
 
 import { Accordion, TextInput } from "@mantine/core";
-import { useForm } from "@mantine/form";
-import { useEffect } from "react";
+import { useCallback } from "react";
 import { TestPipe, Adjustments } from "tabler-icons-react";
 
 type Attributes = {
@@ -22,15 +21,15 @@ export default function FlagAccordion({
   node,
   onNodeUpdate,
 }: Props) {
-  const form = useForm({
-    initialValues: {
-      label: "",
-    },
-  });
+  const updateNode = useCallback(
+    (value: string) => {
+      if (node == null) return;
 
-  useEffect(() => {
-    node == null ? form.reset() : form.setValues(node.data);
-  }, [node]);
+      const newData = { ...node?.data, label: value };
+      onNodeUpdate({ ...node, data: newData });
+    },
+    [node, onNodeUpdate]
+  );
 
   return (
     <Accordion multiple defaultValue={["Testing"]}>
@@ -49,19 +48,12 @@ export default function FlagAccordion({
             Attributes
           </Accordion.Control>
           <Accordion.Panel>
-            <form>
-              <TextInput
-                label="Label"
-                placeholder="Node label"
-                {...form.getInputProps("label")}
-                onChange={e =>
-                  onNodeUpdate({
-                    ...node,
-                    data: { ...node.data, label: e.target.value },
-                  })
-                }
-              />
-            </form>
+            <TextInput
+              label="Label"
+              placeholder="Node label"
+              value={node.data.label}
+              onChange={e => updateNode(e.target.value)}
+            />
           </Accordion.Panel>
         </Accordion.Item>
       )}
