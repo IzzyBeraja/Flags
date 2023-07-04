@@ -1,6 +1,12 @@
 import type { ActionType } from "@components/ActionBar/ActionBar";
 import type { FlowNode, CustomNodeTypes } from "@customTypes/nodeTypes";
-import type { Connection, Edge, EdgeChange, NodeChange } from "reactflow";
+import type {
+  Connection,
+  Edge,
+  EdgeChange,
+  NodeChange,
+  OnSelectionChangeParams,
+} from "reactflow";
 
 import ActionBar from "@components/ActionBar/ActionBar";
 import CardNode from "@components/Nodes/CardNode/CardNode";
@@ -21,6 +27,7 @@ type Props = {
   onEdgesChange: (edges: EdgeChange[]) => void;
   onConnect: (connection: Edge | Connection) => void;
   onNewNode: () => void;
+  onSelectionChange: (params: OnSelectionChangeParams) => void;
 };
 
 //? How will I be handling the coloring of the nodes and edges?
@@ -33,6 +40,7 @@ export default function FlowDiagram({
   onEdgesChange,
   onConnect,
   onNewNode,
+  onSelectionChange,
 }: Props) {
   const { fitView } = useReactFlow();
   const [action, setAction] = useState<ActionType>("move");
@@ -95,6 +103,13 @@ export default function FlowDiagram({
     setAction("newEdge");
   }, []);
 
+  const onSelectionChangeHandler = useCallback(
+    (selection: OnSelectionChangeParams) => {
+      onSelectionChange(selection);
+    },
+    []
+  );
+
   return (
     <>
       <ReactFlow
@@ -111,6 +126,7 @@ export default function FlowDiagram({
         nodesDraggable={moveType === "move"}
         panOnDrag={moveType === "pan" || [1]}
         deleteKeyCode={["Delete", "Backspace"]}
+        onSelectionChange={onSelectionChangeHandler}
       >
         <Panel position="bottom-center">
           <ActionBar

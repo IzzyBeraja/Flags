@@ -1,6 +1,12 @@
 import type { Project } from "@components/FlagNav/FlagNav";
 import type { FlowNode } from "@customTypes/nodeTypes";
-import type { Connection, Edge, EdgeChange, NodeChange } from "reactflow";
+import type {
+  Connection,
+  Edge,
+  EdgeChange,
+  NodeChange,
+  OnSelectionChangeParams,
+} from "reactflow";
 
 import FlagAccordion from "@components/FlagAccordion/FlagAccordion";
 import FlagNav from "@components/FlagNav/FlagNav";
@@ -61,6 +67,7 @@ export default function FlagsRoute() {
   //> I need to understand better how to handle the state of the diagram
   const [nodes, setNodes] = useState<FlowNode[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
+  const [selectedNode, setSelectedNode] = useState<string | null>(null);
 
   const results: Record<string, boolean> = {
     node1: true,
@@ -69,21 +76,21 @@ export default function FlagsRoute() {
     node4: false,
   };
 
-  const onNodesChange = useCallback(
+  const onNodesChangeHandler = useCallback(
     (nodeChanges: NodeChange[]) => {
       setNodes(currNodes => applyNodeChanges(nodeChanges, currNodes));
     },
     [setNodes]
   );
 
-  const onEdgesChange = useCallback(
+  const onEdgesChangeHandler = useCallback(
     (edgeChanges: EdgeChange[]) => {
       setEdges(currEdges => applyEdgeChanges(edgeChanges, currEdges));
     },
     [setEdges]
   );
 
-  const onConnect = useCallback(
+  const onConnectHandler = useCallback(
     (connection: Edge | Connection) => {
       setEdges(eds => addEdge(connection, eds));
     },
@@ -106,6 +113,19 @@ export default function FlagsRoute() {
     setNodes(currNodes => currNodes.concat(newNode));
   }, []);
 
+  const onSelectionChange = useCallback(
+    (selection: OnSelectionChangeParams) =>
+      setSelectedNode(selection.nodes[0]?.id),
+    []
+  );
+
+  const onNodeUpdate = useCallback((updatedNode: FlowNode) => {
+    console.log(updatedNode);
+    setNodes(currNodes =>
+      currNodes.map(node => (node.id === updatedNode.id ? updatedNode : node))
+    );
+  }, []);
+
   return (
     <Grid style={{ height: "100%" }}>
       <Grid.Col span={2}>
@@ -116,15 +136,19 @@ export default function FlagsRoute() {
           <FlowDiagram
             nodes={nodes}
             edges={edges}
-            onConnect={onConnect}
-            onEdgesChange={onEdgesChange}
-            onNodesChange={onNodesChange}
+            onConnect={onConnectHandler}
+            onNodesChange={onNodesChangeHandler}
+            onEdgesChange={onEdgesChangeHandler}
             onNewNode={onNewNode}
+            onSelectionChange={onSelectionChange}
           />
         </ReactFlowProvider>
       </Grid.Col>
       <Grid.Col span={2}>
-        <FlagAccordion />
+        <FlagAccordion
+          node={nodes.find(n => n.id === selectedNode) ?? null}
+          onNodeUpdate={onNodeUpdate}
+        />
       </Grid.Col>
     </Grid>
   );
