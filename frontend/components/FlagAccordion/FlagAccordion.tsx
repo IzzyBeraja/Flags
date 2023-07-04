@@ -1,6 +1,7 @@
+import type { CardData } from "@components/Nodes/CardNode/CardNode";
 import type { FlowNode } from "@customTypes/nodeTypes";
 
-import { Accordion, TextInput } from "@mantine/core";
+import { Accordion, Checkbox, Stack, TextInput } from "@mantine/core";
 import { useCallback } from "react";
 import { TestPipe, Adjustments } from "tabler-icons-react";
 
@@ -22,10 +23,10 @@ export default function FlagAccordion({
   onNodeUpdate,
 }: Props) {
   const updateNode = useCallback(
-    (value: string) => {
+    <K extends keyof CardData>(key: K, value: CardData[K]) => {
       if (node == null) return;
 
-      const newData = { ...node?.data, label: value };
+      const newData = { ...node?.data, [key]: value };
       onNodeUpdate({ ...node, data: newData });
     },
     [node, onNodeUpdate]
@@ -48,12 +49,24 @@ export default function FlagAccordion({
             Attributes
           </Accordion.Control>
           <Accordion.Panel>
-            <TextInput
-              label="Label"
-              placeholder="Node label"
-              value={node.data.label}
-              onChange={e => updateNode(e.target.value)}
-            />
+            <Stack>
+              <TextInput
+                label="Label"
+                placeholder="Node label"
+                value={node.data.label}
+                onChange={e => updateNode("label", e.target.value)}
+              />
+              <Checkbox
+                label="Status"
+                checked={node.data.status === "pass"}
+                onChange={e =>
+                  updateNode(
+                    "status",
+                    e.currentTarget.checked ? "pass" : "fail"
+                  )
+                }
+              />
+            </Stack>
           </Accordion.Panel>
         </Accordion.Item>
       )}

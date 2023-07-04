@@ -46,15 +46,7 @@ export default function FlowDiagram({
   const [action, setAction] = useState<ActionType>("move");
   const [moveType, setMoveType] = useState<MoveType>("move");
 
-  const nodeType = useMemo<CustomNodeTypes>(
-    () => ({
-      card: CardNode,
-      dropdown: CardNode,
-      end: CardNode, //> Needs custom component
-      start: CardNode, //> Needs custom component
-    }),
-    []
-  );
+  const nodeType = useMemo<CustomNodeTypes>(() => ({ card: CardNode }), []);
 
   const onNodesChangeHandler = useCallback((nodeChanges: NodeChange[]) => {
     onNodesChange(nodeChanges);
