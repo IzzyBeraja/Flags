@@ -24,39 +24,55 @@ const projects: Project[] = [
   {
     flags: [
       {
+        edges: [],
+        id: "flag1",
         name: "Launch Rocket",
-        status: "pass",
+        nodes: [],
       },
       {
+        edges: [],
+        id: "flag2",
         name: "Run Rover",
-        status: "pass",
+        nodes: [],
       },
       {
+        edges: [],
+        id: "flag3",
         name: "Invest in CGI",
-        status: "fail",
+        nodes: [],
       },
       {
+        edges: [],
+        id: "flag4",
         name: "Deal with Aliens",
-        status: "error",
+        nodes: [],
       },
     ],
+    id: "project1",
     name: "Development",
   },
   {
     flags: [
       {
+        edges: [],
+        id: "flag5",
         name: "Show Banner",
-        status: "fail",
+        nodes: [],
       },
       {
+        edges: [],
+        id: "flag6",
         name: "30 second ads",
-        status: "fail",
+        nodes: [],
       },
       {
+        edges: [],
+        id: "flag7",
         name: "Display Call to Action",
-        status: "pass",
+        nodes: [],
       },
     ],
+    id: "project2",
     name: "Advertising",
   },
 ];
