@@ -12,7 +12,8 @@ import FlagAccordion from "@components/FlagAccordion/FlagAccordion";
 import FlagNav from "@components/FlagNav/FlagNav";
 import FlowDiagram from "@components/FlowDiagram/FlowDiagram";
 import { Grid } from "@mantine/core";
-import { useCallback, useState } from "react";
+import { useRouter } from "next/router";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ReactFlowProvider,
   addEdge,
@@ -27,13 +28,39 @@ const projects: Project[] = [
         edges: [],
         id: "flag1",
         name: "Launch Rocket",
-        nodes: [],
+        nodes: [
+          {
+            data: {
+              label: "Is Android",
+            },
+            id: "node1",
+            position: { x: 250, y: 5 },
+            type: "card",
+          },
+        ],
       },
       {
         edges: [],
         id: "flag2",
         name: "Run Rover",
-        nodes: [],
+        nodes: [
+          {
+            data: {
+              label: "Is Employee",
+            },
+            id: "node0",
+            position: { x: 100, y: 4 },
+            type: "card",
+          },
+          {
+            data: {
+              label: "Is Tester",
+            },
+            id: "node1",
+            position: { x: 200, y: 4 },
+            type: "card",
+          },
+        ],
       },
       {
         edges: [],
@@ -78,12 +105,27 @@ const projects: Project[] = [
 ];
 
 export default function FlagsRoute() {
-  //> This will be the initial state of the flag
-  //> Updates to the flag and flow will be separate so less data is passed around
-  //> I need to understand better how to handle the state of the diagram
+  const router = useRouter();
+  const route = router.query["flags"] ?? [];
+  const [_, projectId, flagId] = Array.isArray(route) ? route : [route];
+
   const [nodes, setNodes] = useState<FlowNode[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
+
+  const currentProject = useMemo(
+    () => projects.find(({ id }) => id === projectId),
+    [projectId]
+  );
+  const currentFlag = useMemo(
+    () => currentProject?.flags.find(({ id }) => id === flagId),
+    [flagId]
+  );
+
+  useEffect(() => {
+    setNodes(currentFlag?.nodes ?? []);
+    setEdges(currentFlag?.edges ?? []);
+  }, [route]);
 
   const results: Record<string, boolean> = {
     node1: true,

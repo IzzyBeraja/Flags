@@ -103,35 +103,33 @@ export default function FlowDiagram({
   );
 
   return (
-    <>
-      <ReactFlow
-        nodes={nodes}
-        edges={edges}
-        nodeTypes={nodeType}
-        onNodesChange={onNodesChangeHandler}
-        onEdgesChange={onEdgesChangeHandler}
-        onConnect={onConnectHandler}
-        nodeOrigin={[0.5, 0.5]} // Defines anchor point (0,0) is top left, (1,1) is bottom right, (0.5,0.5) is center
-        fitView
-        snapToGrid
-        snapGrid={[4, 4]}
-        nodesDraggable={moveType === "move"}
-        panOnDrag={moveType === "pan" || [1]}
-        deleteKeyCode={["Delete", "Backspace"]}
-        onSelectionChange={onSelectionChangeHandler}
-      >
-        <Panel position="bottom-center">
-          <ActionBar
-            onAddNode={onAddNodeHandler}
-            onPan={onPaneHandler}
-            onMove={onMoveHandler}
-            onAddEdge={onAddEdgeHandler}
-            onFitView={onFitViewHandler}
-            selected={action}
-          />
-        </Panel>
-        <Background color="#666" variant={BackgroundVariant.Dots} gap={40} />
-      </ReactFlow>
-    </>
+    <ReactFlow
+      nodes={nodes}
+      edges={edges}
+      nodeTypes={nodeType}
+      onNodesChange={onNodesChangeHandler}
+      onEdgesChange={onEdgesChangeHandler}
+      onConnect={onConnectHandler}
+      nodeOrigin={[0.5, 0.5]} // Defines anchor point (0,0) is top left, (1,1) is bottom right, (0.5,0.5) is center
+      fitView
+      snapToGrid
+      snapGrid={[4, 4]}
+      nodesDraggable={moveType === "move"}
+      panOnDrag={moveType === "pan" || [1]}
+      deleteKeyCode={["Delete", "Backspace"]}
+      onSelectionChange={onSelectionChangeHandler}
+    >
+      <Panel position="bottom-center">
+        <ActionBar
+          onAddNode={onAddNodeHandler}
+          onPan={onPaneHandler}
+          onMove={onMoveHandler}
+          onAddEdge={onAddEdgeHandler}
+          onFitView={onFitViewHandler}
+          selected={action}
+        />
+      </Panel>
+      <Background color="#666" variant={BackgroundVariant.Dots} gap={40} />
+    </ReactFlow>
   );
 }
