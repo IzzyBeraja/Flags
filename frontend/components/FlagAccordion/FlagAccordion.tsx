@@ -58,6 +58,7 @@ export default function FlagAccordion({
               />
               <Checkbox
                 label="Status"
+                disabled
                 checked={node.data.status === "pass"}
                 onChange={e =>
                   updateNode(
@@ -65,6 +66,12 @@ export default function FlagAccordion({
                     e.currentTarget.checked ? "pass" : "fail"
                   )
                 }
+              />
+              <TextInput
+                label="Rule"
+                placeholder="Rule Id"
+                value={node.data.ruleId ?? ""}
+                onChange={e => updateNode("ruleId", e.target.value)}
               />
             </Stack>
           </Accordion.Panel>

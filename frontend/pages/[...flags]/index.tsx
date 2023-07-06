@@ -21,6 +21,8 @@ import {
   applyNodeChanges,
 } from "reactflow";
 
+import { boolToStatus } from "@/util/typeConversions";
+
 const projects: Project[] = [
   {
     flags: [
@@ -33,7 +35,7 @@ const projects: Project[] = [
             data: {
               label: "Is Android",
             },
-            id: "node1",
+            id: "flag1-node1",
             position: { x: 250, y: 5 },
             type: "card",
           },
@@ -48,7 +50,7 @@ const projects: Project[] = [
             data: {
               label: "Is Employee",
             },
-            id: "node0",
+            id: "flag2-node0",
             position: { x: 100, y: 4 },
             type: "card",
           },
@@ -56,7 +58,7 @@ const projects: Project[] = [
             data: {
               label: "Is Tester",
             },
-            id: "node1",
+            id: "flag2-node1",
             position: { x: 200, y: 4 },
             type: "card",
           },
@@ -115,11 +117,11 @@ export default function FlagsRoute() {
 
   const currentProject = useMemo(
     () => projects.find(({ id }) => id === projectId),
-    [projectId]
+    [projects, projectId]
   );
   const currentFlag = useMemo(
     () => currentProject?.flags.find(({ id }) => id === flagId),
-    [flagId]
+    [currentProject, flagId]
   );
 
   useEffect(() => {
@@ -128,14 +130,14 @@ export default function FlagsRoute() {
   }, [route]);
 
   const results: Record<string, boolean> = {
-    node1: true,
-    node2: false,
-    node3: true,
-    node4: false,
+    rule1: true,
+    rule2: false,
+    rule3: true,
+    rule4: false,
   };
 
   const onNodesChangeHandler = useCallback(
-    (nodeChanges: NodeChange[]) => {
+    async (nodeChanges: NodeChange[]) => {
       setNodes(currNodes => applyNodeChanges(nodeChanges, currNodes));
     },
     [setNodes]
@@ -161,7 +163,7 @@ export default function FlagsRoute() {
     const newNode: FlowNode = {
       data: {
         label: `Node ${num}`,
-        status: results[`node${num}`] ? "pass" : "fail",
+        ruleId: "",
       },
       id: `node${num}`,
       position: { x: 0, y: 0 },
@@ -179,7 +181,14 @@ export default function FlagsRoute() {
 
   const onNodeUpdate = useCallback((updatedNode: FlowNode) => {
     setNodes(currNodes =>
-      currNodes.map(node => (node.id === updatedNode.id ? updatedNode : node))
+      currNodes.map(node => {
+        if (node.id !== updatedNode.id) return node;
+
+        const ruleId = updatedNode.data.ruleId ?? "";
+        updatedNode.data.status = boolToStatus(results[ruleId]);
+
+        return updatedNode;
+      })
     );
   }, []);
 

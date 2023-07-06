@@ -23,6 +23,7 @@ export type CardData = {
   label: string;
   icon?: Icon;
   status?: Status;
+  ruleId?: string;
   inputDisabled?: boolean;
   outputDisabled?: boolean;
   showHandles?: boolean;
