@@ -41,7 +41,7 @@ export default function CardNode({ data, selected }: Props) {
     status = "error",
     inputDisabled = false,
     outputDisabled = false,
-    showHandles = false,
+    showHandles = true,
   } = data;
   const { classes, cx } = useStyles();
 

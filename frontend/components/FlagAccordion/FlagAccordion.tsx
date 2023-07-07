@@ -1,3 +1,4 @@
+import type { UserData } from "@/hooks/flagRules";
 import type { FlowNode } from "@customTypes/nodeTypes";
 
 import AttributesAccordion from "@components/FlagAccordion/AttributesAccordion";
@@ -7,12 +8,22 @@ import { Accordion } from "@mantine/core";
 type Props = {
   node: FlowNode | null;
   onNodeUpdate: (node: FlowNode) => void;
+  userData: UserData;
+  onUserDataChange: (userData: UserData) => void;
 };
 
-export default function FlagAccordion({ node, onNodeUpdate }: Props) {
+export default function FlagAccordion({
+  node,
+  onNodeUpdate,
+  userData,
+  onUserDataChange,
+}: Props) {
   return (
     <Accordion multiple defaultValue={["Testing"]}>
-      <TestingAccordion />
+      <TestingAccordion
+        userData={userData}
+        onUserDataChange={onUserDataChange}
+      />
       {node != null && (
         <AttributesAccordion node={node} onNodeUpdate={onNodeUpdate} />
       )}

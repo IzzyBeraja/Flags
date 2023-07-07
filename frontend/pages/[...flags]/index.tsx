@@ -1,4 +1,3 @@
-import type { Project } from "@components/FlagNav/FlagNav";
 import type { FlowNode } from "@customTypes/nodeTypes";
 import type {
   Connection,
@@ -21,99 +20,32 @@ import {
   applyNodeChanges,
 } from "reactflow";
 
+import { fakeProjects } from "@/data/fakedata";
+import { useFlagResults } from "@/hooks/flagRules";
 import { boolToStatus } from "@/util/typeConversions";
 
-const projects: Project[] = [
-  {
-    flags: [
-      {
-        edges: [],
-        id: "flag1",
-        name: "Launch Rocket",
-        nodes: [
-          {
-            data: {
-              label: "Is Android",
-            },
-            id: "flag1-node1",
-            position: { x: 250, y: 5 },
-            type: "card",
-          },
-        ],
-      },
-      {
-        edges: [],
-        id: "flag2",
-        name: "Run Rover",
-        nodes: [
-          {
-            data: {
-              label: "Is Employee",
-            },
-            id: "flag2-node0",
-            position: { x: 100, y: 4 },
-            type: "card",
-          },
-          {
-            data: {
-              label: "Is Tester",
-            },
-            id: "flag2-node1",
-            position: { x: 200, y: 4 },
-            type: "card",
-          },
-        ],
-      },
-      {
-        edges: [],
-        id: "flag3",
-        name: "Invest in CGI",
-        nodes: [],
-      },
-      {
-        edges: [],
-        id: "flag4",
-        name: "Deal with Aliens",
-        nodes: [],
-      },
-    ],
-    id: "project1",
-    name: "Development",
-  },
-  {
-    flags: [
-      {
-        edges: [],
-        id: "flag5",
-        name: "Show Banner",
-        nodes: [],
-      },
-      {
-        edges: [],
-        id: "flag6",
-        name: "30 second ads",
-        nodes: [],
-      },
-      {
-        edges: [],
-        id: "flag7",
-        name: "Display Call to Action",
-        nodes: [],
-      },
-    ],
-    id: "project2",
-    name: "Advertising",
-  },
-];
-
 export default function FlagsRoute() {
+  //? Routing
   const router = useRouter();
   const route = router.query["flags"] ?? [];
   const [_, projectId, flagId] = Array.isArray(route) ? route : [route];
 
+  //? React Flow
   const [nodes, setNodes] = useState<FlowNode[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
+
+  //? Flag Results
+  const [userData, setUserData, results] = useFlagResults({
+    currentOS: null,
+    dob: null,
+    employee: null,
+    tester: null,
+    userId: null,
+  });
+
+  //= TODO: replace with real data queried either Server Side or Client Side
+  const projects = fakeProjects;
 
   const currentProject = useMemo(
     () => projects.find(({ id }) => id === projectId),
@@ -124,17 +56,27 @@ export default function FlagsRoute() {
     [currentProject, flagId]
   );
 
+  //? When the route changes, update the nodes and edges
   useEffect(() => {
     setNodes(currentFlag?.nodes ?? []);
     setEdges(currentFlag?.edges ?? []);
   }, [route]);
 
-  const results: Record<string, boolean> = {
-    rule1: true,
-    rule2: false,
-    rule3: true,
-    rule4: false,
-  };
+  //? When userData changes, update the status of the nodes
+  useEffect(() => {
+    console.log("userData changed");
+    setNodes(currNodes =>
+      currNodes.map(node => {
+        const ruleId = node.data.ruleId ?? "";
+        const updatedNode = {
+          ...node,
+          data: { ...node.data, status: boolToStatus(results[ruleId]) },
+        };
+
+        return updatedNode;
+      })
+    );
+  }, [userData]);
 
   const onNodesChangeHandler = useCallback(
     async (nodeChanges: NodeChange[]) => {
@@ -179,18 +121,21 @@ export default function FlagsRoute() {
     []
   );
 
-  const onNodeUpdate = useCallback((updatedNode: FlowNode) => {
-    setNodes(currNodes =>
-      currNodes.map(node => {
-        if (node.id !== updatedNode.id) return node;
+  const onNodeUpdate = useCallback(
+    (updatedNode: FlowNode) => {
+      setNodes(currNodes =>
+        currNodes.map(node => {
+          if (node.id !== updatedNode.id) return node;
 
-        const ruleId = updatedNode.data.ruleId ?? "";
-        updatedNode.data.status = boolToStatus(results[ruleId]);
+          const ruleId = updatedNode.data.ruleId ?? "";
+          updatedNode.data.status = boolToStatus(results[ruleId]);
 
-        return updatedNode;
-      })
-    );
-  }, []);
+          return updatedNode;
+        })
+      );
+    },
+    [userData, setUserData, results]
+  );
 
   return (
     <Grid style={{ height: "100%" }}>
@@ -212,6 +157,8 @@ export default function FlagsRoute() {
       </Grid.Col>
       <Grid.Col span={2}>
         <FlagAccordion
+          userData={userData}
+          onUserDataChange={setUserData}
           node={nodes.find(n => n.id === selectedNode) ?? null}
           onNodeUpdate={onNodeUpdate}
         />
