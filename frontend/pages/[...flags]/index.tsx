@@ -64,7 +64,6 @@ export default function FlagsRoute() {
 
   //? When userData changes, update the status of the nodes
   useEffect(() => {
-    console.log("userData changed");
     setNodes(currNodes =>
       currNodes.map(node => {
         const ruleId = node.data.ruleId ?? "";
@@ -76,7 +75,7 @@ export default function FlagsRoute() {
         return updatedNode;
       })
     );
-  }, [userData]);
+  }, [userData, currentFlag]);
 
   const onNodesChangeHandler = useCallback(
     async (nodeChanges: NodeChange[]) => {

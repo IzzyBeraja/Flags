@@ -11,9 +11,19 @@ export const fakeProjects: Project[] = [
           {
             data: {
               label: "Is Android",
+              ruleId: "rule4",
             },
             id: "flag1-node1",
-            position: { x: 250, y: 5 },
+            position: { x: -100, y: 4 },
+            type: "card",
+          },
+          {
+            data: {
+              label: "Is iOS",
+              ruleId: "rule3",
+            },
+            id: "flag1-node2",
+            position: { x: 100, y: 4 },
             type: "card",
           },
         ],
@@ -26,17 +36,19 @@ export const fakeProjects: Project[] = [
           {
             data: {
               label: "Is Employee",
+              ruleId: "rule5",
             },
             id: "flag2-node0",
-            position: { x: 100, y: 4 },
+            position: { x: -100, y: 4 },
             type: "card",
           },
           {
             data: {
               label: "Is Tester",
+              ruleId: "rule6",
             },
             id: "flag2-node1",
-            position: { x: 200, y: 4 },
+            position: { x: 100, y: 4 },
             type: "card",
           },
         ],

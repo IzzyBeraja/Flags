@@ -7,7 +7,7 @@ import { TestPipe } from "tabler-icons-react";
 
 const os = [
   { label: "Android", value: "android" },
-  { label: "iOS", value: "iOS" },
+  { label: "iOS", value: "ios" },
   { label: "Windows", value: "windows" },
 ];
 
