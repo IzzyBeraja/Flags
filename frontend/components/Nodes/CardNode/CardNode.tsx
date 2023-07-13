@@ -71,7 +71,8 @@ export default function CardNode({ data, selected }: Props) {
           classes.handleTop,
           (inputDisabled || !displayHandles) && classes.handleDisabled
         )}
-        isConnectable={!inputDisabled && displayHandles}
+        isConnectableStart={displayHandles}
+        isConnectable={!inputDisabled}
       />
       <Handle
         className={cx(
@@ -81,7 +82,8 @@ export default function CardNode({ data, selected }: Props) {
         )}
         type="source"
         position={Position.Bottom}
-        isConnectable={!outputDisabled && displayHandles}
+        isConnectableStart={displayHandles}
+        isConnectable={!outputDisabled}
       />
     </Box>
   );
