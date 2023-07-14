@@ -10,7 +10,10 @@ import type {
 import FlagAccordion from "@components/FlagAccordion/FlagAccordion";
 import FlagNav from "@components/FlagNav/FlagNav";
 import FlowDiagram from "@components/FlowDiagram/FlowDiagram";
+import { fakeProjects } from "@data/fakedata";
+import { useFlagResults } from "@hooks/flagRules";
 import { Grid } from "@mantine/core";
+import { boolToStatus } from "@util/typeConversions";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
@@ -19,10 +22,6 @@ import {
   applyEdgeChanges,
   applyNodeChanges,
 } from "reactflow";
-
-import { fakeProjects } from "@/data/fakedata";
-import { useFlagResults } from "@/hooks/flagRules";
-import { boolToStatus } from "@/util/typeConversions";
 
 export default function FlagsRoute() {
   //? Routing

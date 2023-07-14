@@ -1,5 +1,5 @@
-import type { UserData } from "@/hooks/flagRules";
 import type { FlowNode } from "@customTypes/nodeTypes";
+import type { UserData } from "@hooks/flagRules";
 
 import AttributesAccordion from "@components/FlagAccordion/AttributesAccordion";
 import TestingAccordion from "@components/FlagAccordion/TestingAccordion";

@@ -14,7 +14,9 @@
       "@components/*": ["./components/*"],
       "@styles/*": ["./styles/*"],
       "@customTypes/*": ["./customTypes/*"],
-      "@/*": ["./*"]
+      "@hooks/*": ["./hooks/*"],
+      "@data/*": ["./data/*"],
+      "@util/*": ["./util/*"],
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "next.config.js"],
