@@ -12,15 +12,15 @@ import FlagNav from "@components/FlagNav/FlagNav";
 import FlowDiagram from "@components/FlowDiagram/FlowDiagram";
 import { fakeProjects } from "@data/fakedata";
 import { useFlagResults } from "@hooks/flagRules";
-import { Grid } from "@mantine/core";
+import { Grid, useMantineTheme } from "@mantine/core";
 import { boolToStatus } from "@util/typeConversions";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
-  ReactFlowProvider,
   addEdge,
   applyEdgeChanges,
   applyNodeChanges,
+  useReactFlow,
 } from "reactflow";
 
 export default function FlagsRoute() {
@@ -30,6 +30,7 @@ export default function FlagsRoute() {
   const [_, projectId, flagId] = Array.isArray(route) ? route : [route];
 
   //? React Flow
+  const reactFlowInstance = useReactFlow();
   const [nodes, setNodes] = useState<FlowNode[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
@@ -42,6 +43,8 @@ export default function FlagsRoute() {
     tester: null,
     userId: null,
   });
+
+  const theme = useMantineTheme();
 
   //= TODO: replace with real data queried either Server Side or Client Side
   const projects = fakeProjects;
@@ -61,21 +64,42 @@ export default function FlagsRoute() {
     setEdges(currentFlag?.edges ?? []);
   }, [route]);
 
-  //? When userData changes, update the status of the nodes
+  //? When userData changes, update the status of the nodes and edges
   useEffect(() => {
-    setNodes(currNodes =>
-      currNodes.map(node => {
+    updateNodeStatuses();
+    updateEdgeColors();
+  }, [userData, currentFlag]);
+
+  const updateNodeStatuses = useCallback(() => {
+    setNodes(nodes =>
+      nodes.map(node => {
         const ruleId = node.data.ruleId ?? "";
         const updatedNode = {
           ...node,
           data: { ...node.data, status: boolToStatus(results[ruleId]) },
         };
-
         return updatedNode;
       })
     );
-  }, [userData, currentFlag]);
+  }, [userData, setUserData, results]);
 
+  const updateEdgeColors = useCallback(() => {
+    setEdges(edges =>
+      edges.map(edge => {
+        boolToStatus(
+          results[reactFlowInstance.getNode(edge.source)?.data?.ruleId]
+        ) === "pass"
+          ? ((edge.style = { stroke: theme.colors.green[3] }),
+            (edge.animated = true))
+          : ((edge.style = { stroke: theme.colors.red[3] }),
+            (edge.animated = false));
+
+        return edge;
+      })
+    );
+  }, [userData, setUserData, results]);
+
+  // Gets called when the user interacts with a node
   const onNodesChangeHandler = useCallback(
     async (nodeChanges: NodeChange[]) => {
       setNodes(currNodes => applyNodeChanges(nodeChanges, currNodes));
@@ -83,15 +107,21 @@ export default function FlagsRoute() {
     [setNodes]
   );
 
+  // Gets called when the user interacts with an edge
   const onEdgesChangeHandler = useCallback(
     (edgeChanges: EdgeChange[]) => {
+      //? Update all edges when a connection is deleted
+
       setEdges(currEdges => applyEdgeChanges(edgeChanges, currEdges));
     },
     [setEdges]
   );
 
+  // Gets called when the user connects two nodes
   const onConnectHandler = useCallback(
     (connection: Edge | Connection) => {
+      //? Update all edges when a connection is added
+
       setEdges(eds => addEdge(connection, eds));
     },
     [setEdges]
@@ -100,6 +130,7 @@ export default function FlagsRoute() {
   let num = 0;
 
   const onNewNode = useCallback(() => {
+    console.log("New node added");
     const newNode: FlowNode = {
       data: {
         label: `Node ${num}`,
@@ -141,17 +172,15 @@ export default function FlagsRoute() {
         <FlagNav projects={projects} />
       </Grid.Col>
       <Grid.Col span="auto" display="flex" style={{ flexDirection: "column" }}>
-        <ReactFlowProvider>
-          <FlowDiagram
-            nodes={nodes}
-            edges={edges}
-            onConnect={onConnectHandler}
-            onNodesChange={onNodesChangeHandler}
-            onEdgesChange={onEdgesChangeHandler}
-            onNewNode={onNewNode}
-            onSelectionChange={onSelectionChange}
-          />
-        </ReactFlowProvider>
+        <FlowDiagram
+          nodes={nodes}
+          edges={edges}
+          onConnect={onConnectHandler}
+          onNodesChange={onNodesChangeHandler}
+          onEdgesChange={onEdgesChangeHandler}
+          onNewNode={onNewNode}
+          onSelectionChange={onSelectionChange}
+        />
       </Grid.Col>
       <Grid.Col span={2}>
         <FlagAccordion
