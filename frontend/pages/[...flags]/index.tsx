@@ -11,7 +11,7 @@ import FlagAccordion from "@components/FlagAccordion/FlagAccordion";
 import FlagNav from "@components/FlagNav/FlagNav";
 import FlowDiagram from "@components/FlowDiagram/FlowDiagram";
 import { fakeProjects } from "@data/fakedata";
-import { useFlagResults } from "@hooks/flagRules";
+import { initialRules, useFlagResults } from "@hooks/flagRules";
 import { Grid, useMantineTheme } from "@mantine/core";
 import { boolToStatus } from "@util/typeConversions";
 import { useRouter } from "next/router";
@@ -36,13 +36,16 @@ export default function FlagsRoute() {
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
 
   //? Flag Results
-  const [userData, setUserData, results] = useFlagResults({
-    currentOS: null,
-    dob: null,
-    employee: null,
-    tester: null,
-    userId: null,
-  });
+  const [userData, setUserData, rules] = useFlagResults(
+    {
+      currentOS: null,
+      dob: null,
+      employee: null,
+      tester: null,
+      userId: null,
+    },
+    initialRules
+  );
 
   const theme = useMantineTheme();
 
@@ -76,18 +79,22 @@ export default function FlagsRoute() {
         const ruleId = node.data.ruleId ?? "";
         const updatedNode = {
           ...node,
-          data: { ...node.data, status: boolToStatus(results[ruleId]) },
+          data: {
+            ...node.data,
+            status: boolToStatus(rules.get(ruleId)?.result ?? false),
+          },
         };
         return updatedNode;
       })
     );
-  }, [userData, setUserData, results]);
+  }, [userData, setUserData, rules]);
 
   const updateEdgeColors = useCallback(() => {
     setEdges(edges =>
       edges.map(edge => {
         boolToStatus(
-          results[reactFlowInstance.getNode(edge.source)?.data?.ruleId]
+          rules.get(reactFlowInstance.getNode(edge.source)?.data?.ruleId)
+            ?.result ?? false
         ) === "pass"
           ? ((edge.style = { stroke: theme.colors.green[3] }),
             (edge.animated = true))
@@ -97,7 +104,7 @@ export default function FlagsRoute() {
         return edge;
       })
     );
-  }, [userData, setUserData, results]);
+  }, [userData, setUserData, rules]);
 
   // Gets called when the user interacts with a node
   const onNodesChangeHandler = useCallback(
@@ -157,13 +164,15 @@ export default function FlagsRoute() {
           if (node.id !== updatedNode.id) return node;
 
           const ruleId = updatedNode.data.ruleId ?? "";
-          updatedNode.data.status = boolToStatus(results[ruleId]);
+          updatedNode.data.status = boolToStatus(
+            rules.get(ruleId)?.result ?? false
+          );
 
           return updatedNode;
         })
       );
     },
-    [userData, setUserData, results]
+    [userData, setUserData, rules]
   );
 
   return (
