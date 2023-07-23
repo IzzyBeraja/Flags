@@ -24,6 +24,7 @@ export type FlagRule = {
   label: string;
   description: string;
   rule: (userData: UserData) => boolean;
+  value: string;
   result?: boolean;
 };
 
@@ -35,6 +36,7 @@ export const initialRules = new Map<string, FlagRule>([
       id: "rule1",
       label: "User ID",
       rule: (userData: UserData) => userData.userId === "123",
+      value: "rule1",
     },
   ],
   [
@@ -45,6 +47,7 @@ export const initialRules = new Map<string, FlagRule>([
       label: "User Age",
       rule: (userData: UserData) =>
         (userData.dob ?? new Date()) > new Date("01/01/2000"),
+      value: "rule2",
     },
   ],
   [
@@ -54,6 +57,7 @@ export const initialRules = new Map<string, FlagRule>([
       id: "rule3",
       label: "On iOS",
       rule: (userData: UserData) => userData.currentOS === "ios",
+      value: "rule3",
     },
   ],
   [
@@ -63,6 +67,7 @@ export const initialRules = new Map<string, FlagRule>([
       id: "rule4",
       label: "On Android",
       rule: (userData: UserData) => userData.currentOS === "android",
+      value: "rule4",
     },
   ],
   [
@@ -72,6 +77,7 @@ export const initialRules = new Map<string, FlagRule>([
       id: "rule5",
       label: "Is Employee",
       rule: (userData: UserData) => userData.employee === true,
+      value: "rule5",
     },
   ],
   [
@@ -81,6 +87,7 @@ export const initialRules = new Map<string, FlagRule>([
       id: "rule6",
       label: "Is Tester",
       rule: (userData: UserData) => userData.tester === true,
+      value: "rule6",
     },
   ],
 ]);

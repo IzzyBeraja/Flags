@@ -193,6 +193,7 @@ export default function FlagsRoute() {
       </Grid.Col>
       <Grid.Col span={2}>
         <FlagAccordion
+          flagRules={rules}
           userData={userData}
           onUserDataChange={setUserData}
           node={nodes.find(n => n.id === selectedNode) ?? null}

@@ -1,5 +1,5 @@
 import type { FlowNode } from "@customTypes/nodeTypes";
-import type { UserData } from "@hooks/flagRules";
+import type { FlagMap, UserData } from "@hooks/flagRules";
 
 import AttributesAccordion from "@components/FlagAccordion/AttributesAccordion";
 import TestingAccordion from "@components/FlagAccordion/TestingAccordion";
@@ -10,6 +10,7 @@ type Props = {
   onNodeUpdate: (node: FlowNode) => void;
   userData: UserData;
   onUserDataChange: (userData: UserData) => void;
+  flagRules: FlagMap;
 };
 
 export default function FlagAccordion({
@@ -17,6 +18,7 @@ export default function FlagAccordion({
   onNodeUpdate,
   userData,
   onUserDataChange,
+  flagRules,
 }: Props) {
   return (
     <Accordion multiple defaultValue={["Testing"]}>
@@ -25,7 +27,11 @@ export default function FlagAccordion({
         onUserDataChange={onUserDataChange}
       />
       {node != null && (
-        <AttributesAccordion node={node} onNodeUpdate={onNodeUpdate} />
+        <AttributesAccordion
+          flagRules={flagRules}
+          node={node}
+          onNodeUpdate={onNodeUpdate}
+        />
       )}
     </Accordion>
   );
