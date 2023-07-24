@@ -1,10 +1,12 @@
 import ColorSchemeToggle from "../ColorSchemeToggle/ColorSchemeToggle";
 
+import LoginButton from "@components/LoginButton/LoginButton";
 import {
   Container as M_Container,
   createStyles,
   Header as M_Header,
   Text as M_Text,
+  Group,
 } from "@mantine/core";
 
 export default function Header() {
@@ -14,7 +16,10 @@ export default function Header() {
     <M_Header height={60}>
       <M_Container fluid className={classes.container}>
         <M_Text fz="xl">🚩 Flags</M_Text>
-        <ColorSchemeToggle />
+        <Group>
+          <LoginButton />
+          <ColorSchemeToggle />
+        </Group>
       </M_Container>
     </M_Header>
   );

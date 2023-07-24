@@ -1,3 +1,4 @@
+import UserDetails from "@components/UserDetails/UserDetails";
 import { Navbar as M_NavBar, NavLink, useMantineTheme } from "@mantine/core";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -62,7 +63,9 @@ export default function SideBar() {
           />
         ))}
       </M_NavBar.Section>
-      <M_NavBar.Section>User Information</M_NavBar.Section>
+      <M_NavBar.Section>
+        <UserDetails />
+      </M_NavBar.Section>
     </M_NavBar>
   );
 }
