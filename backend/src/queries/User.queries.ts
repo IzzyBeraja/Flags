@@ -9,18 +9,14 @@ const SALT_ROUNDS = 10;
 
 type UserWithoutPassword = Omit<User, "password">;
 
-export type CreateUser =
+export type RegisterUser =
   | { success: true; createdUser: UserWithoutPassword }
   | { success: false; error: string };
 
-export type GetUser =
-  | { success: true; user: UserWithoutPassword }
-  | { success: false; error: string };
-
-export async function createUser(
+export async function registerUser(
   prisma: PrismaClient,
   newUser: Prisma.UserCreateInput
-): Promise<CreateUser> {
+): Promise<RegisterUser> {
   const hashedPassword = await bcrypt.hash(newUser.password, SALT_ROUNDS);
 
   try {
@@ -39,17 +35,25 @@ export async function createUser(
   }
 }
 
-export async function getUser(prisma: PrismaClient, userId: string) {
+export type GetUser =
+  | { success: true; user: UserWithoutPassword }
+  | { success: false; error: string };
+
+export async function getUser(
+  prisma: PrismaClient,
+  userId: string
+): Promise<GetUser> {
   const user = await prisma.user.findFirst({
     where: {
       id: userId,
     },
   });
 
-  return user && exclude(user, ["password"]);
+  return user != null
+    ? { success: true, user: exclude(user, ["password"]) }
+    : { error: "No user found", success: false };
 }
 
-//> TODO - Find a better name for this
 export async function loginUser(
   prisma: PrismaClient,
   email: string,
@@ -69,21 +73,11 @@ export async function loginUser(
       };
     }
 
-    const { password: userPassword, ...userWithoutPassword } = user;
+    const passwordMatch = await bcrypt.compare(password, user.password);
 
-    const passwordMatch = await bcrypt.compare(password, userPassword);
-
-    if (!passwordMatch) {
-      return {
-        error: "Bad email and password combination",
-        success: false,
-      };
-    }
-
-    return {
-      success: true,
-      user: userWithoutPassword,
-    };
+    return passwordMatch
+      ? { success: true, user: exclude(user, ["password"]) }
+      : { error: "Bad email and password combination", success: false };
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       return {

@@ -1,6 +1,6 @@
 import { sessionName } from "./../middleware/session.middleware";
 import { BAD_REQUEST, CREATED, OK } from "../errors/errorCodes";
-import { createUser, loginUser } from "../queries/User.queries";
+import { registerUser, loginUser } from "../queries/User.queries";
 import { validate } from "../validation/validateRequest";
 
 import express from "express";
@@ -16,15 +16,15 @@ router.post(
     body("password", "A valid password is required").isLength({ min: 6 }),
   ]),
   async (req, res) => {
-    const createUserRequest = await createUser(req.prisma, {
+    const registerUserRequest = await registerUser(req.prisma, {
       email: req.body["email"].toLowerCase(),
       name: req.body["name"],
       password: req.body["password"],
     });
 
-    return createUserRequest.success
-      ? res.status(CREATED).json(createUserRequest.createdUser)
-      : res.status(BAD_REQUEST).send(createUserRequest.error);
+    return registerUserRequest.success
+      ? res.status(CREATED).json(registerUserRequest.createdUser)
+      : res.status(BAD_REQUEST).send(registerUserRequest.error);
   }
 );
 
@@ -39,18 +39,18 @@ router.post(
       return res.status(BAD_REQUEST).send("You are already logged in");
     }
 
-    const getUserRequest = await loginUser(
+    const loginUserRequest = await loginUser(
       req.prisma,
       req.body["email"].toLowerCase(),
       req.body["password"]
     );
 
-    if (getUserRequest.success) {
-      req.session.userId = getUserRequest.user.id;
+    if (loginUserRequest.success) {
+      req.session.userId = loginUserRequest.user.id;
       return res.status(OK).send("Login successful");
     }
 
-    return res.status(BAD_REQUEST).send(getUserRequest.error);
+    return res.status(BAD_REQUEST).send(loginUserRequest.error);
   }
 );
 
