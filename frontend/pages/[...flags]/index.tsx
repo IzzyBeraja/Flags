@@ -11,7 +11,7 @@ import FlagAccordion from "@components/FlagAccordion/FlagAccordion";
 import FlagNav from "@components/FlagNav/FlagNav";
 import FlowDiagram from "@components/FlowDiagram/FlowDiagram";
 import { fakeProjects } from "@data/fakedata";
-import { initialRules, useFlagResults } from "@hooks/flagRules";
+import { initialRules, useFlagResults } from "@hooks/useFlagResults";
 import { Grid, useMantineTheme } from "@mantine/core";
 import { boolToStatus } from "@util/typeConversions";
 import { useRouter } from "next/router";

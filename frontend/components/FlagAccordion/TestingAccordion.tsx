@@ -1,4 +1,4 @@
-import type { UserData } from "@hooks/flagRules";
+import type { UserData } from "@hooks/useFlagResults";
 
 import { Accordion, Checkbox, Select, Stack, TextInput } from "@mantine/core";
 import { DateInput } from "@mantine/dates";

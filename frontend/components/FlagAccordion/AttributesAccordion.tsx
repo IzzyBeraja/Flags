@@ -1,6 +1,6 @@
 import type { CardData } from "@components/Nodes/CardNode/CardNode";
 import type { FlowNode } from "@customTypes/nodeTypes";
-import type { FlagMap } from "@hooks/flagRules";
+import type { FlagMap } from "@hooks/useFlagResults";
 
 import { Accordion, Checkbox, Select, Stack, TextInput } from "@mantine/core";
 import { useCallback, useState } from "react";
