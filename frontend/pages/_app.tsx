@@ -6,12 +6,11 @@ import type { AppProps, AppContext } from "next/app";
 import Layout from "@components/Layout/Layout";
 import { ColorSchemeProvider, MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
+import { emotionCache } from "@styles/emotionCache";
 import { getCookie, setCookie } from "cookies-next";
 import NextApp from "next/app";
 import Head from "next/head";
 import { useState } from "react";
-
-import { emotionCache } from "@/emotionCache";
 
 type Props = AppProps & {
   currColorScheme: ColorScheme;

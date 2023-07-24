@@ -1,9 +1,8 @@
 import type { DocumentContext } from "next/document";
 
 import { ServerStyles, createStylesServer } from "@mantine/next";
+import { emotionCache } from "@styles/emotionCache";
 import Document from "next/document";
-
-import { emotionCache } from "@/emotionCache";
 
 const stylesServer = createStylesServer(emotionCache);
 
