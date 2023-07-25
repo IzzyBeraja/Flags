@@ -1,31 +1,30 @@
 import "@styles/reactFlow.css";
 
+import type { Cookie } from "@hooks/useCookie";
 import type { ColorScheme } from "@mantine/core";
 import type { AppProps, AppContext } from "next/app";
 
+import CookierProvider from "@components/CookieProvider/CookieProvider";
 import Layout from "@components/Layout/Layout";
+import useCookie from "@hooks/useCookie";
+import { getDefaultCookies } from "@hooks/useCookie";
 import { ColorSchemeProvider, MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
 import { emotionCache } from "@styles/emotionCache";
-import { getCookie, setCookie } from "cookies-next";
 import NextApp from "next/app";
 import Head from "next/head";
-import { useState } from "react";
 
 type Props = AppProps & {
-  currColorScheme: ColorScheme;
+  cookies: Cookie;
 };
 
-export default function App({ Component, pageProps, currColorScheme }: Props) {
-  const [colorScheme, setColorScheme] = useState<ColorScheme>(currColorScheme);
+export default function App({ Component, pageProps, cookies }: Props) {
+  const { cookie, updateCookie, deleteCookie } = useCookie(cookies);
 
   const toggleColorScheme = (value?: ColorScheme) => {
     const nextColorScheme =
-      value || (colorScheme === "dark" ? "light" : "dark");
-    setColorScheme(nextColorScheme);
-    setCookie("mantine-color-scheme", nextColorScheme, {
-      maxAge: 60 * 60 * 24 * 30,
-    });
+      value || (cookie.mantineColorScheme === "dark" ? "light" : "dark");
+    updateCookie("mantineColorScheme", nextColorScheme);
   };
 
   return (
@@ -37,23 +36,28 @@ export default function App({ Component, pageProps, currColorScheme }: Props) {
           content="minimum-scale=1, initial-scale=1, width=device-width"
         />
       </Head>
-
-      <ColorSchemeProvider
-        colorScheme={colorScheme}
-        toggleColorScheme={toggleColorScheme}
+      <CookierProvider
+        cookie={cookie}
+        updateCookie={updateCookie}
+        deleteCookie={deleteCookie}
       >
-        <MantineProvider
-          emotionCache={emotionCache}
-          theme={{ colorScheme }}
-          withGlobalStyles
-          withNormalizeCSS
+        <ColorSchemeProvider
+          colorScheme={cookie.mantineColorScheme}
+          toggleColorScheme={toggleColorScheme}
         >
-          <Layout>
-            <Component {...pageProps} />
-            <Notifications />
-          </Layout>
-        </MantineProvider>
-      </ColorSchemeProvider>
+          <MantineProvider
+            emotionCache={emotionCache}
+            theme={{ colorScheme: cookie.mantineColorScheme }}
+            withGlobalStyles
+            withNormalizeCSS
+          >
+            <Layout>
+              <Component {...pageProps} />
+              <Notifications />
+            </Layout>
+          </MantineProvider>
+        </ColorSchemeProvider>
+      </CookierProvider>
     </>
   );
 }
@@ -63,7 +67,6 @@ App.getInitialProps = async (appContext: AppContext) => {
 
   return {
     ...appProps,
-    currColorScheme:
-      getCookie("mantine-color-scheme", appContext.ctx) || "dark",
+    cookies: getDefaultCookies(appContext.ctx),
   };
 };
