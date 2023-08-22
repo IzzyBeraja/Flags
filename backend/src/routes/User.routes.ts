@@ -6,9 +6,7 @@ const router = express.Router();
 
 router.get("/", async (req, res) => {
   if (req.session.userId == null) {
-    return res
-      .status(UNAUTHORIZED)
-      .send("You need to be logged in to access this route");
+    return res.status(UNAUTHORIZED).send("You need to be logged in to access this route");
   }
 
   const user = await req.prisma.user.findUnique({

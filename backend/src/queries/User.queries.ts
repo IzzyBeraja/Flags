@@ -39,10 +39,7 @@ export type GetUser =
   | { success: true; user: UserWithoutPassword }
   | { success: false; error: string };
 
-export async function getUser(
-  prisma: PrismaClient,
-  userId: string
-): Promise<GetUser> {
+export async function getUser(prisma: PrismaClient, userId: string): Promise<GetUser> {
   const user = await prisma.user.findFirst({
     where: {
       id: userId,

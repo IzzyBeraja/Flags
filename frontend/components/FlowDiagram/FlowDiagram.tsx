@@ -1,22 +1,11 @@
 import type { ActionType } from "@components/ActionBar/ActionBar";
 import type { FlowNode, CustomNodeTypes } from "@customTypes/nodeTypes";
-import type {
-  Connection,
-  Edge,
-  EdgeChange,
-  NodeChange,
-  OnSelectionChangeParams,
-} from "reactflow";
+import type { Connection, Edge, EdgeChange, NodeChange, OnSelectionChangeParams } from "reactflow";
 
 import ActionBar from "@components/ActionBar/ActionBar";
 import CardNode from "@components/Nodes/CardNode/CardNode";
 import { useCallback, useMemo, useState } from "react";
-import ReactFlow, {
-  Background,
-  BackgroundVariant,
-  Panel,
-  useReactFlow,
-} from "reactflow";
+import ReactFlow, { Background, BackgroundVariant, Panel, useReactFlow } from "reactflow";
 
 type MoveType = "pan" | "move";
 
@@ -95,12 +84,9 @@ export default function FlowDiagram({
     setAction("newEdge");
   }, []);
 
-  const onSelectionChangeHandler = useCallback(
-    (selection: OnSelectionChangeParams) => {
-      onSelectionChange(selection);
-    },
-    []
-  );
+  const onSelectionChangeHandler = useCallback((selection: OnSelectionChangeParams) => {
+    onSelectionChange(selection);
+  }, []);
 
   return (
     <ReactFlow

@@ -22,8 +22,7 @@ export default function App({ Component, pageProps, cookies }: Props) {
   const { cookie, updateCookie, deleteCookie } = useCookie(cookies);
 
   const toggleColorScheme = (value?: ColorScheme) => {
-    const nextColorScheme =
-      value || (cookie.mantineColorScheme === "dark" ? "light" : "dark");
+    const nextColorScheme = value || (cookie.mantineColorScheme === "dark" ? "light" : "dark");
     updateCookie("mantineColorScheme", nextColorScheme);
   };
 
@@ -31,16 +30,9 @@ export default function App({ Component, pageProps, cookies }: Props) {
     <>
       <Head>
         <title>🚩 Flags</title>
-        <meta
-          name="viewport"
-          content="minimum-scale=1, initial-scale=1, width=device-width"
-        />
+        <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
       </Head>
-      <CookierProvider
-        cookie={cookie}
-        updateCookie={updateCookie}
-        deleteCookie={deleteCookie}
-      >
+      <CookierProvider cookie={cookie} updateCookie={updateCookie} deleteCookie={deleteCookie}>
         <ColorSchemeProvider
           colorScheme={cookie.mantineColorScheme}
           toggleColorScheme={toggleColorScheme}

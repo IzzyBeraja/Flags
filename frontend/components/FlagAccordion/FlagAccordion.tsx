@@ -22,16 +22,9 @@ export default function FlagAccordion({
 }: Props) {
   return (
     <Accordion multiple defaultValue={["Testing"]}>
-      <TestingAccordion
-        userData={userData}
-        onUserDataChange={onUserDataChange}
-      />
+      <TestingAccordion userData={userData} onUserDataChange={onUserDataChange} />
       {node != null && (
-        <AttributesAccordion
-          flagRules={flagRules}
-          node={node}
-          onNodeUpdate={onNodeUpdate}
-        />
+        <AttributesAccordion flagRules={flagRules} node={node} onNodeUpdate={onNodeUpdate} />
       )}
     </Accordion>
   );

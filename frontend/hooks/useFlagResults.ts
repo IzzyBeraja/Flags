@@ -45,8 +45,7 @@ export const initialRules = new Map<string, FlagRule>([
       description: "User is over 21",
       id: "rule2",
       label: "User Age",
-      rule: (userData: UserData) =>
-        (userData.dob ?? new Date()) > new Date("01/01/2000"),
+      rule: (userData: UserData) => (userData.dob ?? new Date()) > new Date("01/01/2000"),
       value: "rule2",
     },
   ],
@@ -92,10 +91,7 @@ export const initialRules = new Map<string, FlagRule>([
   ],
 ]);
 
-export function useFlagResults(
-  initialData: UserData,
-  initialRules?: FlagMap
-): UseFlagResults {
+export function useFlagResults(initialData: UserData, initialRules?: FlagMap): UseFlagResults {
   const [userData, setUserData] = useSetState<UserData>(initialData);
   const [rulesMap] = useState<FlagMap>(initialRules ?? new Map());
   const forceUpdate = useForceUpdate();

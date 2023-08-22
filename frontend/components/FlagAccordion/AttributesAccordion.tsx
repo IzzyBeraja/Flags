@@ -12,14 +12,8 @@ type Props = {
   flagRules: FlagMap;
 };
 
-export default function AttributesAccordion({
-  node,
-  onNodeUpdate,
-  flagRules,
-}: Props) {
-  const [currentRule, setCurrentRule] = useState<string | null>(
-    node.data.ruleId ?? null
-  );
+export default function AttributesAccordion({ node, onNodeUpdate, flagRules }: Props) {
+  const [currentRule, setCurrentRule] = useState<string | null>(node.data.ruleId ?? null);
 
   const updateNode = useCallback(
     <K extends keyof CardData>(key: K, value: CardData[K]) => {
@@ -35,10 +29,7 @@ export default function AttributesAccordion({
     (ruleId: string) => {
       setCurrentRule(ruleId);
       updateNode("label", flagRules?.get(ruleId)?.label ?? "");
-      updateNode(
-        "status",
-        flagRules?.get(ruleId)?.result ?? false ? "pass" : "fail"
-      );
+      updateNode("status", flagRules?.get(ruleId)?.result ?? false ? "pass" : "fail");
       updateNode("ruleId", ruleId);
     },
     [updateNode]
@@ -46,9 +37,7 @@ export default function AttributesAccordion({
 
   return (
     <Accordion.Item value="Attributes">
-      <Accordion.Control icon={<Adjustments size={"1.5rem"} />}>
-        Attributes
-      </Accordion.Control>
+      <Accordion.Control icon={<Adjustments size={"1.5rem"} />}>Attributes</Accordion.Control>
       <Accordion.Panel>
         <Stack>
           <Select
@@ -69,9 +58,7 @@ export default function AttributesAccordion({
             label="Status"
             disabled
             checked={flagRules?.get(currentRule ?? "")?.result ?? false}
-            onChange={e =>
-              updateNode("status", e.currentTarget.checked ? "pass" : "fail")
-            }
+            onChange={e => updateNode("status", e.currentTarget.checked ? "pass" : "fail")}
           />
         </Stack>
       </Accordion.Panel>

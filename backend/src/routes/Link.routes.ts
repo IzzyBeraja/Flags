@@ -71,9 +71,7 @@ router.delete(
 
       return res.status(OK).json(prisma);
     } catch (err) {
-      return res
-        .status(NOT_FOUND)
-        .send("The post with the id provided was not found");
+      return res.status(NOT_FOUND).send("The post with the id provided was not found");
     }
   }
 );

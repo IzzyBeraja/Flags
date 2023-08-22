@@ -1,11 +1,5 @@
 import type { FlowNode } from "@customTypes/nodeTypes";
-import type {
-  Connection,
-  Edge,
-  EdgeChange,
-  NodeChange,
-  OnSelectionChangeParams,
-} from "reactflow";
+import type { Connection, Edge, EdgeChange, NodeChange, OnSelectionChangeParams } from "reactflow";
 
 import FlagAccordion from "@components/FlagAccordion/FlagAccordion";
 import FlagNav from "@components/FlagNav/FlagNav";
@@ -16,12 +10,7 @@ import { Grid, useMantineTheme } from "@mantine/core";
 import { boolToStatus } from "@util/typeConversions";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  addEdge,
-  applyEdgeChanges,
-  applyNodeChanges,
-  useReactFlow,
-} from "reactflow";
+import { addEdge, applyEdgeChanges, applyNodeChanges, useReactFlow } from "reactflow";
 
 export default function FlagsRoute() {
   //? Routing
@@ -93,13 +82,10 @@ export default function FlagsRoute() {
     setEdges(edges =>
       edges.map(edge => {
         boolToStatus(
-          rules.get(reactFlowInstance.getNode(edge.source)?.data?.ruleId)
-            ?.result ?? false
+          rules.get(reactFlowInstance.getNode(edge.source)?.data?.ruleId)?.result ?? false
         ) === "pass"
-          ? ((edge.style = { stroke: theme.colors.green[3] }),
-            (edge.animated = true))
-          : ((edge.style = { stroke: theme.colors.red[3] }),
-            (edge.animated = false));
+          ? ((edge.style = { stroke: theme.colors.green[3] }), (edge.animated = true))
+          : ((edge.style = { stroke: theme.colors.red[3] }), (edge.animated = false));
 
         return edge;
       })
@@ -152,8 +138,7 @@ export default function FlagsRoute() {
   }, []);
 
   const onSelectionChange = useCallback(
-    (selection: OnSelectionChangeParams) =>
-      setSelectedNode(selection.nodes[0]?.id),
+    (selection: OnSelectionChangeParams) => setSelectedNode(selection.nodes[0]?.id),
     []
   );
 
@@ -164,9 +149,7 @@ export default function FlagsRoute() {
           if (node.id !== updatedNode.id) return node;
 
           const ruleId = updatedNode.data.ruleId ?? "";
-          updatedNode.data.status = boolToStatus(
-            rules.get(ruleId)?.result ?? false
-          );
+          updatedNode.data.status = boolToStatus(rules.get(ruleId)?.result ?? false);
 
           return updatedNode;
         })

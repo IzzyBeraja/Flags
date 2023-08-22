@@ -17,18 +17,12 @@ interface Props extends CookieContextProps {
 export function useCookieContext(): CookieContextProps {
   const ctx = useContext(CookieContext);
 
-  if (ctx == null)
-    throw new Error("useCookieContext must be used within a CookieProvider");
+  if (ctx == null) throw new Error("useCookieContext must be used within a CookieProvider");
 
   return ctx;
 }
 
-export default function CookierProvider({
-  cookie,
-  updateCookie,
-  deleteCookie,
-  children,
-}: Props) {
+export default function CookierProvider({ cookie, updateCookie, deleteCookie, children }: Props) {
   return (
     <CookieContext.Provider value={{ cookie, deleteCookie, updateCookie }}>
       {children}

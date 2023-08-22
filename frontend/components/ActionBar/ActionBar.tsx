@@ -1,13 +1,7 @@
 import type { Icon } from "tabler-icons-react";
 
 import { Button, Card } from "@mantine/core";
-import {
-  ArrowGuide,
-  HandStop,
-  Maximize,
-  Pointer,
-  SquarePlus,
-} from "tabler-icons-react";
+import { ArrowGuide, HandStop, Maximize, Pointer, SquarePlus } from "tabler-icons-react";
 
 export type ActionType = "move" | "newNode" | "pan" | "fit" | "newEdge";
 

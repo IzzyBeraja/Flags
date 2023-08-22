@@ -11,11 +11,7 @@
     "node": true
   },
   "plugins": ["import", "prettier", "sort-keys-fix", "@typescript-eslint"],
-  "extends": [
-    "eslint:recommended",
-    "plugin:@typescript-eslint/recommended",
-    "prettier"
-  ],
+  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended", "prettier"],
   "rules": {
     "prettier/prettier": [
       "error",
@@ -26,7 +22,7 @@
         "insertPragma": false,
         "jsxBracketSameLine": false,
         "jsxSingleQuote": false,
-        "printWidth": 80,
+        "printWidth": 100,
         "proseWrap": "always",
         "quoteProps": "as-needed",
         "requirePragma": false,
@@ -41,11 +37,7 @@
     "import/order": [
       "error",
       {
-        "groups": [
-          "type",
-          ["sibling", "parent"],
-          ["builtin", "external", "internal"]
-        ],
+        "groups": ["type", ["sibling", "parent"], ["builtin", "external", "internal"]],
         "alphabetize": {
           "order": "asc",
           "caseInsensitive": true
@@ -53,11 +45,7 @@
         "newlines-between": "always"
       }
     ],
-    "sort-keys": [
-      "error",
-      "asc",
-      { "caseSensitive": true, "natural": true, "minKeys": 2 }
-    ],
+    "sort-keys": ["error", "asc", { "caseSensitive": true, "natural": true, "minKeys": 2 }],
     "sort-keys-fix/sort-keys-fix": "error",
     "@typescript-eslint/consistent-type-imports": [
       "error",

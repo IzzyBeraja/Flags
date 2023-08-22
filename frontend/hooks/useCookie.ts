@@ -22,9 +22,7 @@ export function getDefaultCookies(options?: OptionsType): Cookie {
 }
 
 export default function useCookie(initialCookie?: Cookie): UseCookieReturn {
-  const [cookie, setCookie] = useSetState<Cookie>(
-    initialCookie ?? defaultCookie
-  );
+  const [cookie, setCookie] = useSetState<Cookie>(initialCookie ?? defaultCookie);
 
   const updateCookie = (key: keyof Cookie, value: Cookie[keyof Cookie]) => {
     setCookiesNext(key, value);

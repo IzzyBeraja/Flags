@@ -1,14 +1,6 @@
 import type { Icon } from "tabler-icons-react";
 
-import {
-  ActionIcon,
-  Card,
-  Group,
-  Text,
-  Box,
-  createStyles,
-  rem,
-} from "@mantine/core";
+import { ActionIcon, Card, Group, Text, Box, createStyles, rem } from "@mantine/core";
 import { Handle, Position } from "reactflow";
 
 export type Status = keyof typeof StatusColor;
@@ -49,11 +41,7 @@ export default function CardNode({ data, selected }: Props) {
 
   return (
     <Box>
-      <Card
-        shadow="sm"
-        maw="15rem"
-        className={cx(classes.container, classes[status])}
-      >
+      <Card shadow="sm" maw="15rem" className={cx(classes.container, classes[status])}>
         <Group position="center" spacing="sm">
           {Icon != null && (
             <ActionIcon variant="outline" color="green">

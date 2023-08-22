@@ -25,11 +25,7 @@ type Props = {
 export default function FlagNav({ projects }: Props) {
   return (
     <>
-      <TextInput
-        placeholder="Search for flags"
-        icon={<Search size="1rem" />}
-        mb="sm"
-      />
+      <TextInput placeholder="Search for flags" icon={<Search size="1rem" />} mb="sm" />
       {projects.map(({ name, flags, id: projectId }) => (
         <NavLink key={name} label={name}>
           {flags.map(({ name, id: flagId }) => (

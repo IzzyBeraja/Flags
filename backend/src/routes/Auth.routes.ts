@@ -8,6 +8,8 @@ import { body } from "express-validator";
 
 const router = express.Router();
 
+//** Register **//
+
 router.post(
   "/register",
   validate([
@@ -27,6 +29,8 @@ router.post(
       : res.status(BAD_REQUEST).send(registerUserRequest.error);
   }
 );
+
+//** Login **//
 
 router.post(
   "/login",
@@ -53,6 +57,8 @@ router.post(
     return res.status(BAD_REQUEST).send(loginUserRequest.error);
   }
 );
+
+//** Logout **//
 
 router.post("/logout", (req, res) => {
   if (req.session.userId == null) {

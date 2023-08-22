@@ -1,11 +1,4 @@
-import {
-  Avatar,
-  Box,
-  Group,
-  UnstyledButton,
-  Text,
-  createStyles,
-} from "@mantine/core";
+import { Avatar, Box, Group, UnstyledButton, Text, createStyles } from "@mantine/core";
 import { getCookie } from "cookies-next";
 
 export default function UserDetails() {

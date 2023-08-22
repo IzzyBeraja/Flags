@@ -28,9 +28,7 @@ export default function Testing({ userData, onUserDataChange }: Props) {
 
   return (
     <Accordion.Item value="Testing">
-      <Accordion.Control icon={<TestPipe size={"1.5rem"} />}>
-        Testing
-      </Accordion.Control>
+      <Accordion.Control icon={<TestPipe size={"1.5rem"} />}>Testing</Accordion.Control>
       <Accordion.Panel>
         <Stack>
           <TextInput
