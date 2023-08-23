@@ -1,3 +1,5 @@
+import type { ParamsDictionary } from "express-serve-static-core";
+
 import { CREATED, NOT_FOUND, OK } from "../errors/errorCodes";
 import { validate } from "../validation/validateRequest";
 
@@ -34,7 +36,19 @@ router.post(
   }
 );
 
-router.post(
+type updateInputType = {
+  description: string;
+  url: string;
+  id: string;
+};
+
+type updateOutputType = {
+  description: string | undefined;
+  url: string | undefined;
+  id: string;
+};
+
+router.post<ParamsDictionary, updateOutputType, updateInputType>(
   "/update",
   validate([
     body("description", "A valid descrpition required").isLength({
@@ -47,11 +61,11 @@ router.post(
   async (req, res) => {
     const prisma = await req.prisma.link.update({
       data: {
-        description: req.body["description"] ?? undefined,
-        url: req.body["url"] ?? undefined,
+        description: req.body.description ?? "",
+        url: req.body.url ?? "",
       },
       where: {
-        id: req.body["id"],
+        id: req.body.id,
       },
     });
 
