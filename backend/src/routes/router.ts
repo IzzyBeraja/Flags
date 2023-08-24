@@ -4,13 +4,17 @@ import path from "path";
 import { fileURLToPath, pathToFileURL } from "url";
 
 const router = Router();
-
 const currentDirectory = path.dirname(fileURLToPath(import.meta.url));
-buildRoutes(currentDirectory);
 
-console.log("Building routes");
+try {
+  await buildRoutes(currentDirectory);
+  console.log("✅ Routes initialized");
+} catch (error) {
+  console.error("❌ Routes failed to initialize");
+  console.error(error);
+}
 
-function buildRoutes(routesDirectory: string) {
+async function buildRoutes(routesDirectory: string) {
   fs.readdirSync(routesDirectory).forEach(async file => {
     const fullPath = path.join(routesDirectory, file);
     const stat = fs.statSync(fullPath);
@@ -21,10 +25,13 @@ function buildRoutes(routesDirectory: string) {
       const routeUrl = pathToFileURL(fullPath).href;
       const relativePath = path
         .relative(currentDirectory, fullPath)
+        .replace(/\\/g, "/")
         .replace(".routes.js", "")
         .replace(".routes.ts", "");
 
       const route = await import(routeUrl);
+      if (route.default == null || typeof route.default !== "function")
+        return console.error(`❌ Route ${relativePath} failed to initialize`);
       router.use(`/${relativePath}`, route.default);
     }
   });
