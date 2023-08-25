@@ -3,38 +3,59 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath, pathToFileURL } from "url";
 
-const router = Router();
+type Method = "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "OPTIONS" | "HEAD" | "ALL";
+
+const expressRouter = Router();
+const filename = fileURLToPath(import.meta.url);
 const currentDirectory = path.dirname(fileURLToPath(import.meta.url));
 
+const allRoutes = new Set();
+
 try {
-  await buildRoutes(currentDirectory);
+  buildRoutes(currentDirectory);
   console.log("✅ Routes initialized");
 } catch (error) {
   console.error("❌ Routes failed to initialize");
   console.error(error);
 }
 
-async function buildRoutes(routesDirectory: string) {
+function buildRoutes(routesDirectory: string) {
   fs.readdirSync(routesDirectory).forEach(async file => {
+    if (file === filename) return;
+
     const fullPath = path.join(routesDirectory, file);
     const stat = fs.statSync(fullPath);
 
     if (stat.isDirectory()) return buildRoutes(fullPath);
 
-    if (file.endsWith(".routes.js") || file.endsWith(".routes.ts")) {
-      const routeUrl = pathToFileURL(fullPath).href;
-      const relativePath = path
-        .relative(currentDirectory, fullPath)
-        .replace(/\\/g, "/")
-        .replace(".routes.js", "")
-        .replace(".routes.ts", "");
+    if (!file.endsWith(".routes.js") && !file.endsWith(".routes.ts"))
+      return console.log(`- Ignored file: ${file}`);
 
-      const route = await import(routeUrl);
-      if (route.default == null || typeof route.default !== "function")
-        return console.error(`❌ Route ${relativePath} failed to initialize`);
-      router.use(`/${relativePath}`, route.default);
+    const routeUrl = pathToFileURL(fullPath).href;
+    const relativePath = `/${path.relative(currentDirectory, routesDirectory).replace(/\\/g, "/")}`;
+
+    const router = (await import(routeUrl)).default as Router;
+    if (router == null || typeof router !== "function") {
+      return console.error(
+        `❌ Route ${relativePath} failed to initialize. Did you export a default function?`
+      );
     }
+
+    const routePath = router.stack[0].route.path;
+    const routeMethod: Method = router.stack[0].route.stack[0].method.toUpperCase();
+
+    addRoute(routeMethod, relativePath, `${relativePath}${routePath}`, router);
   });
 }
 
-export default router;
+function addRoute(method: Method, directory: string, path: string, router: Router) {
+  if (allRoutes.has(`${method} ${path}`)) {
+    return console.error(`❌ Route ${method} ${path} already exists`);
+  }
+
+  expressRouter.use(directory, router);
+  allRoutes.add(`${method} ${path}`);
+  console.log(`- Initialized Route: ${method}\t${path}`);
+}
+
+export default expressRouter;

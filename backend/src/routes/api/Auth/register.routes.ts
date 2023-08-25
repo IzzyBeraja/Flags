@@ -1,13 +1,11 @@
-import { BAD_REQUEST, CREATED } from "../../errors/errorCodes";
-import { registerUser } from "../../queries/User.queries";
-import { validate } from "../../validation/validateRequest";
+import { BAD_REQUEST, CREATED } from "../../../errors/errorCodes";
+import { registerUser } from "../../../queries/User.queries";
+import { validate } from "../../../validation/validateRequest";
 
 import { Router } from "express";
 import { body } from "express-validator";
 
 const router = Router();
-
-//** Register **//
 
 router.post(
   "/register",

@@ -1,11 +1,9 @@
-import { BAD_REQUEST, OK } from "../../errors/errorCodes";
-import { sessionName } from "../../middleware/session.middleware";
+import { BAD_REQUEST, OK } from "../../../errors/errorCodes";
+import { sessionName } from "../../../middleware/session.middleware";
 
 import { Router } from "express";
 
 const router = Router();
-
-//** Logout **//
 
 router.post("/logout", (req, res) => {
   if (req.session.userId == null) {

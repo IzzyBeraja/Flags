@@ -1,13 +1,13 @@
-import { BAD_REQUEST, OK } from "../../errors/errorCodes";
-import { loginUser } from "../../queries/User.queries";
-import { validate } from "../../validation/validateRequest";
+import { BAD_REQUEST, OK } from "../../../errors/errorCodes";
+import { loginUser } from "../../../queries/User.queries";
+import { validate } from "../../../validation/validateRequest";
 
 import { Router } from "express";
 import { body } from "express-validator";
 
 const router = Router();
 
-//** Login **//
+export const schema = {};
 
 router.post(
   "/login",
