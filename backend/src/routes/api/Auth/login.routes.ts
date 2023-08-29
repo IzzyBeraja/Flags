@@ -1,20 +1,34 @@
+import type { ParamsDictionary } from "express-serve-static-core";
+
 import { BAD_REQUEST, OK } from "../../../errors/errorCodes";
 import { loginUser } from "../../../queries/User.queries";
-import { validate } from "../../../validation/validateRequest";
+import { validateSchema } from "../../../validation/requestValidation";
 
 import { Router } from "express";
-import { body } from "express-validator";
+import { v4 as createUUID } from "uuid";
+
+interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+interface LoginResponse { }
 
 const router = Router();
+export const route_id = createUUID();
+export const requestSchema = {
+  properties: {
+    email: { type: "string" },
+    password: { type: "string" },
+  },
+  required: ["email", "password"],
+  type: "object",
+};
 
-export const schema = {};
-
-router.post(
+router.post<ParamsDictionary, LoginResponse, LoginRequest>(
   "/login",
-  validate([
-    body("email", "A valid email is required").isEmail(),
-    body("password", "A valid password is required").isLength({ min: 6 }),
-  ]),
+  validateSchema(route_id),
   async (req, res) => {
     if (req.session.userId != null) {
       return res.status(BAD_REQUEST).send("You are already logged in");
