@@ -12,8 +12,7 @@ interface LoginRequest {
   password: string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface LoginResponse { }
+interface LoginResponse {}
 
 const router = Router();
 export const route_id = createUUID();
