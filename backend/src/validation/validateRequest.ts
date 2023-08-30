@@ -13,7 +13,7 @@ export function validateSchema(schema: string) {
     validate.errors?.forEach(error => {
       if (error.message == null) return;
 
-      const key = error.instancePath.slice(1);
+      const key = error.instancePath.slice(1) || "additionalErrors";
       errors[key] = errors[key] == null ? [error.message] : [...errors[key], error.message];
     });
 
