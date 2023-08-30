@@ -2,9 +2,16 @@ import type { JSONSchemaType } from "ajv";
 
 //= Username =//
 
+const maxUsernameLength = 25;
+const minUsernameLength = 3;
+
 export const usernameSchema: JSONSchemaType<string> = {
-  maxLength: 25,
-  minLength: 3,
+  errorMessage: {
+    maxLength: `Username must be at most ${maxUsernameLength} characters`,
+    minLength: `Username must be at least ${minUsernameLength} characters`,
+  },
+  maxLength: maxUsernameLength,
+  minLength: minUsernameLength,
   type: "string",
 };
 
@@ -53,8 +60,15 @@ export const passwordSchema: JSONSchemaType<string> = {
 
 //= Name =//
 
+const maxNameLength = 35;
+const minNameLength = 1;
+
 export const nameSchema: JSONSchemaType<string> = {
-  maxLength: 25,
-  minLength: 1,
+  errorMessage: {
+    maxLength: `Name must be at most ${maxNameLength} characters`,
+    minLength: `Name must be at least ${minNameLength} character`,
+  },
+  maxLength: maxNameLength,
+  minLength: minNameLength,
   type: "string",
 };
