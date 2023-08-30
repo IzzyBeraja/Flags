@@ -1,17 +1,20 @@
-import type { Request, Response, NextFunction } from "express";
-import type { ValidationChain } from "express-validator";
+import type { NextFunction, Request, Response } from "express";
 
-import { validationResult } from "express-validator";
+import { BAD_REQUEST } from "../errors/errorCodes";
+import { ajv } from "../initialize/initializeRoutes";
 
-export function validate(validations: ValidationChain[]) {
-  return async (req: Request, res: Response, next: NextFunction) => {
-    await Promise.all(validations.map(validation => validation.run(req)));
+export function validateSchema(schema: string) {
+  return (req: Request, res: Response, next: NextFunction) => {
+    const validate = ajv.getSchema(schema);
 
-    const errors = validationResult(req);
-    if (errors.isEmpty()) {
+    if (validate == null) return next();
+
+    if (validate(req.body)) {
+      console.log("No Errors");
       return next();
     }
 
-    return res.status(400).json({ errors: errors.array() });
+    console.log(validate.errors);
+    return res.status(BAD_REQUEST).send(validate.errors);
   };
 }

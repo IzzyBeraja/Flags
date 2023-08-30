@@ -1,6 +1,7 @@
 import type { JSONSchemaType } from "ajv";
 
 import Ajv from "ajv";
+import addAjvErrors from "ajv-errors";
 import { Router } from "express";
 import fs from "fs";
 import path from "path";
@@ -80,6 +81,7 @@ function generateSchema(requestSchema: RouteSchema, route_id: RouteId) {
 }
 
 export default async function initializeRoutes() {
+  addAjvErrors(ajv);
   await buildRoutes(routesDirectory);
   ajv.getSchema("");
 }

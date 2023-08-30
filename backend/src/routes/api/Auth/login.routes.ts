@@ -2,10 +2,11 @@ import type { ParamsDictionary } from "express-serve-static-core";
 
 import { BAD_REQUEST, OK } from "../../../errors/errorCodes";
 import { loginUser } from "../../../queries/User.queries";
-import { validateSchema } from "../../../validation/requestValidation";
+import { genRouteUUID } from "../../../utils/routeFunctions";
+import { validateSchema } from "../../../validation/validateRequest";
+import { emailSchema, passwordSchema } from "../../../validation/validationRules";
 
 import { Router } from "express";
-import { v4 as createUUID } from "uuid";
 
 interface LoginRequest {
   email: string;
@@ -15,11 +16,12 @@ interface LoginRequest {
 interface LoginResponse {}
 
 const router = Router();
-export const route_id = createUUID();
+export const route_id = genRouteUUID();
 export const requestSchema = {
+  additionalProperties: false,
   properties: {
-    email: { type: "string" },
-    password: { type: "string" },
+    email: emailSchema,
+    password: passwordSchema,
   },
   required: ["email", "password"],
   type: "object",

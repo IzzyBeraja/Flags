@@ -1,5 +1,5 @@
 import { OK, UNAUTHORIZED } from "../../../errors/errorCodes";
-import { validateSchema } from "../../../validation/requestValidation";
+import { validateSchema } from "../../../validation/validateRequest";
 
 import { Router } from "express";
 import { v4 as createUUID } from "uuid";

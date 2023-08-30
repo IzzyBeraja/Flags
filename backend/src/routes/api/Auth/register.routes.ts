@@ -1,19 +1,39 @@
+import type { JSONSchemaType } from "ajv";
+import type { ParamsDictionary } from "express-serve-static-core";
+
 import { BAD_REQUEST, CREATED } from "../../../errors/errorCodes";
 import { registerUser } from "../../../queries/User.queries";
-import { validate } from "../../../validation/validateRequest";
+import { genRouteUUID } from "../../../utils/routeFunctions";
+import { validateSchema } from "../../../validation/validateRequest";
+import { emailSchema, nameSchema, passwordSchema } from "../../../validation/validationRules";
 
 import { Router } from "express";
-import { body } from "express-validator";
 
 const router = Router();
 
-router.post(
+interface RegisterRequest {
+  email: string;
+  name: string;
+  password: string;
+}
+
+interface RegisterResponse {}
+
+export const route_id = genRouteUUID();
+export const requestSchema: JSONSchemaType<RegisterRequest> = {
+  additionalProperties: false,
+  properties: {
+    email: emailSchema,
+    name: nameSchema,
+    password: passwordSchema,
+  },
+  required: ["email", "name", "password"],
+  type: "object",
+};
+
+router.post<ParamsDictionary, RegisterResponse, RegisterRequest>(
   "/register",
-  validate([
-    body("email", "A valid email is required").isEmail(),
-    body("name", "A valid name is required").isAlphanumeric(),
-    body("password", "A valid password is required").isLength({ min: 6 }),
-  ]),
+  validateSchema(route_id),
   async (req, res) => {
     const registerUserRequest = await registerUser(req.prisma, {
       email: req.body["email"].toLowerCase(),
