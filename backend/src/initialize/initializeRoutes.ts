@@ -43,8 +43,10 @@ async function buildRoutes(cwd: string): Promise<void> {
     const routeMethod = route.default.stack[0].route.stack[0].method.toUpperCase() as Method;
     const relativeRoutePath = `/${path.relative(routesDirectory, cwd).replace(/\\/g, "/")}`;
 
+    console.group(`  ${relativeRoutePath}${routePath}`);
     createRoute(routeMethod, relativeRoutePath, `${relativeRoutePath}${routePath}`, route.default);
-    generateSchema(relativeRoutePath, requestSchema, route_id);
+    generateSchema(requestSchema, route_id);
+    console.groupEnd();
   }
 }
 
@@ -55,17 +57,17 @@ function createRoute(method: Method, directory: string, path: string, router: Ro
 
   expressRouter.use(directory, router);
   allRoutes.add(`${method} ${path}`);
-  console.log(` - (Route) Initialized Route: ${method}\t${path}`);
+  console.log(`  - (Route) Initialized ${method}`);
 }
 
-function generateSchema(route: string, requestSchema: RouteSchema, route_id: RouteId) {
+function generateSchema(requestSchema: RouteSchema, route_id: RouteId) {
   if (route_id == null) {
-    console.log(` - (Schema) Ignored file: ${route} because it does not have a route_id`);
+    console.log("\x1b[2m%s\x1b[0m", `  - (Schema) Skipped - missing route_id`);
     return;
   }
 
   if (requestSchema == null) {
-    console.log(` - (Schema) Ignored file: ${route} because it does not have a requestSchema`);
+    console.log(`  - (Schema) Skipped - missing requestSchema`);
     return;
   }
 
