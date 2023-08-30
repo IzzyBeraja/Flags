@@ -4,9 +4,9 @@ import ioredis from "ioredis";
 
 dotenv.config();
 
-let redisSessionStore: RedisStore | undefined;
+export let redisSessionStore: RedisStore | undefined;
 
-try {
+export default async function initializeSessionCache() {
   const port = Number.parseInt(process.env["REDIS_PORT"] ?? "5000");
   const host = process.env["REDIS_HOST"] ?? "localhost";
   const password = process.env["REDIS_PASSWORD"] ?? "password";
@@ -17,11 +17,4 @@ try {
   await client.monitor();
 
   redisSessionStore = new RedisStore({ client });
-
-  console.log("✅ Redis initialized");
-} catch (error) {
-  console.error("❌ Redis failed to initialize");
-  console.error(error);
 }
-
-export default redisSessionStore;

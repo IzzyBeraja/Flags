@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 
 import { BAD_REQUEST } from "../errors/errorCodes";
-import { ajv } from "../start/compileValidations";
+import { ajv } from "../initialize/initializeRoutes";
 
 export function validateSchema(schema: string) {
   return (req: Request, res: Response, next: NextFunction) => {

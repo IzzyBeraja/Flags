@@ -1,5 +1,5 @@
+import initializeServices from "./initialize/initialize";
 import applyMiddleware from "./middleware/middleware";
-import start from "./start/start";
 
 import dotenv from "dotenv";
 import express from "express";
@@ -8,7 +8,7 @@ dotenv.config();
 
 const app = express();
 
-start();
+await initializeServices();
 applyMiddleware(app);
 
 const port = Number.parseInt(process.env["PORT"] ?? "4000");

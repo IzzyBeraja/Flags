@@ -2,8 +2,8 @@ import type { Express } from "express";
 
 import corsMiddleware from "./cors.middleware";
 import sessionMiddleware from "./session.middleware";
+import { expressRouter } from "../initialize/initializeRoutes";
 import prismaMiddleware from "../middleware/prisma.middleware";
-import expressRouter from "../routes/router";
 
 import express from "express";
 

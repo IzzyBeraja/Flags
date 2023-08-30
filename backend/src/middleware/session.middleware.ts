@@ -1,4 +1,4 @@
-import redisSessionStore from "../middleware/redisSessionStore.middleware";
+import { redisSessionStore } from "../initialize/initializeSessionCache";
 
 import dotenv from "dotenv";
 import session from "express-session";
