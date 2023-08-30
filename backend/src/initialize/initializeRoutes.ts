@@ -26,7 +26,7 @@ async function buildRoutes(cwd: string): Promise<void> {
     const stat = fs.statSync(fullPath);
 
     if (stat.isDirectory()) {
-      buildRoutes(fullPath);
+      await buildRoutes(fullPath);
       continue;
     }
 
@@ -42,22 +42,27 @@ async function buildRoutes(cwd: string): Promise<void> {
     const routePath = route.default.stack[0].route.path as string;
     const routeMethod = route.default.stack[0].route.stack[0].method.toUpperCase() as Method;
     const relativeRoutePath = `/${path.relative(routesDirectory, cwd).replace(/\\/g, "/")}`;
+    const routeName = [relativeRoutePath, routePath].join("");
 
-    console.group(`  ${relativeRoutePath}${routePath}`);
-    createRoute(routeMethod, relativeRoutePath, `${relativeRoutePath}${routePath}`, route.default);
-    generateSchema(requestSchema, route_id);
+    console.group(`  ${routeName}`);
+    if (createRoute(routeMethod, relativeRoutePath, routeName, route.default))
+      generateSchema(requestSchema, route_id);
     console.groupEnd();
   }
 }
 
-function createRoute(method: Method, directory: string, path: string, router: Router) {
-  if (allRoutes.has(`${method} ${path}`)) {
-    return console.error(`❌ Route ${method} ${path} already exists`);
+function createRoute(method: Method, directory: string, path: string, router: Router): boolean {
+  const key = `${method} ${path}`;
+
+  if (allRoutes.has(key)) {
+    console.error(`❌ Route ${method} ${path} already exists`);
+    return false;
   }
 
   expressRouter.use(directory, router);
-  allRoutes.add(`${method} ${path}`);
+  allRoutes.add(key);
   console.log(`  - (Route) Initialized ${method}`);
+  return true;
 }
 
 function generateSchema(requestSchema: RouteSchema, route_id: RouteId) {
