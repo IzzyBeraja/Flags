@@ -1,3 +1,4 @@
+import type { JSONSchemaType } from "ajv";
 import type { ParamsDictionary } from "express-serve-static-core";
 
 import { BAD_REQUEST, OK } from "../../../errors/errorCodes";
@@ -8,6 +9,9 @@ import { emailSchema, passwordSchema } from "../../../validation/validationRules
 
 import { Router } from "express";
 
+const router = Router();
+export const route_id = genRouteUUID();
+
 interface LoginRequest {
   email: string;
   password: string;
@@ -15,9 +19,7 @@ interface LoginRequest {
 
 interface LoginResponse {}
 
-const router = Router();
-export const route_id = genRouteUUID();
-export const requestSchema = {
+export const requestSchema: JSONSchemaType<LoginRequest> = {
   additionalProperties: false,
   properties: {
     email: emailSchema,

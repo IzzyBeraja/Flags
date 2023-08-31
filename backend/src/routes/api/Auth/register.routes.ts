@@ -10,6 +10,7 @@ import { emailSchema, nameSchema, passwordSchema } from "../../../validation/val
 import { Router } from "express";
 
 const router = Router();
+export const route_id = genRouteUUID();
 
 interface RegisterRequest {
   email: string;
@@ -19,7 +20,6 @@ interface RegisterRequest {
 
 interface RegisterResponse {}
 
-export const route_id = genRouteUUID();
 export const requestSchema: JSONSchemaType<RegisterRequest> = {
   additionalProperties: false,
   properties: {
