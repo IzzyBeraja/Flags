@@ -1,6 +1,6 @@
 import type { ParamsDictionary } from "express-serve-static-core";
 
-import { OK } from "../../../errors/errorCodes";
+import { OK } from "../../../errors/errorCodes.js";
 
 import { Router } from "express";
 

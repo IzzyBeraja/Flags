@@ -1,7 +1,7 @@
 {
   "name": "flags-backend",
   "version": "1.0.0",
-  "description": "Provides flags for users based on vraious criteria which can allow and disallow features, actions, etc.",
+  "description": "Provides flags based on various criteria which can allow and disallow features, actions, etc.",
   "main": "index.js",
   "author": "Izzy Beraja",
   "license": "MIT",
@@ -32,16 +32,14 @@
     "express-session": "^1.17.3",
     "express-validator": "^6.15.0",
     "ioredis": "^5.3.1",
+    "rimraf": "^5.0.1",
     "uuid": "^9.0.0"
   },
   "scripts": {
-    "dev": "nodemon --watch src --exec \"tsc --outDir dist && node --es-module-specifier-resolution=node dist/index.js\" -e ts",
+    "dev": "nodemon",
     "migrate": "npx prisma migrate dev --name",
     "genPrisma": "npx prisma generate",
     "prismaStudio": "npx prisma studio",
-    "start": "nodemon --exec ts-node src/index.ts",
-    "build": "tsc",
     "lint": "eslint --fix --ext .ts src"
-  },
-  "packageManager": "yarn@3.5.0"
+  }
 }

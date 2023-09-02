@@ -1,4 +1,4 @@
-import { NOT_FOUND, OK } from "../../../errors/errorCodes";
+import { NOT_FOUND, OK } from "../../../errors/errorCodes.js";
 
 import { Router } from "express";
 

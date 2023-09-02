@@ -1,6 +1,6 @@
 import type { PrismaClient, User } from "@prisma/client";
 
-import { exclude } from "./QueryFunctions";
+import { exclude } from "./QueryFunctions.js";
 
 import { Prisma } from "@prisma/client";
 import bcrypt from "bcrypt";

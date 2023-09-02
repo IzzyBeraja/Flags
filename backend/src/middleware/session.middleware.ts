@@ -1,4 +1,4 @@
-import { redisSessionStore } from "../initialize/initializeSessionCache";
+import { redisSessionStore } from "../initialize/initializeSessionCache.js";
 
 import dotenv from "dotenv";
 import session from "express-session";

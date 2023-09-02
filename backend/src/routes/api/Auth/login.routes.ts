@@ -1,11 +1,11 @@
 import type { JSONSchemaType } from "ajv";
 import type { ParamsDictionary } from "express-serve-static-core";
 
-import { BAD_REQUEST, OK } from "../../../errors/errorCodes";
-import { loginUser } from "../../../queries/User.queries";
-import { genRouteUUID } from "../../../utils/routeFunctions";
-import { validateSchema } from "../../../validation/validateRequest";
-import { emailSchema, passwordSchema } from "../../../validation/validationRules";
+import { BAD_REQUEST, OK } from "../../../errors/errorCodes.js";
+import { loginUser } from "../../../queries/User.queries.js";
+import { genRouteUUID } from "../../../utils/routeFunctions.js";
+import { validateSchema } from "../../../validation/validateRequest.js";
+import { emailSchema, passwordSchema } from "../../../validation/validationRules.js";
 
 import { Router } from "express";
 

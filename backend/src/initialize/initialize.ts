@@ -1,6 +1,6 @@
-import initializeDB from "./initializeDB";
-import initializeRoutes from "./initializeRoutes";
-import initializeSessionCache from "./initializeSessionCache";
+import initializeDB from "./initializeDB.js";
+import initializeRoutes from "./initializeRoutes.js";
+import initializeSessionCache from "./initializeSessionCache.js";
 
 export default async function initializeServices() {
   await Promise.all([
