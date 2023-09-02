@@ -1,5 +1,3 @@
-import "./pathAliases.js";
-
 import initializeServices from "./initialize/initialize.js";
 import applyMiddleware from "./middleware/middleware.js";
 
