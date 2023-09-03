@@ -1,10 +1,12 @@
+import type { Request, Response } from "express";
+
 import { OK, UNAUTHORIZED } from "../../../errors/errorCodes";
 
 import { Router } from "express";
 
 const router = Router();
 
-router.get("/", async (req, res) => {
+router.get("/", async (req: Request, res: Response) => {
   if (req.session.userId == null) {
     return res.status(UNAUTHORIZED).send("You need to be logged in to access this route");
   }
