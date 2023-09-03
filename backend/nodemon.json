@@ -4,5 +4,5 @@
   ],
   "ext": ".ts,.js",
   "ignore": [],
-  "exec": "rimraf ./dist && tsc --outDir dist && node --es-module-specifier-resolution=node dist/index.js"
+  "exec": "rimraf ./dist && tsc --project tsconfig.build.json --outDir dist && node --es-module-specifier-resolution=node dist/index.js"
 }
