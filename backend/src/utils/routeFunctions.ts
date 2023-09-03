@@ -1,5 +1,3 @@
 import { v4 } from "uuid";
 
-export const genRouteUUID = (): string => {
-  return v4();
-};
+export const genRouteUUID = (): string => v4();

@@ -4,5 +4,5 @@
   ],
   "ext": ".ts,.js",
   "ignore": [],
-  "exec": "rimraf ./dist && tsc && node -r dotenv/config ./dist/index.js"
+  "exec": "rimraf ./dist && tsc --outDir dist && node --es-module-specifier-resolution=node dist/index.js"
 }

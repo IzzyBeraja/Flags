@@ -1,4 +1,4 @@
-import { OK, UNAUTHORIZED } from "../../../errors/errorCodes.js";
+import { OK, UNAUTHORIZED } from "../../../errors/errorCodes";
 
 import { Router } from "express";
 
