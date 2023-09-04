@@ -11,7 +11,6 @@ type Method = "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "OPTIONS" | "HEAD" |
 type RouteSchema = JSONSchemaType<unknown> | null;
 type RouteId = string | null;
 
-export const expressRouter = Router();
 export const ajv = new Ajv({ allErrors: true });
 
 const allRoutes = new Set();
@@ -19,7 +18,7 @@ const allRoutes = new Set();
 const currentDir = path.dirname(fileURLToPath(import.meta.url));
 const routesDirectory = path.resolve(currentDir, "../routes");
 
-async function buildRoutes(cwd: string): Promise<void> {
+async function buildRoutes(expressRouter: Router, cwd: string): Promise<void> {
   const files = fs.readdirSync(cwd);
 
   for (const file of files) {
@@ -27,7 +26,7 @@ async function buildRoutes(cwd: string): Promise<void> {
     const stat = fs.statSync(fullPath);
 
     if (stat.isDirectory()) {
-      await buildRoutes(fullPath);
+      await buildRoutes(expressRouter, fullPath);
       continue;
     }
 
@@ -40,27 +39,47 @@ async function buildRoutes(cwd: string): Promise<void> {
     const route = await import(routeUrl);
     const route_id: RouteId = route.route_id;
     const requestSchema: RouteSchema = route.requestSchema;
-    const routePath = route.default.stack[0].route.path as string;
-    const routeMethod = route.default.stack[0].route.stack[0].method.toUpperCase() as Method;
-    const relativeRoutePath = `/${path.relative(routesDirectory, cwd).replace(/\\/g, "/")}`;
-    const routeName = [relativeRoutePath, routePath].join("");
+    const subRoute = route.default.stack[0].route.path as string;
+    const method = route.default.stack[0].route.stack[0].method.toUpperCase() as Method;
+    const parentRoute = `/${path.relative(routesDirectory, cwd).replace(/\\/g, "/")}`;
+    const routePath = [parentRoute, subRoute].join("");
 
-    console.group(`  ${routeName}`);
-    if (createRoute(routeMethod, relativeRoutePath, routeName, route.default))
+    console.group(`  ${routePath}`);
+
+    const newRouteData: NewRouteData = {
+      method,
+      parentRoute,
+      routePath,
+      router: route.default,
+    };
+
+    if (createRoute(expressRouter, newRouteData)) {
       generateSchema(requestSchema, route_id);
-    console.groupEnd();
+      console.groupEnd();
+    }
   }
 }
 
-function createRoute(method: Method, directory: string, path: string, router: Router): boolean {
-  const key = `${method} ${path}`;
+type NewRouteData = {
+  method: Method;
+  parentRoute: string;
+  routePath: string;
+  /** The route information for a singular route */
+  router: Router;
+};
+
+function createRoute(
+  expressRouter: Router,
+  { parentRoute, method, routePath, router }: NewRouteData
+): boolean {
+  const key = `${method} ${routePath}`;
 
   if (allRoutes.has(key)) {
-    console.error(`❌ Route ${method} ${path} already exists`);
+    console.error(`❌ Route ${method} ${routePath} already exists`);
     return false;
   }
 
-  expressRouter.use(directory, router);
+  expressRouter.use(parentRoute, router);
   allRoutes.add(key);
   console.log(`  - (Route) Initialized ${method}`);
   return true;
@@ -81,7 +100,11 @@ function generateSchema(requestSchema: RouteSchema, route_id: RouteId) {
 }
 
 export default async function initializeRoutes() {
+  const expressRouter = Router();
+
   addAjvErrors(ajv);
-  await buildRoutes(routesDirectory);
+  await buildRoutes(expressRouter, routesDirectory);
   ajv.getSchema("");
+
+  return expressRouter;
 }

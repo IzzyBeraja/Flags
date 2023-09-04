@@ -2,8 +2,8 @@ import initializeDB from "./initializeDB.js";
 import initializeRoutes from "./initializeRoutes.js";
 import initializeSessionCache from "./initializeSessionCache.js";
 
-export default async function initializeServices() {
-  await Promise.all([
+export default async function initialize() {
+  return await Promise.all([
     runAsync(
       initializeRoutes,
       "Initializing routes",
@@ -27,16 +27,17 @@ export default async function initializeServices() {
   ]);
 }
 
-async function runAsync(
-  func: () => Promise<void>,
+async function runAsync<T>(
+  func: () => Promise<T>,
   start: string,
   success: string,
   failure: string
-) {
+): Promise<T> {
   try {
     console.log(start);
-    await func();
+    const result = await func();
     console.log(success);
+    return result;
   } catch (e) {
     console.error(failure);
     console.error(e);

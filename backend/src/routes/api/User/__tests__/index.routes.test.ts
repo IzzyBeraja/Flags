@@ -1,30 +1,26 @@
 import type { PrismaClient } from "@prisma/client";
+import type RedisStore from "connect-redis";
 import type { Application } from "express";
 
 import { OK, UNAUTHORIZED } from "../../../../errors/errorCodes";
-import { mockPrismaMiddleware } from "../../../../middleware/__mocks__/prisma.middleware.mock";
-import { mockSessionMiddleware } from "../../../../middleware/__mocks__/session.middleware.mock";
+import middleware from "../../../../middleware/middleware";
 import router from "../index.routes";
 
 import express from "express";
 import { mockDeep } from "jest-mock-extended";
 import request from "supertest";
 
+const mockRedisStore = mockDeep<RedisStore>();
 const mockPrisma = mockDeep<PrismaClient>();
 
 describe("GET /api/user/", () => {
   let app: Application;
   beforeEach(() => {
     app = express();
+    middleware(app, router, mockRedisStore, mockPrisma);
   });
 
   describe("when NOT logged in", () => {
-    beforeEach(() => {
-      app.use(mockSessionMiddleware());
-      app.use(mockPrismaMiddleware(mockPrisma));
-      app.use(router);
-    });
-
     it("returns unauthorized", async () => {
       const response = await request(app).get("/");
 
@@ -34,9 +30,8 @@ describe("GET /api/user/", () => {
 
   describe("when logged in", () => {
     beforeEach(() => {
-      app.use(mockSessionMiddleware({ userId: "1" }));
-      app.use(mockPrismaMiddleware(mockPrisma));
-      app.use(router);
+      // Figure out how to mock session
+      console.log("Mock session for logged in user");
     });
 
     it("returns user data w/o password", async () => {

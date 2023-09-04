@@ -1,5 +1,5 @@
 import { BAD_REQUEST, OK } from "../../../errors/errorCodes.js";
-import { sessionName } from "../../../middleware/session.middleware.js";
+import { sessionName } from "../../../initialize/initializeSession.js";
 
 import { Router } from "express";
 

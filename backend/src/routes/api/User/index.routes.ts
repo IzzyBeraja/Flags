@@ -7,6 +7,7 @@ import { Router } from "express";
 const router = Router();
 
 router.get("/", async (req: Request, res: Response) => {
+  console.log("SESSION: ", req.session);
   if (req.session.userId == null) {
     return res.status(UNAUTHORIZED).send("You need to be logged in to access this route");
   }

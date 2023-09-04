@@ -4,8 +4,6 @@ import ioredis from "ioredis";
 
 dotenv.config();
 
-export let redisSessionStore: RedisStore | undefined;
-
 export default async function initializeSessionCache() {
   const port = Number.parseInt(process.env["REDIS_PORT"] ?? "5000");
   const host = process.env["REDIS_HOST"] ?? "localhost";
@@ -16,5 +14,5 @@ export default async function initializeSessionCache() {
   // Verify connection with redis
   await client.monitor();
 
-  redisSessionStore = new RedisStore({ client });
+  return new RedisStore({ client });
 }

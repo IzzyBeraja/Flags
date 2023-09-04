@@ -1,8 +1,10 @@
+import type { PrismaClient } from "@prisma/client";
 import type { NextFunction, Request, Response } from "express";
 
-import { prisma } from "../initialize/initializeDB.js";
+const prismaMiddleware =
+  (prismaClient: PrismaClient) => (req: Request, _res: Response, next: NextFunction) => {
+    req.prisma = prismaClient;
+    next();
+  };
 
-export default function prismaMiddleware(req: Request, _res: Response, next: NextFunction) {
-  req.prisma = prisma;
-  next();
-}
+export default prismaMiddleware;
