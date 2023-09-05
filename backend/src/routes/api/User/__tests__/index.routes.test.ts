@@ -2,7 +2,7 @@ import type { PrismaClient } from "@prisma/client";
 import type { NextFunction, Request, Response } from "express";
 import type { DeepMockProxy } from "jest-mock-extended";
 
-import { OK } from "../../../../errors/errorCodes";
+import { OK, UNAUTHORIZED } from "../../../../errors/errorCodes";
 import { route } from "../index.routes";
 
 import { mock, mockDeep } from "jest-mock-extended";
@@ -12,7 +12,7 @@ let req: Request;
 let res: Response;
 let next: NextFunction;
 
-describe("GET /api/user/", () => {
+describe("/api/user/", () => {
   beforeEach(() => {
     mockPrisma = mockDeep<PrismaClient>();
     req = mock<Request>({ prisma: mockPrisma });
@@ -25,7 +25,7 @@ describe("GET /api/user/", () => {
       await route(req, res, next);
 
       expect(res.status).toHaveBeenCalledTimes(1);
-      expect(res.status).toHaveBeenCalledWith(401);
+      expect(res.status).toHaveBeenCalledWith(UNAUTHORIZED);
     });
   });
 

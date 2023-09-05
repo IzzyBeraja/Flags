@@ -1,13 +1,14 @@
 // == 200 == //
-const OK = 200;
-const CREATED = 201;
-const ACCEPTED = 202;
+export const OK = 200;
+export const CREATED = 201;
+export const ACCEPTED = 202;
 
 // == 400 == //
-const BAD_REQUEST = 400;
-const UNAUTHORIZED = 401;
-const PAYMENT_REQUIRED = 402;
-const FORBIDDEN = 403;
-const NOT_FOUND = 404;
+export const BAD_REQUEST = 400;
+export const UNAUTHORIZED = 401;
+export const PAYMENT_REQUIRED = 402;
+export const FORBIDDEN = 403;
+export const NOT_FOUND = 404;
 
-export { OK, CREATED, ACCEPTED, UNAUTHORIZED, PAYMENT_REQUIRED, FORBIDDEN, NOT_FOUND, BAD_REQUEST };
+//== 500 == //
+export const INTERNAL_SERVER_ERROR = 500;

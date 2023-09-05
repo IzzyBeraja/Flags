@@ -27,7 +27,7 @@ export const requestSchema: JSONSchemaType<LoginRequest> = {
   type: "object",
 };
 
-export type RouteHandler = RequestHandlerAsync<ParamsDictionary, LoginResponse, LoginRequest>;
+type RouteHandler = RequestHandlerAsync<ParamsDictionary, LoginResponse, LoginRequest>;
 
 export const route: RouteHandler = async (req, res) => {
   const loginUserRequest = await loginUser(req.prisma, req.body.email, req.body.password);

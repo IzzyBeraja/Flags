@@ -1,24 +1,34 @@
-import type { RequestHandler } from "express";
+import type { Params, RequestHandlerAsync } from "../../../types/types";
 
-import { BAD_REQUEST, OK } from "../../../errors/errorCodes.js";
-import { sessionName } from "../../../initialize/initializeSession.js";
+import { INTERNAL_SERVER_ERROR, OK, UNAUTHORIZED } from "../../../errors/errorCodes";
+import { sessionName } from "../../../initialize/initializeSession";
 
 export const method = "POST";
 
-export const route: RequestHandler = async (req, res) => {
+export interface LogoutRequest {}
+
+export interface LogoutResponse {
+  message: string;
+}
+
+type RouteHandler = RequestHandlerAsync<Params, LogoutResponse, LogoutRequest>;
+
+export const route: RouteHandler = async (req, res) => {
   if (req.session.userId == null) {
-    return res.status(BAD_REQUEST).send("You are not logged in");
+    res.status(UNAUTHORIZED);
+    res.json({ message: "You must be logged in to logout" });
+    return;
   }
 
-  //> TODO - Modify this to use async/await
   req.session.destroy(err => {
     if (err) {
-      console.error(err);
-      return res.status(BAD_REQUEST).send("Something went wrong");
+      res.status(INTERNAL_SERVER_ERROR);
+      res.json({ message: "Something went wrong" });
+      return;
     }
 
     res.clearCookie(sessionName);
-    return res.status(OK).send("Logout successful");
+    res.status(OK);
+    res.json({ message: "Logout successful" });
   });
-  return;
 };
