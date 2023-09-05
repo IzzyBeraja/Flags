@@ -1,16 +1,12 @@
 import type { JSONSchemaType } from "ajv";
+import type { RequestHandler } from "express";
 import type { ParamsDictionary } from "express-serve-static-core";
 
 import { BAD_REQUEST, OK } from "../../../errors/errorCodes.js";
 import { loginUser } from "../../../queries/User.queries.js";
-import { genRouteUUID } from "../../../utils/routeFunctions.js";
-import { validateSchema } from "../../../validation/validateRequest.js";
 import { emailSchema, passwordSchema } from "../../../validation/validationRules.js";
 
-import { Router } from "express";
-
-const router = Router();
-export const route_id = genRouteUUID();
+export const method = "POST";
 
 interface LoginRequest {
   email: string;
@@ -29,27 +25,23 @@ export const requestSchema: JSONSchemaType<LoginRequest> = {
   type: "object",
 };
 
-router.post<ParamsDictionary, LoginResponse, LoginRequest>(
-  "/login",
-  validateSchema(route_id),
-  async (req, res) => {
-    if (req.session.userId != null) {
-      return res.status(BAD_REQUEST).send("You are already logged in");
-    }
+type RouteHandler = RequestHandler<ParamsDictionary, LoginResponse, LoginRequest>;
 
-    const loginUserRequest = await loginUser(
-      req.prisma,
-      req.body["email"].toLowerCase(),
-      req.body["password"]
-    );
-
-    if (loginUserRequest.success) {
-      req.session.userId = loginUserRequest.user["id"];
-      return res.status(OK).send("Login successful");
-    }
-
-    return res.status(BAD_REQUEST).send(loginUserRequest.error);
+export const route: RouteHandler = async (req, res) => {
+  if (req.session.userId != null) {
+    return res.status(BAD_REQUEST).send("You are already logged in");
   }
-);
 
-export default router;
+  const loginUserRequest = await loginUser(
+    req.prisma,
+    req.body["email"].toLowerCase(),
+    req.body["password"]
+  );
+
+  if (loginUserRequest.success) {
+    req.session.userId = loginUserRequest.user["id"];
+    return res.status(OK).send("Login successful");
+  }
+
+  return res.status(BAD_REQUEST).send(loginUserRequest.error);
+};

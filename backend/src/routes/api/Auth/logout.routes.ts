@@ -1,11 +1,11 @@
+import type { RequestHandler } from "express";
+
 import { BAD_REQUEST, OK } from "../../../errors/errorCodes.js";
 import { sessionName } from "../../../initialize/initializeSession.js";
 
-import { Router } from "express";
+export const method = "POST";
 
-const router = Router();
-
-router.post("/logout", (req, res) => {
+export const route: RequestHandler = async (req, res) => {
   if (req.session.userId == null) {
     return res.status(BAD_REQUEST).send("You are not logged in");
   }
@@ -21,6 +21,4 @@ router.post("/logout", (req, res) => {
     return res.status(OK).send("Logout successful");
   });
   return;
-});
-
-export default router;
+};

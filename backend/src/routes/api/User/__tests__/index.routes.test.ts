@@ -1,40 +1,38 @@
 import type { PrismaClient } from "@prisma/client";
-import type RedisStore from "connect-redis";
-import type { Application } from "express";
+import type { NextFunction, Request, Response } from "express";
+import type { DeepMockProxy } from "jest-mock-extended";
 
-import { OK, UNAUTHORIZED } from "../../../../errors/errorCodes";
-import middleware from "../../../../middleware/middleware";
-import router from "../index.routes";
+import { OK } from "../../../../errors/errorCodes";
+import { route } from "../index.routes";
 
-import express from "express";
-import { mockDeep } from "jest-mock-extended";
-import request from "supertest";
+import { mock, mockDeep } from "jest-mock-extended";
 
-const mockRedisStore = mockDeep<RedisStore>();
-const mockPrisma = mockDeep<PrismaClient>();
+let mockPrisma: DeepMockProxy<PrismaClient>;
+let req: Request;
+let res: Response;
+let next: NextFunction;
 
 describe("GET /api/user/", () => {
-  let app: Application;
   beforeEach(() => {
-    app = express();
-    middleware(app, router, mockRedisStore, mockPrisma);
+    mockPrisma = mockDeep<PrismaClient>();
+    req = mock<Request>({ prisma: mockPrisma });
+    res = mock<Response>();
+    next = jest.fn();
   });
 
   describe("when NOT logged in", () => {
     it("returns unauthorized", async () => {
-      const response = await request(app).get("/");
+      await route(req, res, next);
 
-      expect(response.status).toBe(UNAUTHORIZED);
+      expect(res.status).toHaveBeenCalledTimes(1);
+      expect(res.status).toHaveBeenCalledWith(401);
     });
   });
 
   describe("when logged in", () => {
-    beforeEach(() => {
-      // Figure out how to mock session
-      console.log("Mock session for logged in user");
-    });
-
     it("returns user data w/o password", async () => {
+      req.session.userId = "1";
+
       mockPrisma.user.findUnique.mockResolvedValue({
         email: "email@email.com",
         id: "1",
@@ -42,10 +40,12 @@ describe("GET /api/user/", () => {
         password: "password",
       });
 
-      const response = await request(app).get("/");
+      await route(req, res, next);
 
-      expect(response.status).toBe(OK);
-      expect(response.body).toMatchObject({
+      expect(res.status).toHaveBeenCalledTimes(1);
+      expect(res.status).toHaveBeenCalledWith(OK);
+      expect(res.json).toHaveBeenCalledTimes(1);
+      expect(res.json).toHaveBeenCalledWith({
         email: "email@email.com",
         id: "1",
         name: "name",

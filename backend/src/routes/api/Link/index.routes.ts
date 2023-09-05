@@ -1,12 +1,11 @@
-import { Router } from "express";
+import type { RequestHandlerAsync } from "../../../types/types";
 
-const router = Router();
+export const method = "GET";
 
-router.get("/", async (req, res) => {
+export const route: RequestHandlerAsync = async (req, res) => {
   const data = await req.prisma.link.findMany({
     include: { createdBy: true },
   });
-  return res.json(data);
-});
 
-export default router;
+  res.json(data);
+};

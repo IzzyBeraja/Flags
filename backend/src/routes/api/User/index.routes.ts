@@ -1,21 +1,20 @@
-import type { Request, Response } from "express";
+import type { RequestHandlerAsync } from "../../../types/types";
 
 import { OK, UNAUTHORIZED } from "../../../errors/errorCodes";
 
-import { Router } from "express";
+export const method = "GET";
 
-const router = Router();
-
-router.get("/", async (req: Request, res: Response) => {
-  console.log("SESSION: ", req.session);
+export const route: RequestHandlerAsync = async (req, res) => {
   if (req.session.userId == null) {
-    return res.status(UNAUTHORIZED).send("You need to be logged in to access this route");
+    res.status(UNAUTHORIZED);
+    res.send("You need to be logged in to access this route");
+    return;
   }
 
   const user = await req.prisma.user.findUnique({
-    where: { id: req.session.userId },
+    where: { id: req.session.userId ?? "" },
   });
-  return res.status(OK).json({ ...user, password: undefined });
-});
 
-export default router;
+  res.status(OK);
+  res.json({ ...user, password: undefined });
+};
