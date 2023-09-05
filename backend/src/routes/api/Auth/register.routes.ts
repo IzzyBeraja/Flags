@@ -1,20 +1,28 @@
+import type { UserWithoutPassword } from "../../../queries/User.queries";
+import type { Params, RequestHandlerAsync } from "../../../types/types";
 import type { JSONSchemaType } from "ajv";
-import type { RequestHandler } from "express";
-import type { ParamsDictionary } from "express-serve-static-core";
 
-import { BAD_REQUEST, CREATED } from "../../../errors/errorCodes.js";
-import { registerUser } from "../../../queries/User.queries.js";
-import { emailSchema, nameSchema, passwordSchema } from "../../../validation/validationRules.js";
+import { BAD_REQUEST, CREATED } from "../../../errors/errorCodes";
+import { registerUser } from "../../../queries/User.queries";
+import { emailSchema, nameSchema, passwordSchema } from "../../../validation/validationRules";
 
 export const method = "POST";
 
-interface RegisterRequest {
+export interface RegisterRequest {
   email: string;
   name: string;
   password: string;
 }
 
-interface RegisterResponse {}
+type UserCreated = {
+  createdUser: UserWithoutPassword;
+};
+
+type UserNotCreated = {
+  error: string;
+};
+
+export type RegisterResponse = UserCreated | UserNotCreated;
 
 export const requestSchema: JSONSchemaType<RegisterRequest> = {
   additionalProperties: false,
@@ -27,16 +35,22 @@ export const requestSchema: JSONSchemaType<RegisterRequest> = {
   type: "object",
 };
 
-type RouteHandler = RequestHandler<ParamsDictionary, RegisterResponse, RegisterRequest>;
+type RouteHandler = RequestHandlerAsync<Params, RegisterResponse, RegisterRequest>;
 
 export const route: RouteHandler = async (req, res) => {
   const registerUserRequest = await registerUser(req.prisma, {
-    email: req.body["email"].toLowerCase(),
-    name: req.body["name"],
-    password: req.body["password"],
+    email: req.body.email,
+    name: req.body.name,
+    password: req.body.password,
   });
 
-  registerUserRequest.success
-    ? res.status(CREATED).json(registerUserRequest.createdUser)
-    : res.status(BAD_REQUEST).send(registerUserRequest.error);
+  if (!registerUserRequest.success) {
+    res.status(BAD_REQUEST);
+    res.json({ error: registerUserRequest.error });
+    return;
+  }
+
+  req.session.userId = registerUserRequest.createdUser.id;
+  res.status(CREATED);
+  res.json({ createdUser: registerUserRequest.createdUser });
 };

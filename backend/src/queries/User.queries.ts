@@ -7,7 +7,7 @@ import bcrypt from "bcrypt";
 
 const SALT_ROUNDS = 10;
 
-type UserWithoutPassword = Omit<User, "password">;
+export type UserWithoutPassword = Omit<User, "password">;
 
 export type RegisterUser =
   | { success: true; createdUser: UserWithoutPassword }
