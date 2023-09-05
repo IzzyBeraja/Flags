@@ -1,19 +1,21 @@
+import type { RequestHandlerAsync } from "../../../types/types.js";
 import type { JSONSchemaType } from "ajv";
-import type { RequestHandler } from "express";
 import type { ParamsDictionary } from "express-serve-static-core";
 
-import { BAD_REQUEST, OK } from "../../../errors/errorCodes.js";
-import { loginUser } from "../../../queries/User.queries.js";
-import { emailSchema, passwordSchema } from "../../../validation/validationRules.js";
+import { OK, UNAUTHORIZED } from "../../../errors/errorCodes";
+import { loginUser } from "../../../queries/User.queries";
+import { emailSchema, passwordSchema } from "../../../validation/validationRules";
 
 export const method = "POST";
 
-interface LoginRequest {
+export interface LoginRequest {
   email: string;
   password: string;
 }
 
-interface LoginResponse {}
+export interface LoginResponse {
+  message: string;
+}
 
 export const requestSchema: JSONSchemaType<LoginRequest> = {
   additionalProperties: false,
@@ -25,23 +27,18 @@ export const requestSchema: JSONSchemaType<LoginRequest> = {
   type: "object",
 };
 
-type RouteHandler = RequestHandler<ParamsDictionary, LoginResponse, LoginRequest>;
+export type RouteHandler = RequestHandlerAsync<ParamsDictionary, LoginResponse, LoginRequest>;
 
 export const route: RouteHandler = async (req, res) => {
-  if (req.session.userId != null) {
-    return res.status(BAD_REQUEST).send("You are already logged in");
-  }
-
-  const loginUserRequest = await loginUser(
-    req.prisma,
-    req.body["email"].toLowerCase(),
-    req.body["password"]
-  );
+  const loginUserRequest = await loginUser(req.prisma, req.body.email, req.body.password);
 
   if (loginUserRequest.success) {
-    req.session.userId = loginUserRequest.user["id"];
-    return res.status(OK).send("Login successful");
+    req.session.userId = loginUserRequest.user.id;
+    res.status(OK);
+    res.json({ message: "Login successful" });
+    return;
   }
 
-  return res.status(BAD_REQUEST).send(loginUserRequest.error);
+  res.status(UNAUTHORIZED);
+  res.json({ message: loginUserRequest.error });
 };

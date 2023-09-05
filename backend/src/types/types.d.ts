@@ -23,8 +23,12 @@ type Asyncify<T> = T extends (...args: infer U) => infer R
   : T;
 
 type RequestHandlerAsync<
-  P = ParamsDictionary,
+  P = Params,
   ResBody = unknown,
   ReqBody = unknown,
   ReqQuery = Query
 > = Asyncify<RequestHandler<P, ResBody, ReqBody, ReqQuery>>;
+
+export interface Params {
+  [key: string]: string;
+}
