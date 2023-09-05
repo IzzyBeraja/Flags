@@ -1,7 +1,7 @@
 import type { JSONSchemaType } from "ajv";
 import type { RequestHandler } from "express";
 
-import { validate } from "../validation/validateRequest";
+import { validateSchema } from "../validation/validateRequest";
 
 import Ajv from "ajv";
 import allowErrorMessages from "ajv-errors";
@@ -80,7 +80,7 @@ async function buildRoutes(expressRouter: Router, cwd: string): Promise<void> {
 
 function createRoute(expressRouter: Router, routeData: NewRouteData) {
   const { method, routePath, route, routeSchema } = routeData;
-  const requestHandlers = [];
+  const requestHandlers: Array<RequestHandler> = [];
 
   const key = `${method} ${routePath}`;
 
@@ -97,8 +97,7 @@ function createRoute(expressRouter: Router, routeData: NewRouteData) {
   const requestValidator =
     routeSchema.requestSchema != null && ajv.compile(routeSchema.requestSchema);
 
-  requestValidator && requestHandlers.push(validate(requestValidator));
-
+  requestValidator && requestHandlers.push(validateSchema(requestValidator));
   requestHandlers.push(route);
 
   expressRouter[acceptedMethods[method]](routePath, ...requestHandlers);
