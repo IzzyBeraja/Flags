@@ -1,9 +1,13 @@
 import { PrismaClient } from "@prisma/client";
 
-export default async function initializeDB() {
+export default async function initializeDB(errors: Array<string>) {
   const prisma = new PrismaClient();
 
-  await prisma.$connect();
+  try {
+    await prisma.$connect();
+  } catch (error) {
+    errors.push(error as string);
+  }
 
   return prisma;
 }

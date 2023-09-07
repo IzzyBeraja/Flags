@@ -4,13 +4,6 @@ export default {
   resetMocks: true,
   testEnvironment: "node",
   transform: {
-    "^.+\\.(ts)$": [
-      "ts-jest",
-      {
-        "ts-jest": {
-          tsconfig: "tsconfig.json",
-        },
-      },
-    ],
+    "^.+\\.(ts)$": ["ts-jest", { "ts-jest": { tsconfig: "tsconfig.json" } }],
   },
 };

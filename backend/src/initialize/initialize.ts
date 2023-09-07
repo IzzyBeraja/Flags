@@ -1,47 +1,48 @@
+import type { RouteError } from "./initializeRoutes.js";
+
 import initializeDB from "./initializeDB.js";
-import initializeRoutes from "./initializeRoutes.js";
+import initializeRoutes, { allRoutes } from "./initializeRoutes.js";
 import initializeSessionCache from "./initializeSessionCache.js";
 
 export default async function initialize() {
-  return await Promise.all([
-    runAsync(
-      initializeRoutes,
-      "Initializing routes",
-      "✅ Routes initialized",
-      "❌ Routes failed to initialize"
-    ),
+  const routeErrors: Array<RouteError> = [];
+  const dbErrors: Array<string> = [];
+  const cacheErrors: Array<string> = [];
 
-    runAsync(
-      initializeDB,
-      "Initializing DB",
-      "✅ Database initialized",
-      "❌ Database failed to initialize"
-    ),
-
-    runAsync(
-      initializeSessionCache,
-      "Initializing session cache",
-      "✅ Session cache initialized",
-      "❌ Session cache failed to initialize"
-    ),
+  const results = await Promise.all([
+    initializeRoutes(routeErrors),
+    initializeDB(dbErrors),
+    initializeSessionCache(cacheErrors),
   ]);
-}
 
-async function runAsync<T>(
-  func: () => Promise<T>,
-  start: string,
-  success: string,
-  failure: string
-): Promise<T> {
-  try {
-    console.log(start);
-    const result = await func();
-    console.log(success);
-    return result;
-  } catch (e) {
-    console.error(failure);
-    console.error(e);
-    console.error("Server shutting down...");
-    process.exit(1);
+  console.group("🌐 Routes");
+  console.group(`Built ${allRoutes.size} routes`);
+  allRoutes.forEach(route => console.log(route));
+  console.groupEnd();
+  console.group(`Found ${routeErrors.length} errors`);
+  routeErrors.forEach(({ message, routePath }) => console.log(`${routePath} - ${message}`));
+  console.groupEnd();
+  console.groupEnd();
+
+  console.group("📦 Database");
+  if (dbErrors.length > 0) {
+    console.group(`Found ${dbErrors.length} errors`);
+    dbErrors.forEach(error => console.log(error));
+    console.groupEnd();
+  } else {
+    console.log("Database connected succesesfully");
   }
+  console.groupEnd();
+
+  console.group("💸 Session Cache");
+  if (cacheErrors.length > 0) {
+    console.group(`Found ${cacheErrors.length} errors`);
+    cacheErrors.forEach(error => console.log(error));
+    console.groupEnd();
+  } else {
+    console.log("Session Cache connected succesesfully");
+  }
+  console.groupEnd();
+
+  return results;
 }

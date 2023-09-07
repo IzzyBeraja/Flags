@@ -1,7 +1,7 @@
 import type { ValidateFunction } from "ajv";
 import type { NextFunction, Request, Response } from "express";
 
-import { BAD_REQUEST } from "../errors/errorCodes.js";
+import { BAD_REQUEST } from "../errors/errorCodes";
 
 export function validateSchema<T>(validateFunction: ValidateFunction<T>) {
   return (req: Request, res: Response, next: NextFunction) => {

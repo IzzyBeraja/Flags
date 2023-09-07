@@ -18,23 +18,38 @@ const acceptedMethods = {
   PUT: "put",
 } as const;
 type Method = keyof typeof acceptedMethods;
-type RouteSchema = JSONSchemaType<unknown> | null;
+
+type RouteSchema = JSONSchemaType<unknown> | undefined;
+
+export type RouteModule = {
+  method?: Method | undefined;
+  route?: RequestHandler | undefined;
+  requestSchema?: RouteSchema | undefined;
+};
 
 type NewRouteData = {
   method: Method;
   route: RequestHandler;
   routePath: string;
-  routeSchema: { requestSchema?: RouteSchema; responseSchema?: RouteSchema };
+  requestSchema: RouteSchema;
 };
 
-export const ajv = new Ajv({ allErrors: true });
+export type RouteError = {
+  message: string;
+  routePath: string;
+};
 
-const allRoutes = new Set();
+export const allRoutes = new Set();
 
 const currentDir = path.dirname(fileURLToPath(import.meta.url));
 const routesDirectory = path.resolve(currentDir, "../routes");
 
-async function buildRoutes(expressRouter: Router, cwd: string): Promise<void> {
+async function buildRoutes(
+  expressRouter: Router,
+  ajv: Ajv,
+  cwd: string,
+  errors: Array<RouteError>
+): Promise<void> {
   const files = fs.readdirSync(cwd);
 
   for (const file of files) {
@@ -42,7 +57,7 @@ async function buildRoutes(expressRouter: Router, cwd: string): Promise<void> {
     const stat = fs.statSync(fullPath);
 
     if (stat.isDirectory()) {
-      await buildRoutes(expressRouter, fullPath);
+      await buildRoutes(expressRouter, ajv, fullPath, errors);
       continue;
     }
 
@@ -51,11 +66,6 @@ async function buildRoutes(expressRouter: Router, cwd: string): Promise<void> {
       continue;
     }
 
-    const routeUrl = pathToFileURL(fullPath).href;
-
-    //? What happens if the route has not exports?
-    const { method, route, requestSchema } = await import(routeUrl);
-
     const routeName = file.replace(".routes.js", "");
 
     // Example: /api/Auth/login
@@ -63,54 +73,67 @@ async function buildRoutes(expressRouter: Router, cwd: string): Promise<void> {
       routeName === "index" ? "" : routeName
     }`;
 
-    console.group(`  ${routePath}`);
+    const routeUrl = pathToFileURL(fullPath).href;
+
+    //? What happens if the route has not exports?
+    const { method, route, requestSchema }: RouteModule = await import(routeUrl);
+
+    if (method == null || typeof method !== "string" || !acceptedMethods[method]) {
+      errors.push({ message: `Invalid method`, routePath });
+      continue;
+    }
+
+    if (route == null || typeof route !== "function") {
+      errors.push({ message: `Invalid route handler`, routePath });
+      continue;
+    }
 
     const newRouteData: NewRouteData = {
       method,
+      requestSchema,
       route,
       routePath,
-      routeSchema: { requestSchema },
     };
 
-    createRoute(expressRouter, newRouteData);
-
-    console.groupEnd();
+    createRoute(expressRouter, ajv, newRouteData, errors);
   }
 }
 
-function createRoute(expressRouter: Router, routeData: NewRouteData) {
-  const { method, routePath, route, routeSchema } = routeData;
+function createRoute(
+  expressRouter: Router,
+  ajv: Ajv,
+  routeData: NewRouteData,
+  errors: Array<RouteError>
+) {
+  const { method, routePath, route, requestSchema } = routeData;
   const requestHandlers: Array<RequestHandler> = [];
 
   const key = `${method} ${routePath}`;
 
-  if (acceptedMethods[method] == null) {
-    console.error(`❌ Method ${method} is not an accepted method`);
-    return;
-  }
-
   if (allRoutes.has(key)) {
-    console.error(`❌ Route ${method} ${routePath} already exists`);
+    errors.push({ message: `Route already exists`, routePath });
     return;
   }
 
-  const requestValidator =
-    routeSchema.requestSchema != null && ajv.compile(routeSchema.requestSchema);
+  const requestValidator = requestSchema != null && ajv.compile(requestSchema);
 
   requestValidator && requestHandlers.push(validateSchema(requestValidator));
   requestHandlers.push(route);
 
   expressRouter[acceptedMethods[method]](routePath, ...requestHandlers);
   allRoutes.add(key);
-  console.log(`  - (Route) Initialized ${method}`);
-  return true;
 }
 
-export default async function initializeRoutes() {
-  const expressRouter = Router();
+export default async function initializeRoutes(
+  errors: Array<RouteError>,
+  router?: Router,
+  ajv?: Ajv
+) {
+  const expressRouter = router ?? Router();
+  const ajvInstance = ajv ?? new Ajv({ allErrors: true });
 
-  allowErrorMessages(ajv);
-  await buildRoutes(expressRouter, routesDirectory);
+  allowErrorMessages(ajvInstance);
+  await buildRoutes(expressRouter, ajvInstance, routesDirectory, errors);
 
   return expressRouter;
 }
