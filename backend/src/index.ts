@@ -9,8 +9,8 @@ dotenv.config();
 const app = express();
 
 async function startServer() {
-  const [router, prismaClient, redisStore] = await initialize();
-  middleware(app, router, redisStore, prismaClient);
+  const [router, prismaClient, redisStore, planetScaleDB] = await initialize();
+  middleware(app, router, redisStore, prismaClient, planetScaleDB);
 
   const port = Number.parseInt(process.env["PORT"] ?? "4000");
   app.listen(port, () => console.log(`🚀 Server started http://localhost:${port}`));

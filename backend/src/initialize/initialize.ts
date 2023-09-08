@@ -1,6 +1,7 @@
 import type { RouteError } from "./initializeRoutes.js";
 
 import initializeDB from "./initializeDB.js";
+import initializePDB from "./initializePDB.js";
 import initializeRoutes, { allRoutes } from "./initializeRoutes.js";
 import initializeSessionCache from "./initializeSessionCache.js";
 
@@ -8,20 +9,24 @@ export default async function initialize() {
   const routeErrors: Array<RouteError> = [];
   const dbErrors: Array<string> = [];
   const cacheErrors: Array<string> = [];
+  const pdbErrors: Array<Error> = [];
 
   const results = await Promise.all([
     initializeRoutes(routeErrors),
     initializeDB(dbErrors),
     initializeSessionCache(cacheErrors),
+    initializePDB(pdbErrors),
   ]);
 
   console.group("🌐 Routes");
   console.group(`Built ${allRoutes.size} routes`);
   allRoutes.forEach(route => console.log(route));
   console.groupEnd();
-  console.group(`Found ${routeErrors.length} errors`);
-  routeErrors.forEach(({ message, routePath }) => console.log(`${routePath} - ${message}`));
-  console.groupEnd();
+  if (routeErrors.length > 0) {
+    console.group(`Found ${routeErrors.length} errors`);
+    routeErrors.forEach(({ message, routePath }) => console.log(`${routePath} - ${message}`));
+    console.groupEnd();
+  }
   console.groupEnd();
 
   console.group("📦 Database");
@@ -41,6 +46,16 @@ export default async function initialize() {
     console.groupEnd();
   } else {
     console.log("Session Cache connected succesesfully");
+  }
+  console.groupEnd();
+
+  console.group("🌐 PlanetScale Database");
+  if (pdbErrors.length > 0) {
+    console.group(`Found ${pdbErrors.length} errors`);
+    pdbErrors.forEach(error => console.log(error));
+    console.groupEnd();
+  } else {
+    console.log("PlanetScale Database connected succesesfully");
   }
   console.groupEnd();
 
