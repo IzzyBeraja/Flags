@@ -2,7 +2,6 @@
   "name": "flags-frontend",
   "version": "0.1.0",
   "private": true,
-  "packageManager": "yarn@3.5.0",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

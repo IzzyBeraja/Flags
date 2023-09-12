@@ -50,8 +50,8 @@
   "scripts": {
     "dev": "nodemon",
     "test": "jest",
-    "migrate": "npx prisma migrate dev --name",
     "genPrisma": "npx prisma generate",
+    "prisma push": "npx prisma db push",
     "prismaStudio": "npx prisma studio",
     "lint": "eslint --fix --ext .ts src"
   }

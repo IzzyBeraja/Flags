@@ -34,10 +34,12 @@ describe("/api/user/", () => {
       req.session.userId = "1";
 
       mockPrisma.user.findUnique.mockResolvedValue({
+        createdAt: new Date("1994-11-09T00:00:00"),
         email: "email@email.com",
         id: "1",
         name: "name",
         password: "password",
+        updatedAt: new Date("1994-11-09T00:00:00"),
       });
 
       await route(req, res, next);
@@ -46,9 +48,11 @@ describe("/api/user/", () => {
       expect(res.status).toHaveBeenCalledWith(OK);
       expect(res.json).toHaveBeenCalledTimes(1);
       expect(res.json).toHaveBeenCalledWith({
+        createdAt: new Date("1994-11-09T00:00:00"),
         email: "email@email.com",
         id: "1",
         name: "name",
+        updatedAt: new Date("1994-11-09T00:00:00"),
       });
     });
   });

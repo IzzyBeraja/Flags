@@ -24,7 +24,13 @@ describe("/api/auth/login", () => {
     it("has valid credentials", async () => {
       loginUserMock.mockResolvedValueOnce({
         success: true,
-        user: { email: "email@email.com", id: "1", name: "name" },
+        user: {
+          createdAt: new Date("1994-11-09T00:00:00"),
+          email: "email@email.com",
+          id: "1",
+          name: "name",
+          updatedAt: new Date("1994-11-09T00:00:00"),
+        },
       });
 
       await route(req, res, next);

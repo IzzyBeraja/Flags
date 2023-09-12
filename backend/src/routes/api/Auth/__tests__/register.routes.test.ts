@@ -22,7 +22,13 @@ describe("/api/auth/register", () => {
 
   it("registration successful", async () => {
     registerUserMock.mockResolvedValueOnce({
-      createdUser: { email: "email", id: "1", name: "name" },
+      createdUser: {
+        createdAt: new Date("1994-11-09T00:00:00"),
+        email: "email",
+        id: "1",
+        name: "name",
+        updatedAt: new Date("1994-11-09T00:00:00"),
+      },
       success: true,
     });
 

@@ -1,29 +1,19 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
-  log      = ["query", "info", "warn", "error"]
+  log      = "(array)"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-
-model Link {
-  id          String   @id @default(uuid())
-  createdAt   DateTime @default(now())
-  description String
-  url         String
-  createdBy   User     @relation(fields: [userId], references: [id])
-  userId      String
+  provider     = "mysql"
+  url          = env("DATABASE_URL_DEV")
+  relationMode = "prisma"
 }
 
 model User {
-  id       String @id @default(uuid())
-  name     String
-  email    String @unique
-  password String
-  links    Link[]
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
