@@ -1,6 +1,6 @@
 import ColorSchemeToggle from "../ColorSchemeToggle/ColorSchemeToggle";
 
-import LoginButton from "@components/LoginButton/LoginButton";
+import SignInButton from "@components/SignInButton/SignInButton";
 import {
   Container as M_Container,
   createStyles,
@@ -17,7 +17,7 @@ export default function Header() {
       <M_Container fluid className={classes.container}>
         <M_Text fz="xl">🚩 Flags</M_Text>
         <Group>
-          <LoginButton />
+          <SignInButton />
           <ColorSchemeToggle />
         </Group>
       </M_Container>
