@@ -44,6 +44,7 @@ export const route: RouteHandler = async (req, res) => {
     password: req.body.password,
   });
 
+  //> I will need to not send exact errors from database to client
   if (!registerUserRequest.success) {
     res.status(BAD_REQUEST);
     res.json({ error: registerUserRequest.error });

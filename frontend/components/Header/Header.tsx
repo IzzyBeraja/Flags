@@ -1,13 +1,14 @@
 import ColorSchemeToggle from "../ColorSchemeToggle/ColorSchemeToggle";
 
-import SignInButton from "@components/SignInButton/SignInButton";
 import {
   Container as M_Container,
   createStyles,
   Header as M_Header,
   Text as M_Text,
   Group,
+  Button,
 } from "@mantine/core";
+import Link from "next/link";
 
 export default function Header() {
   const { classes } = useStyles();
@@ -17,7 +18,12 @@ export default function Header() {
       <M_Container fluid className={classes.container}>
         <M_Text fz="xl">🚩 Flags</M_Text>
         <Group>
-          <SignInButton />
+          <Button href="/signIn" component={Link} variant="transparent">
+            Sign In
+          </Button>
+          <Button href="/signUp" component={Link} variant="outline" color="gray">
+            Sign Up
+          </Button>
           <ColorSchemeToggle />
         </Group>
       </M_Container>

@@ -9,10 +9,12 @@ const SALT_ROUNDS = 10;
 
 export type UserWithoutPassword = Omit<User, "password">;
 
+//> Include error codes in return type
 export type RegisterUser =
   | { success: true; createdUser: UserWithoutPassword }
   | { success: false; error: string };
 
+//> I will need to have a better way to handle errors
 export async function registerUser(
   prisma: PrismaClient,
   newUser: Prisma.UserCreateInput
