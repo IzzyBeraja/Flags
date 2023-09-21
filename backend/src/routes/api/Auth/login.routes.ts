@@ -40,5 +40,5 @@ export const route: RouteHandler = async (req, res) => {
   }
 
   res.status(UNAUTHORIZED);
-  res.json({ message: loginUserRequest.error });
+  res.json({ message: "Incorrect username or password" });
 };

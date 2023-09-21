@@ -1,5 +1,3 @@
-import type { FormEvent } from "react";
-
 import { Button, Paper, PasswordInput, Stack, TextInput } from "@mantine/core";
 import { useForm } from "@mantine/form";
 
@@ -9,10 +7,13 @@ export type SignInFormFields = {
 };
 
 type Props = {
-  onSubmit: (values: SignInFormFields, event: FormEvent<HTMLFormElement>) => void;
+  /** When form is submitted */
+  onSubmit: (values: SignInFormFields) => void;
+  /** Determines if the form is loading */
+  loading: boolean;
 };
 
-export default function SignInForm({ onSubmit }: Props) {
+export default function SignInForm({ onSubmit, loading }: Props) {
   const form = useForm<SignInFormFields>({
     initialValues: {
       email: "",
@@ -25,7 +26,9 @@ export default function SignInForm({ onSubmit }: Props) {
         <Stack>
           <TextInput label="Email Address" {...form.getInputProps("email")} />
           <PasswordInput label="Password" {...form.getInputProps("password")} />
-          <Button type="submit">Sign In</Button>
+          <Button loading={loading} type="submit">
+            Sign In
+          </Button>
         </Stack>
       </form>
     </Paper>
