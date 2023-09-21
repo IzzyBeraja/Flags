@@ -15,6 +15,6 @@ export function validateSchema<T>(validateFunction: ValidateFunction<T>) {
       errors[key] = errors[key] == null ? [error.message] : [...errors[key], error.message];
     });
 
-    return res.status(BAD_REQUEST).send({ errors });
+    return res.status(BAD_REQUEST).json({ errors });
   };
 }

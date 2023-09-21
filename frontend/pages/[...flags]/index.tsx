@@ -7,7 +7,7 @@ import FlowDiagram from "@components/FlowDiagram/FlowDiagram";
 import { fakeProjects } from "@data/fakedata";
 import { initialRules, useFlagResults } from "@hooks/useFlagResults";
 import { Grid, useMantineTheme } from "@mantine/core";
-import { boolToStatus } from "@util/typeConversions";
+import { boolToStatus } from "@utils/typeConversions";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { addEdge, applyEdgeChanges, applyNodeChanges, useReactFlow } from "reactflow";
