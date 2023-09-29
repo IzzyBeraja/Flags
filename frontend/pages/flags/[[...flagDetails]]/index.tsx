@@ -15,8 +15,10 @@ import { addEdge, applyEdgeChanges, applyNodeChanges, useReactFlow } from "react
 export default function FlagsRoute() {
   //? Routing
   const router = useRouter();
-  const route = router.query["flags"] ?? [];
-  const [_, projectId, flagId] = Array.isArray(route) ? route : [route];
+  const route = router.query["flagDetails"] ?? [];
+  const [projectId, flagId] = Array.isArray(route) ? route : [route];
+
+  console.count("Route");
 
   //? React Flow
   const reactFlowInstance = useReactFlow();
@@ -54,7 +56,7 @@ export default function FlagsRoute() {
   useEffect(() => {
     setNodes(currentFlag?.nodes ?? []);
     setEdges(currentFlag?.edges ?? []);
-  }, [route]);
+  }, [projectId, flagId]);
 
   //? When userData changes, update the status of the nodes and edges
   useEffect(() => {

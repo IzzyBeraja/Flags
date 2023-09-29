@@ -1,7 +1,7 @@
 import type { FlowNode } from "@customTypes/nodeTypes";
 import type { Edge } from "reactflow";
 
-import { TextInput, NavLink } from "@mantine/core";
+import { NavLink, TextInput } from "@mantine/core";
 import Link from "next/link";
 import { Search } from "tabler-icons-react";
 
@@ -31,7 +31,7 @@ export default function FlagNav({ projects }: Props) {
           {flags.map(({ name, id: flagId }) => (
             <NavLink
               component={Link}
-              href={["flags", projectId, flagId].join("/")}
+              href={[projectId, flagId].join("/")}
               key={flagId}
               label={name}
             />
