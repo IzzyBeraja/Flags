@@ -3,8 +3,6 @@ import type { Params, RequestHandlerAsync } from "../../../types/types";
 import { INTERNAL_SERVER_ERROR, OK, UNAUTHORIZED } from "../../../errors/errorCodes";
 import { sessionName } from "../../../initialize/initializeSession";
 
-export const method = "POST";
-
 export interface LogoutRequest {}
 
 export interface LogoutResponse {
@@ -13,7 +11,7 @@ export interface LogoutResponse {
 
 type RouteHandler = RequestHandlerAsync<Params, LogoutResponse, LogoutRequest>;
 
-export const route: RouteHandler = async (req, res) => {
+export const Post: RouteHandler = async (req, res) => {
   if (req.session.userId == null) {
     res.status(UNAUTHORIZED);
     res.json({ message: "You must be logged in to logout" });

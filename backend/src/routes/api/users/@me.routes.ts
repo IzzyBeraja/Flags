@@ -2,9 +2,7 @@ import type { RequestHandlerAsync } from "../../../types/types";
 
 import { OK, UNAUTHORIZED } from "../../../errors/errorCodes";
 
-export const method = "GET";
-
-export const route: RequestHandlerAsync = async (req, res) => {
+export const Get: RequestHandlerAsync = async (req, res) => {
   if (req.session.userId == null) {
     res.status(UNAUTHORIZED);
     res.send("You need to be logged in to access this route");

@@ -3,7 +3,7 @@ import type { NextFunction, Request, Response } from "express";
 import type { DeepMockProxy } from "jest-mock-extended";
 
 import { OK, UNAUTHORIZED } from "../../../../errors/errorCodes";
-import { route } from "../@me.routes";
+import { Get } from "../@me.routes";
 
 import { mock, mockDeep } from "jest-mock-extended";
 
@@ -22,7 +22,7 @@ describe("/api/user/", () => {
 
   describe("when NOT logged in", () => {
     it("returns unauthorized", async () => {
-      await route(req, res, next);
+      await Get(req, res, next);
 
       expect(res.status).toHaveBeenCalledTimes(1);
       expect(res.status).toHaveBeenCalledWith(UNAUTHORIZED);
@@ -42,7 +42,7 @@ describe("/api/user/", () => {
         updatedAt: new Date("1994-11-09T00:00:00"),
       });
 
-      await route(req, res, next);
+      await Get(req, res, next);
 
       expect(res.status).toHaveBeenCalledTimes(1);
       expect(res.status).toHaveBeenCalledWith(OK);

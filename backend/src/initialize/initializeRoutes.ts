@@ -10,28 +10,36 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath, pathToFileURL } from "url";
 
-const acceptedMethods = {
-  DELETE: "delete",
-  GET: "get",
-  PATCH: "patch",
-  POST: "post",
-  PUT: "put",
-} as const;
-type Method = keyof typeof acceptedMethods;
+const validMethods = ["Get", "Post", "Put", "Patch", "Delete"] as const;
+export type Method = (typeof validMethods)[number];
 
 type RouteSchema = JSONSchemaType<unknown> | undefined;
 
-export type RouteModule = {
-  method?: Method | undefined;
-  route?: RequestHandler | undefined;
+type RouteFunctions<T, Name extends string = ""> = {
+  [key in Method as `${key}${Name}`]?: T | undefined;
+};
+
+export type RouteModule = RouteFunctions<RouteSchema, "RequestSchema"> &
+  RouteFunctions<RouteSchema, "ResponseSchema"> &
+  RouteFunctions<RequestHandler>;
+
+export type RouteDetails = {
+  method: Lowercase<Method>;
   requestSchema?: RouteSchema | undefined;
+  responseSchema?: RouteSchema | undefined;
+  route: RequestHandler;
+};
+
+type RouteMetadata = {
+  method: Lowercase<Method>;
+  hasRequestSchema: boolean;
+  hasResponseSchema: boolean;
+  routePath: string;
 };
 
 type NewRouteData = {
-  method: Method;
-  route: RequestHandler;
   routePath: string;
-  requestSchema: RouteSchema;
+  routeDetails: RouteDetails[];
 };
 
 export type RouteError = {
@@ -39,7 +47,7 @@ export type RouteError = {
   routePath: string;
 };
 
-export const allRoutes = new Set();
+export const allRoutes = new Set<RouteMetadata>();
 
 const currentDir = path.dirname(fileURLToPath(import.meta.url));
 const routesDirectory = path.resolve(currentDir, "../routes");
@@ -75,23 +83,37 @@ async function buildRoutes(
 
     const routeUrl = pathToFileURL(fullPath).href;
 
-    //? What happens if the route has not exports?
-    const { method, route, requestSchema }: RouteModule = await import(routeUrl);
+    const routeModule: RouteModule = await import(routeUrl);
 
-    if (method == null || typeof method !== "string" || !acceptedMethods[method]) {
-      errors.push({ message: `Invalid method`, routePath });
-      continue;
-    }
+    const routeDetails: RouteDetails[] = [];
 
-    if (route == null || typeof route !== "function") {
-      errors.push({ message: `Invalid route handler`, routePath });
+    validMethods.forEach(method => {
+      const route = routeModule[method];
+
+      if (route == null) {
+        return;
+      }
+
+      if (typeof route !== "function") {
+        errors.push({ message: `${method} route must be a function`, routePath });
+        return;
+      }
+
+      routeDetails.push({
+        method: method.toLowerCase() as Lowercase<Method>,
+        requestSchema: routeModule[`${method}RequestSchema`],
+        responseSchema: routeModule[`${method}ResponseSchema`],
+        route,
+      });
+    });
+
+    if (routeDetails.length === 0) {
+      errors.push({ message: `No valid routes found`, routePath });
       continue;
     }
 
     const newRouteData: NewRouteData = {
-      method,
-      requestSchema,
-      route,
+      routeDetails,
       routePath,
     };
 
@@ -105,23 +127,33 @@ function createRoute(
   routeData: NewRouteData,
   errors: Array<RouteError>
 ) {
-  const { method, routePath, route, requestSchema } = routeData;
-  const requestHandlers: Array<RequestHandler> = [];
+  const { routePath, routeDetails } = routeData;
 
-  const key = `${method} ${routePath}`;
+  //> Not including ResponseSchema until I add docs as it's not used for
+  //> route generation currently
+  routeDetails.forEach(routeDetail => {
+    const { method, route, requestSchema, responseSchema } = routeDetail;
+    const requestHandlers: Array<RequestHandler> = [];
+    const routeMetadata = {
+      hasRequestSchema: requestSchema != null,
+      hasResponseSchema: responseSchema != null,
+      method,
+      routePath,
+    };
 
-  if (allRoutes.has(key)) {
-    errors.push({ message: `Route already exists`, routePath });
-    return;
-  }
+    if (allRoutes.has(routeMetadata)) {
+      errors.push({ message: `Route already exists`, routePath });
+      return;
+    }
 
-  const requestValidator = requestSchema != null && ajv.compile(requestSchema);
+    const requestValidator = requestSchema != null && ajv.compile(requestSchema);
 
-  requestValidator && requestHandlers.push(validateSchema(requestValidator));
-  requestHandlers.push(route);
+    requestValidator && requestHandlers.push(validateSchema(requestValidator));
+    requestHandlers.push(route);
 
-  expressRouter[acceptedMethods[method]](routePath, ...requestHandlers);
-  allRoutes.add(key);
+    expressRouter[method](routePath, ...requestHandlers);
+    allRoutes.add(routeMetadata);
+  });
 }
 
 export default async function initializeRoutes(

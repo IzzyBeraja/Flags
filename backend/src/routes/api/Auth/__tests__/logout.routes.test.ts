@@ -3,7 +3,7 @@ import type { LogoutRequest, LogoutResponse } from "../logout.routes";
 import type { Request, Response } from "express";
 
 import { INTERNAL_SERVER_ERROR, OK, UNAUTHORIZED } from "../../../../errors/errorCodes";
-import { route } from "../logout.routes";
+import { Post } from "../logout.routes";
 
 import { mock } from "jest-mock-extended";
 
@@ -24,7 +24,7 @@ describe("/api/auth/logout", () => {
     it("returns an error", async () => {
       req.session.userId = undefined;
 
-      await route(req, res, next);
+      await Post(req, res, next);
 
       expect(res.status).toHaveBeenCalledTimes(1);
       expect(res.status).toHaveBeenCalledWith(UNAUTHORIZED);
@@ -37,7 +37,7 @@ describe("/api/auth/logout", () => {
       req.session.userId = "1";
       mockDestroy.mockImplementationOnce(cb => cb(null));
 
-      await route(req, res, next);
+      await Post(req, res, next);
 
       expect(req.session.destroy).toHaveBeenCalledTimes(1);
       expect(res.clearCookie).toHaveBeenCalledTimes(1);
@@ -50,7 +50,7 @@ describe("/api/auth/logout", () => {
       req.session.userId = "1";
       mockDestroy.mockImplementationOnce(cb => cb(new Error("error")));
 
-      await route(req, res, next);
+      await Post(req, res, next);
 
       expect(req.session.destroy).toHaveBeenCalledTimes(1);
       expect(res.clearCookie).not.toHaveBeenCalled();

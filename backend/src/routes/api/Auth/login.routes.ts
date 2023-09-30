@@ -6,8 +6,6 @@ import { OK, UNAUTHORIZED } from "../../../errors/errorCodes";
 import { loginUser } from "../../../queries/User.queries";
 import { emailSchema, passwordSchema } from "../../../validation/validationRules";
 
-export const method = "POST";
-
 export interface LoginRequest {
   email: string;
   password: string;
@@ -17,7 +15,7 @@ export interface LoginResponse {
   message: string;
 }
 
-export const requestSchema: JSONSchemaType<LoginRequest> = {
+export const PostRequestSchema: JSONSchemaType<LoginRequest> = {
   additionalProperties: false,
   properties: {
     email: emailSchema,
@@ -29,7 +27,7 @@ export const requestSchema: JSONSchemaType<LoginRequest> = {
 
 type RouteHandler = RequestHandlerAsync<ParamsDictionary, LoginResponse, LoginRequest>;
 
-export const route: RouteHandler = async (req, res) => {
+export const Post: RouteHandler = async (req, res) => {
   const loginUserRequest = await loginUser(req.prisma, req.body.email, req.body.password);
 
   if (loginUserRequest.success) {

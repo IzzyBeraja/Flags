@@ -4,7 +4,7 @@ import type { Request, Response } from "express";
 
 import { OK, UNAUTHORIZED } from "../../../../errors/errorCodes";
 import * as UserQueries from "../../../../queries/User.queries";
-import { route } from "../login.routes";
+import { Post } from "../login.routes";
 
 import { mock } from "jest-mock-extended";
 
@@ -33,7 +33,7 @@ describe("/api/auth/login", () => {
         },
       });
 
-      await route(req, res, next);
+      await Post(req, res, next);
 
       expect(req.session.userId).toBe("1");
       expect(res.status).toHaveBeenCalledTimes(1);
@@ -47,7 +47,7 @@ describe("/api/auth/login", () => {
         success: false,
       });
 
-      await route(req, res, next);
+      await Post(req, res, next);
 
       expect(req.session.userId).toBeUndefined();
       expect(res.status).toHaveBeenCalledTimes(1);

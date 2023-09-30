@@ -4,7 +4,7 @@ import type { Request, Response } from "express";
 
 import { BAD_REQUEST, CREATED } from "../../../../errors/errorCodes";
 import * as UserQueries from "../../../../queries/User.queries";
-import { route } from "../register.routes";
+import { Post } from "../register.routes";
 
 import { mock } from "jest-mock-extended";
 
@@ -32,7 +32,7 @@ describe("/api/auth/register", () => {
       success: true,
     });
 
-    await route(req, res, next);
+    await Post(req, res, next);
 
     expect(req.session.userId).toBe("1");
     expect(res.status).toHaveBeenCalledTimes(1);
@@ -46,7 +46,7 @@ describe("/api/auth/register", () => {
       success: false,
     });
 
-    await route(req, res, next);
+    await Post(req, res, next);
 
     expect(req.session.userId).toBeUndefined();
     expect(res.status).toHaveBeenCalledTimes(1);
