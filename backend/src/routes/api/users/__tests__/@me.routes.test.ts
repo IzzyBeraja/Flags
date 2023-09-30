@@ -3,7 +3,7 @@ import type { NextFunction, Request, Response } from "express";
 import type { DeepMockProxy } from "jest-mock-extended";
 
 import { OK, UNAUTHORIZED } from "../../../../errors/errorCodes";
-import { route } from "../index.routes";
+import { route } from "../@me.routes";
 
 import { mock, mockDeep } from "jest-mock-extended";
 
