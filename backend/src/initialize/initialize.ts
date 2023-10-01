@@ -17,7 +17,10 @@ export default async function initialize() {
 
   console.group("🌐 Routes");
   console.group(`Built ${allRoutes.size} routes`);
-  console.table([...allRoutes], ["method", "routePath", "hasRequestSchema", "hasResponseSchema"]);
+  console.table(
+    [...allRoutes.values()],
+    ["method", "routePath", "hasRequestSchema", "hasResponseSchema"]
+  );
   console.groupEnd();
   if (routeErrors.length > 0) {
     console.group(`Found ${routeErrors.length} errors`);

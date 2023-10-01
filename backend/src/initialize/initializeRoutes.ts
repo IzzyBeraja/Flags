@@ -13,6 +13,8 @@ import { fileURLToPath, pathToFileURL } from "url";
 const validMethods = ["Get", "Post", "Put", "Patch", "Delete"] as const;
 export type Method = (typeof validMethods)[number];
 
+export const allRoutes = new Map<string, RouteMetadata>();
+
 type RouteSchema = JSONSchemaType<unknown> | undefined;
 
 type RouteFunctions<T, Name extends string = ""> = {
@@ -47,8 +49,6 @@ export type RouteError = {
   routePath: string;
 };
 
-export const allRoutes = new Set<RouteMetadata>();
-
 const currentDir = path.dirname(fileURLToPath(import.meta.url));
 const routesDirectory = path.resolve(currentDir, "../routes");
 
@@ -70,16 +70,15 @@ async function buildRoutes(
     }
 
     if (!file.endsWith(".routes.js")) {
-      console.log(`- Ignored file: ${file}`);
       continue;
     }
 
     const routeName = file.replace(".routes.js", "");
 
     // Example: /api/Auth/login
-    const routePath = `/${path.relative(routesDirectory, cwd).replace(/\\/g, "/")}/${
-      routeName === "index" ? "" : routeName
-    }`;
+    const routePath = `/${path
+      .relative(routesDirectory, cwd)
+      .replace(/\\/g, "/")}/${routeName}`.replace(/\/$/, "");
 
     const routeUrl = pathToFileURL(fullPath).href;
 
@@ -141,8 +140,10 @@ function createRoute(
       routePath,
     };
 
-    if (allRoutes.has(routeMetadata)) {
-      errors.push({ message: `Route already exists`, routePath });
+    const key = `${method} ${routePath}`;
+
+    if (allRoutes.get(key)) {
+      errors.push({ message: `Duplicate route method combination: (${key})`, routePath });
       return;
     }
 
@@ -152,7 +153,7 @@ function createRoute(
     requestHandlers.push(route);
 
     expressRouter[method](routePath, ...requestHandlers);
-    allRoutes.add(routeMetadata);
+    allRoutes.set(key, routeMetadata);
   });
 }
 
