@@ -1,11 +1,9 @@
 import type { PrismaClient, User } from "@prisma/client";
 
 import { exclude } from "./QueryFunctions";
+import { compare, hash } from "../utils/passwordFunctions";
 
 import { Prisma } from "@prisma/client";
-import bcrypt from "bcrypt";
-
-const SALT_ROUNDS = 10;
 
 export type UserWithoutPassword = Omit<User, "password">;
 
@@ -19,7 +17,7 @@ export async function registerUser(
   prisma: PrismaClient,
   newUser: Prisma.UserCreateInput
 ): Promise<RegisterUser> {
-  const hashedPassword = await bcrypt.hash(newUser.password, SALT_ROUNDS);
+  const hashedPassword = await hash(newUser.password);
 
   try {
     const createUserRequest = await prisma.user.create({
@@ -72,7 +70,7 @@ export async function loginUser(
       };
     }
 
-    const passwordMatch = await bcrypt.compare(password, user.password);
+    const passwordMatch = await compare(password, user.password);
 
     return passwordMatch
       ? { success: true, user: exclude(user, ["password"]) }
