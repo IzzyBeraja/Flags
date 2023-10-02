@@ -3,13 +3,13 @@ import type { Params, RequestHandlerAsync } from "../../../types/types";
 import { INTERNAL_SERVER_ERROR, OK, UNAUTHORIZED } from "../../../errors/errorCodes";
 import { sessionName } from "../../../initialize/initializeSession";
 
-export interface LogoutRequest {}
+export interface PostRequest {}
 
-export interface LogoutResponse {
+export interface PostResponse {
   message: string;
 }
 
-type RouteHandler = RequestHandlerAsync<Params, LogoutResponse, LogoutRequest>;
+type RouteHandler = RequestHandlerAsync<Params, PostResponse, PostRequest>;
 
 export const Post: RouteHandler = async (req, res) => {
   if (req.session.userId == null) {

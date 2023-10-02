@@ -6,7 +6,7 @@ import { BAD_REQUEST, CREATED } from "../../../errors/errorCodes";
 import { registerUser } from "../../../queries/User.queries";
 import { emailSchema, nameSchema, passwordSchema } from "../../../validation/validationRules";
 
-export interface RegisterRequest {
+export interface PostRequest {
   email: string;
   name: string;
   password: string;
@@ -20,9 +20,9 @@ type UserNotCreated = {
   error: string;
 };
 
-export type RegisterResponse = UserCreated | UserNotCreated;
+export type PostResponse = UserCreated | UserNotCreated;
 
-export const PostRequestSchema: JSONSchemaType<RegisterRequest> = {
+export const PostRequestSchema: JSONSchemaType<PostRequest> = {
   additionalProperties: false,
   properties: {
     email: emailSchema,
@@ -33,7 +33,7 @@ export const PostRequestSchema: JSONSchemaType<RegisterRequest> = {
   type: "object",
 };
 
-type RouteHandler = RequestHandlerAsync<Params, RegisterResponse, RegisterRequest>;
+type RouteHandler = RequestHandlerAsync<Params, PostResponse, PostRequest>;
 
 export const Post: RouteHandler = async (req, res) => {
   const registerUserRequest = await registerUser(req.prisma, {

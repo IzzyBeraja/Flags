@@ -1,5 +1,5 @@
 import type { Params } from "../../../../types/types";
-import type { LogoutRequest, LogoutResponse } from "../logout.routes";
+import type { PostRequest, PostResponse } from "../logout.routes";
 import type { Request, Response } from "express";
 
 import { INTERNAL_SERVER_ERROR, OK, UNAUTHORIZED } from "../../../../errors/errorCodes";
@@ -11,8 +11,8 @@ const next = jest.fn();
 
 const mockDestroy = jest.fn();
 
-let req: Request<Params, LogoutResponse, LogoutRequest>;
-let res: Response<LogoutResponse>;
+let req: Request<Params, PostResponse, PostRequest>;
+let res: Response<PostResponse>;
 
 describe("/api/auth/logout", () => {
   beforeEach(() => {
