@@ -24,7 +24,7 @@ describe("@me.routes", () => {
 
   describe("GET", () => {
     beforeEach(() => {
-      getReq = mock<Request>();
+      getReq = mock<Request>({ prisma: mockPrisma });
       getRes = mock<Response>();
     });
 
@@ -32,14 +32,14 @@ describe("@me.routes", () => {
       it("returns unauthorized", async () => {
         await Get(getReq, getRes, next);
 
-        expect(patchRes.status).toHaveBeenCalledTimes(1);
-        expect(patchRes.status).toHaveBeenCalledWith(UNAUTHORIZED);
+        expect(getRes.status).toHaveBeenCalledTimes(1);
+        expect(getRes.status).toHaveBeenCalledWith(UNAUTHORIZED);
       });
     });
 
     describe("when logged in", () => {
       it("returns user data w/o password", async () => {
-        patchReq.session.userId = "1";
+        getReq.session.userId = "1";
 
         mockPrisma.user.findUnique.mockResolvedValue({
           createdAt: new Date("1994-11-09T00:00:00"),
@@ -52,10 +52,10 @@ describe("@me.routes", () => {
 
         await Get(getReq, getRes, next);
 
-        expect(patchRes.status).toHaveBeenCalledTimes(1);
-        expect(patchRes.status).toHaveBeenCalledWith(OK);
-        expect(patchRes.json).toHaveBeenCalledTimes(1);
-        expect(patchRes.json).toHaveBeenCalledWith({
+        expect(getRes.status).toHaveBeenCalledTimes(1);
+        expect(getRes.status).toHaveBeenCalledWith(OK);
+        expect(getRes.json).toHaveBeenCalledTimes(1);
+        expect(getRes.json).toHaveBeenCalledWith({
           createdAt: new Date("1994-11-09T00:00:00"),
           email: "email@email.com",
           id: "1",
@@ -132,7 +132,7 @@ describe("@me.routes", () => {
           createdAt: new Date("1994-11-09T00:00:00"),
           email: "email@email.com",
           id: "1",
-          name: "name2",
+          name: "name",
           updatedAt: new Date("1994-11-09T00:00:00"),
         });
 
