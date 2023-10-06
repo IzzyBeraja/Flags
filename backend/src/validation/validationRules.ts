@@ -72,3 +72,15 @@ export const nameSchema: JSONSchemaType<string> = {
   minLength: minNameLength,
   type: "string",
 };
+
+//= Description =//
+
+const maxDescriptionLength = 200;
+
+export const descriptionSchema: JSONSchemaType<string> = {
+  errorMessage: {
+    maxLength: `Description must be at most ${maxDescriptionLength} characters`,
+  },
+  maxLength: maxNameLength,
+  type: "string",
+};
