@@ -1,7 +1,7 @@
 import type { UserWithoutPassword } from "../../../../queries/User.queries";
 import type { Params, RequestHandlerAsync } from "../../../../types/types";
 
-import { OK, UNAUTHORIZED } from "../../../../errors/errorCodes";
+import { NOT_FOUND, OK, UNAUTHORIZED } from "../../../../errors/errorCodes";
 import { compare, hash } from "../../../../utils/passwordFunctions";
 import { passwordSchema } from "../../../../validation/validationRules";
 
@@ -36,8 +36,8 @@ export const Put: PutHandler = async (req, res) => {
   });
 
   if (user == null) {
-    res.status(UNAUTHORIZED);
-    res.json({ error: "You need to be logged in to access this route" });
+    res.status(NOT_FOUND);
+    res.json({ error: "User not found" });
     return;
   }
 
@@ -53,7 +53,7 @@ export const Put: PutHandler = async (req, res) => {
 
   const updatedUser = await req.prisma.user.update({
     data: { password: newPasswordHash },
-    where: { id: req.session.userId },
+    where: { id: req.session.userId, updatedAt: user.updatedAt },
   });
 
   const userWithoutPassword = { ...updatedUser, password: undefined };
