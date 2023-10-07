@@ -1,12 +1,12 @@
 import type { PrismaClient } from "@prisma/client";
 import type { RequestHandler } from "express";
-import type { Connection } from "mysql2/promise";
+import type { DatabasePool } from "slonik";
 
 declare global {
   namespace Express {
     interface Request {
       prisma: PrismaClient;
-      db: Connection;
+      db: DatabasePool;
     }
   }
 }
@@ -34,3 +34,10 @@ type RequestHandlerAsync<
 export interface Params {
   [key: string]: string;
 }
+
+type Error = {
+  message: string;
+};
+
+export type Result<T, U = Error> = [T, null] | [null, U];
+export type ResultAsync<T, U = Error> = Promise<Result<T, U>>;

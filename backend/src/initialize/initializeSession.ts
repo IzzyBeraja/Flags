@@ -1,12 +1,6 @@
 import type RedisStore from "connect-redis";
 import type { SessionOptions } from "express-session";
 
-import dotenv from "dotenv";
-
-dotenv.config();
-
-const secret = process.env["SESSION_SECRET"] ?? "secret";
-
 export const sessionName = "flags.sid";
 
 export const getSessionData = (redisSessionStore: RedisStore): SessionOptions => ({
@@ -20,6 +14,6 @@ export const getSessionData = (redisSessionStore: RedisStore): SessionOptions =>
   resave: false,
   rolling: true,
   saveUninitialized: false,
-  secret,
+  secret: process.env["SESSION_SECRET"] ?? "secret",
   store: redisSessionStore,
 });

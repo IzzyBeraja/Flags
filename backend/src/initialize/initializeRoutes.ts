@@ -1,3 +1,4 @@
+import type { ResultAsync } from "../types/types";
 import type { JSONSchemaType } from "ajv";
 import type { RequestHandler } from "express";
 
@@ -158,15 +159,15 @@ function createRoute(
 }
 
 export default async function initializeRoutes(
-  errors: Array<RouteError>,
   router?: Router,
   ajv?: Ajv
-) {
+): ResultAsync<Router, RouteError[]> {
   const expressRouter = router ?? Router();
   const ajvInstance = ajv ?? new Ajv({ allErrors: true });
+  const errors: Array<RouteError> = [];
 
   allowErrorMessages(ajvInstance);
   await buildRoutes(expressRouter, ajvInstance, routesDirectory, errors);
 
-  return expressRouter;
+  return errors.length > 0 ? [null, errors] : [expressRouter, null];
 }

@@ -1,53 +1,67 @@
 import type { RouteError } from "./initializeRoutes.js";
+import type { ResultAsync } from "../types/types.js";
+import type { PrismaClient } from "@prisma/client";
+import type RedisStore from "connect-redis";
+import type { Router } from "express";
+import type { DatabasePool } from "slonik";
 
-import initializeDB from "./initializeDB.js";
+import initializeDBPool from "./initializeDBPool.js";
+import initializeORM from "./initializeORM.js";
 import initializeRoutes, { allRoutes } from "./initializeRoutes.js";
 import initializeSessionCache from "./initializeSessionCache.js";
 
-export default async function initialize() {
-  const routeErrors: Array<RouteError> = [];
-  const dbErrors: Array<string> = [];
-  const cacheErrors: Array<string> = [];
+type Initialize = {
+  router: Router;
+  prismaClient: PrismaClient;
+  sessionStore: RedisStore;
+  dbPool: DatabasePool;
+};
 
-  const results = await Promise.all([
-    initializeRoutes(routeErrors),
-    initializeDB(dbErrors),
-    initializeSessionCache(cacheErrors),
-  ]);
+type InitializeError =
+  | { service: "prisma" | "database" | "sessionCache"; message: string }
+  | { service: "routes"; errors: RouteError[] };
 
-  console.group("🌐 Routes");
-  console.group(`Built ${allRoutes.size} routes`);
+export default async function initialize(): ResultAsync<Initialize, InitializeError> {
+  // == Routing == //
+  const [router, routerErrors] = await initializeRoutes();
+
+  if (routerErrors != null) {
+    return [null, { errors: routerErrors, service: "routes" }];
+  }
+
+  console.group(`🌐 Routes (${allRoutes.size})`);
   console.table(
     [...allRoutes.values()],
     ["method", "routePath", "hasRequestSchema", "hasResponseSchema"]
   );
   console.groupEnd();
-  if (routeErrors.length > 0) {
-    console.group(`Found ${routeErrors.length} errors`);
-    routeErrors.forEach(({ message, routePath }) => console.log(`${routePath} - ${message}`));
-    console.groupEnd();
-  }
-  console.groupEnd();
 
-  console.group("📦 Database");
-  if (dbErrors.length > 0) {
-    console.group(`Found ${dbErrors.length} errors`);
-    dbErrors.forEach(error => console.log(error));
-    console.groupEnd();
-  } else {
-    console.log("Database connected succesesfully");
-  }
-  console.groupEnd();
+  // == Prisma == //
+  const [prismaClient, prismaError] = await initializeORM();
 
-  console.group("💸 Session Cache");
-  if (cacheErrors.length > 0) {
-    console.group(`Found ${cacheErrors.length} errors`);
-    cacheErrors.forEach(error => console.log(error));
-    console.groupEnd();
-  } else {
-    console.log("Session Cache connected succesesfully");
+  if (prismaError != null) {
+    return [null, { message: prismaError.message, service: "prisma" }];
   }
-  console.groupEnd();
 
-  return results;
+  console.log("📊 Prisma connected sucessfully");
+
+  // == Database == //
+  const [dbPool, dbPoolError] = await initializeDBPool();
+
+  if (dbPoolError != null) {
+    return [null, { message: dbPoolError.message, service: "database" }];
+  }
+
+  console.log("📦 Database connected successfully");
+
+  // == Session Cache == //
+  const [sessionStore, sessionError] = await initializeSessionCache();
+
+  if (sessionError != null) {
+    return [null, { message: sessionError.message, service: "sessionCache" }];
+  }
+
+  console.log("⏩ Session Cache connected succesesfully");
+
+  return [{ dbPool, prismaClient, router, sessionStore }, null];
 }
