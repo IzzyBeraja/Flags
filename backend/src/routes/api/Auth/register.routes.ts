@@ -1,19 +1,18 @@
-import type { UserWithoutPassword } from "../../../queries/User.queries";
+import type { Account } from "../../../queries/registerAccount";
 import type { Params, RequestHandlerAsync } from "../../../types/types";
 import type { JSONSchemaType } from "ajv";
 
 import { BAD_REQUEST, CREATED } from "../../../errors/errorCodes";
-import { registerUser } from "../../../queries/User.queries";
-import { emailSchema, nameSchema, passwordSchema } from "../../../validation/validationRules";
+import { registerAccount } from "../../../queries/registerAccount";
+import { emailSchema, passwordSchema } from "../../../validation/validationRules";
 
 export interface PostRequest {
   email: string;
-  name: string;
   password: string;
 }
 
 type UserCreated = {
-  createdUser: UserWithoutPassword;
+  createdUser: Account;
 };
 
 type UserNotCreated = {
@@ -26,30 +25,24 @@ export const PostRequestSchema: JSONSchemaType<PostRequest> = {
   additionalProperties: false,
   properties: {
     email: emailSchema,
-    name: nameSchema,
     password: passwordSchema,
   },
-  required: ["email", "name", "password"],
+  required: ["email", "password"],
   type: "object",
 };
 
 type RouteHandler = RequestHandlerAsync<Params, PostResponse, PostRequest>;
 
 export const Post: RouteHandler = async (req, res) => {
-  const registerUserRequest = await registerUser(req.prisma, {
-    email: req.body.email,
-    name: req.body.name,
-    password: req.body.password,
-  });
+  const [account, accountError] = await registerAccount(req.db, { ...req.body });
 
-  //> I will need to not send exact errors from database to client
-  if (!registerUserRequest.success) {
+  if (accountError != null) {
     res.status(BAD_REQUEST);
-    res.json({ error: registerUserRequest.error });
+    res.json({ error: accountError.message });
     return;
   }
 
-  req.session.userId = registerUserRequest.createdUser.id;
+  req.session.userId = account.id;
   res.status(CREATED);
-  res.json({ createdUser: registerUserRequest.createdUser });
+  res.json({ createdUser: account });
 };
