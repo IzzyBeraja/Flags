@@ -1,9 +1,9 @@
+import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import type { NextFunction, Request, Response } from "express";
-import type { DatabasePool } from "slonik";
 
 const dbMiddleware =
-  (dbPool: DatabasePool) => (req: Request, _res: Response, next: NextFunction) => {
-    req.db = dbPool;
+  (db: PostgresJsDatabase) => (req: Request, _res: Response, next: NextFunction) => {
+    req.db = db;
     next();
   };
 

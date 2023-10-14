@@ -1,8 +1,9 @@
 import type { ResultAsync } from "../types/types";
+import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
+import { accounts } from "../db/schema/accounts";
 import { hash } from "../utils/passwordFunctions";
 
-import { sql, type DatabasePool, UniqueIntegrityConstraintViolationError } from "slonik";
 export type AccountInput = {
   email: string;
   password: string;
@@ -11,28 +12,31 @@ export type AccountInput = {
 export type Account = {
   id: string;
   email: string;
-  created_at: Date;
-  updated_at: Date;
+  created_at: string;
+  updated_at: string;
 };
 
 export async function registerAccount(
-  pool: DatabasePool,
+  db: PostgresJsDatabase,
   input: AccountInput
 ): ResultAsync<Account> {
   const hashedPassword = await hash(input.password);
 
   try {
-    const account: Account = await pool.one(sql.unsafe`
-    insert into common.accounts (email, password)
-    values (${input.email}, ${hashedPassword})
-    returning id, email, created_at, updated_at
-  `);
+    const [account] = await db
+      .insert(accounts)
+      .values({ email: input.email, password: hashedPassword })
+      .returning({
+        created_at: accounts.created_at,
+        email: accounts.email,
+        id: accounts.id,
+        updated_at: accounts.updated_at,
+      });
+
+    console.log(account);
 
     return [account, null];
   } catch (error) {
-    if (error instanceof UniqueIntegrityConstraintViolationError) {
-      return [null, { message: `Email ${input.email} is already in use` }];
-    }
     return error instanceof Error ? [null, error] : [null, { message: "Something went wrong" }];
   }
 }

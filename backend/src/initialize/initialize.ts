@@ -2,10 +2,10 @@ import type { RouteError } from "./initializeRoutes.js";
 import type { ResultAsync } from "../types/types.js";
 import type { PrismaClient } from "@prisma/client";
 import type RedisStore from "connect-redis";
+import type { PostgresJsDatabase } from "drizzle-orm/postgres-js/driver.js";
 import type { Router } from "express";
-import type { DatabasePool } from "slonik";
 
-import initializeDBPool from "./initializeDBPool.js";
+import initializeDB from "./initializeDB.js";
 import initializeORM from "./initializeORM.js";
 import initializeRoutes, { allRoutes } from "./initializeRoutes.js";
 import initializeSessionCache from "./initializeSessionCache.js";
@@ -14,7 +14,7 @@ type Initialize = {
   router: Router;
   prismaClient: PrismaClient;
   sessionStore: RedisStore;
-  dbPool: DatabasePool;
+  db: PostgresJsDatabase;
 };
 
 type InitializeError =
@@ -46,10 +46,10 @@ export default async function initialize(): ResultAsync<Initialize, InitializeEr
   console.log("📊 Prisma connected sucessfully");
 
   // == Database == //
-  const [dbPool, dbPoolError] = await initializeDBPool();
+  const [db, dbError] = initializeDB();
 
-  if (dbPoolError != null) {
-    return [null, { message: dbPoolError.message, service: "database" }];
+  if (dbError != null) {
+    return [null, { message: dbError.message, service: "database" }];
   }
 
   console.log("📦 Database connected successfully");
@@ -63,5 +63,5 @@ export default async function initialize(): ResultAsync<Initialize, InitializeEr
 
   console.log("⏩ Session Cache connected succesesfully");
 
-  return [{ dbPool, prismaClient, router, sessionStore }, null];
+  return [{ db, prismaClient, router, sessionStore }, null];
 }
