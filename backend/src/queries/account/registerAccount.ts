@@ -1,8 +1,10 @@
-import type { ResultAsync } from "../types/types";
+import type { Error, ResultAsync } from "../../types/types";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
-import { accounts } from "../db/schema/accounts";
-import { hash } from "../utils/passwordFunctions";
+import { accounts } from "../../db/schema/accounts";
+import { hash } from "../../utils/passwordFunctions";
+
+import postgres from "postgres";
 
 export type AccountInput = {
   email: string;
@@ -19,7 +21,7 @@ export type Account = {
 export async function registerAccount(
   db: PostgresJsDatabase,
   input: AccountInput
-): ResultAsync<Account> {
+): ResultAsync<Account, postgres.PostgresError | Error> {
   const hashedPassword = await hash(input.password);
 
   try {
@@ -33,10 +35,10 @@ export async function registerAccount(
         updated_at: accounts.updated_at,
       });
 
-    console.log(account);
-
     return [account, null];
   } catch (error) {
-    return error instanceof Error ? [null, error] : [null, { message: "Something went wrong" }];
+    return error instanceof postgres.PostgresError
+      ? [null, error]
+      : [null, { message: "Something went wrong" }];
   }
 }

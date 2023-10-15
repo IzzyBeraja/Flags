@@ -7,7 +7,7 @@ export const killswitches = pgSchema("common").table(
   "killswitches",
   {
     created_at: timestamp("created_at", { mode: "string" }).notNull().defaultNow(),
-    description: varchar("description", { length: 250 }).notNull(),
+    description: varchar("description", { length: 250 }),
     id: uuid("id")
       .primaryKey()
       .default(sql`gen_random_uuid()`),

@@ -1,5 +1,5 @@
 import type { Params } from "../../../../types/types";
-import type { RegisterRequest, RegisterResponse } from "../register.routes";
+import type { PostRequest, PostResponse } from "../register.routes";
 import type { Request, Response } from "express";
 
 import { BAD_REQUEST, CREATED } from "../../../../errors/errorCodes";
@@ -11,8 +11,8 @@ import { mock } from "jest-mock-extended";
 const registerUserMock = jest.spyOn(UserQueries, "registerUser");
 const next = jest.fn();
 
-let req: Request<Params, RegisterResponse, RegisterRequest>;
-let res: Response<RegisterResponse>;
+let req: Request<Params, PostResponse, PostRequest>;
+let res: Response<PostResponse>;
 
 describe("/api/auth/register", () => {
   beforeEach(() => {

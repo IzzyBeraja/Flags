@@ -1,21 +1,33 @@
+import type { User } from "../../../queries/user/getUserByAccount";
 import type { UserWithoutPassword } from "../../../queries/User.queries";
 import type { Params, RequestHandlerAsync } from "../../../types/types";
 
-import { OK, UNAUTHORIZED } from "../../../errors/errorCodes";
+import { NOT_FOUND, OK, UNAUTHORIZED } from "../../../errors/errorCodes";
+import { getUserByAccount } from "../../../queries/user/getUserByAccount";
 
-export const Get: RequestHandlerAsync = async (req, res) => {
+export interface GetRequest {}
+
+export type GetResponse = { error: string } | { user: User };
+
+export type GetHandler = RequestHandlerAsync<Params, GetResponse, GetRequest>;
+
+export const Get: GetHandler = async (req, res) => {
   if (req.session.userId == null) {
     res.status(UNAUTHORIZED);
-    res.send("You need to be logged in to access this route");
+    res.json({ error: "You need to be logged in to access this route" });
     return;
   }
 
-  const user = await req.prisma.user.findUnique({
-    where: { id: req.session.userId ?? "" },
-  });
+  const [user, error] = await getUserByAccount(req.db, { accountId: req.session.userId });
+
+  if (error != null) {
+    res.status(NOT_FOUND);
+    res.json({ error: "User was not found" });
+    return;
+  }
 
   res.status(OK);
-  res.json({ ...user, password: undefined });
+  res.json({ user });
 };
 
 export interface PatchRequest {

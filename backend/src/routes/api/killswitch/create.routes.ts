@@ -1,14 +1,14 @@
+import type { Killswitch } from "../../../queries/killswitch/createKillswitch";
 import type { Params, RequestHandlerAsync } from "../../../types/types";
 
 import { BAD_REQUEST, CREATED, UNAUTHORIZED } from "../../../errors/errorCodes";
+import { createKillswitch } from "../../../queries/killswitch/createKillswitch";
 import { nameSchema } from "../../../validation/validationRules";
-
-import { Prisma, type Killswitch } from "@prisma/client";
 
 export interface PostRequest {
   name: string;
-  description?: string | undefined;
-  status?: boolean | undefined;
+  description?: string;
+  status?: boolean;
 }
 
 export const PostRequestSchema = {
@@ -33,25 +33,17 @@ export const Post: PostHandler = async (req, res) => {
     return;
   }
 
-  try {
-    const killswitch = await req.prisma.killswitch.create({
-      data: {
-        description: req.body.description ?? null,
-        name: req.body.name,
-        status: req.body.status ?? false,
-        userId: req.session.userId,
-      },
-    });
+  const [killswitch, error] = await createKillswitch(req.db, {
+    ...req.body,
+    userId: req.session.userId,
+  });
 
-    res.status(CREATED);
-    res.json({ killswitch });
-  } catch (error) {
-    if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      console.log(error.code, error.meta, error.message);
-    }
-    console.log(error);
+  if (error != null) {
+    res.status(BAD_REQUEST);
+    res.json({ error: error.message });
+    return;
   }
 
-  res.status(BAD_REQUEST);
-  res.json({ error: "Something went wrong" });
+  res.status(CREATED);
+  res.json({ killswitch });
 };

@@ -3,7 +3,7 @@ import type { JSONSchemaType } from "ajv";
 import type { ParamsDictionary } from "express-serve-static-core";
 
 import { OK, UNAUTHORIZED } from "../../../errors/errorCodes";
-import { loginUser } from "../../../queries/User.queries";
+import { loginAccount } from "../../../queries/account/loginAccount.js";
 import { emailSchema, passwordSchema } from "../../../validation/validationRules";
 
 export interface PostRequest {
@@ -28,15 +28,18 @@ export const PostRequestSchema: JSONSchemaType<PostRequest> = {
 type RouteHandler = RequestHandlerAsync<ParamsDictionary, PostResponse, PostRequest>;
 
 export const Post: RouteHandler = async (req, res) => {
-  const loginUserRequest = await loginUser(req.prisma, req.body.email, req.body.password);
+  console.log(req.session);
+  const [account, error] = await loginAccount(req.db, req.body);
 
-  if (loginUserRequest.success) {
-    req.session.userId = loginUserRequest.user.id;
-    res.status(OK);
-    res.json({ message: "Login successful" });
+  if (error != null) {
+    res.status(UNAUTHORIZED);
+    res.json({ message: error.message });
     return;
   }
 
-  res.status(UNAUTHORIZED);
-  res.json({ message: "Incorrect username or password" });
+  console.log(account);
+
+  req.session.userId = account.id;
+  res.status(OK);
+  res.json({ message: "Login successful" });
 };

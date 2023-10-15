@@ -1,5 +1,5 @@
 import type { Params } from "../../../../types/types";
-import type { LoginRequest, LoginResponse } from "../login.routes";
+import type { PostRequest, PostResponse } from "../login.routes";
 import type { Request, Response } from "express";
 
 import { OK, UNAUTHORIZED } from "../../../../errors/errorCodes";
@@ -11,8 +11,8 @@ import { mock } from "jest-mock-extended";
 const loginUserMock = jest.spyOn(UserQueries, "loginUser");
 const next = jest.fn();
 
-let req: Request<Params, LoginResponse, LoginRequest>;
-let res: Response<LoginResponse>;
+let req: Request<Params, PostResponse, PostRequest>;
+let res: Response<PostResponse>;
 
 describe("/api/auth/login", () => {
   beforeEach(() => {

@@ -1,9 +1,9 @@
-import type { Account } from "../../../queries/registerAccount";
+import type { Account } from "../../../queries/account/registerAccount";
 import type { Params, RequestHandlerAsync } from "../../../types/types";
 import type { JSONSchemaType } from "ajv";
 
 import { BAD_REQUEST, CREATED } from "../../../errors/errorCodes";
-import { registerAccount } from "../../../queries/registerAccount";
+import { registerAccount } from "../../../queries/account/registerAccount";
 import { emailSchema, passwordSchema } from "../../../validation/validationRules";
 
 export interface PostRequest {
