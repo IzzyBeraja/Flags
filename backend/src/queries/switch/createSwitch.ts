@@ -5,14 +5,14 @@ import { killswitches } from "../../db/schema/killswitches";
 
 import postgres from "postgres";
 
-export type KillswitchInput = {
+export type CreateSwitchInput = {
   name: string;
   description?: string | null;
   state?: boolean;
   userId: string;
 };
 
-export type Killswitch = {
+export type Switch = {
   createdAt: string;
   description: string | null;
   name: string;
@@ -21,19 +21,21 @@ export type Killswitch = {
   userId: string;
 };
 
-export async function createKillswitch(
+export async function createSwitch(
   db: PostgresJsDatabase,
-  input: KillswitchInput
-): ResultAsync<Killswitch, postgres.PostgresError | Error> {
+  input: CreateSwitchInput
+): ResultAsync<Switch, postgres.PostgresError | Error> {
   try {
     const [killswitch] = await db
       .insert(killswitches)
-      .values({
-        description: input.description ?? null,
-        name: input.name,
-        owned_by: input.userId,
-        state: input.state,
-      })
+      .values([
+        {
+          description: input.description ?? null,
+          name: input.name,
+          owned_by: input.userId,
+          state: input.state,
+        },
+      ])
       .returning({
         createdAt: killswitches.created_at,
         description: killswitches.description,
