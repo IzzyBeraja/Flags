@@ -1,6 +1,5 @@
-import type { RequestHandlerAsync } from "../../../types/types.js";
+import type { Error, Params, RequestHandlerAsync } from "../../../types/types.js";
 import type { JSONSchemaType } from "ajv";
-import type { ParamsDictionary } from "express-serve-static-core";
 
 import { OK, UNAUTHORIZED } from "../../../errors/errorCodes";
 import { loginAccount } from "../../../queries/account/loginAccount.js";
@@ -11,9 +10,7 @@ export interface PostRequest {
   password: string;
 }
 
-export interface PostResponse {
-  message: string;
-}
+export interface PostResponse {}
 
 export const PostRequestSchema: JSONSchemaType<PostRequest> = {
   additionalProperties: false,
@@ -25,10 +22,9 @@ export const PostRequestSchema: JSONSchemaType<PostRequest> = {
   type: "object",
 };
 
-type RouteHandler = RequestHandlerAsync<ParamsDictionary, PostResponse, PostRequest>;
+type RouteHandler = RequestHandlerAsync<Params, PostResponse | Error, PostRequest>;
 
 export const Post: RouteHandler = async (req, res) => {
-  console.log(req.session);
   const [account, error] = await loginAccount(req.db, req.body);
 
   if (error != null) {
@@ -36,8 +32,6 @@ export const Post: RouteHandler = async (req, res) => {
     res.json({ message: error.message });
     return;
   }
-
-  console.log(account);
 
   req.session.userId = account.id;
   res.status(OK);
