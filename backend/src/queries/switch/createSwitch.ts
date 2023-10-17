@@ -28,14 +28,12 @@ export async function createSwitch(
   try {
     const [killswitch] = await db
       .insert(killswitches)
-      .values([
-        {
-          description: input.description ?? null,
-          name: input.name,
-          owned_by: input.userId,
-          state: input.state,
-        },
-      ])
+      .values({
+        description: input.description ?? null,
+        name: input.name,
+        owned_by: input.userId,
+        state: input.state,
+      })
       .returning({
         createdAt: killswitches.created_at,
         description: killswitches.description,
