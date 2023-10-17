@@ -1,7 +1,7 @@
 import type RedisStore from "connect-redis";
 import type { SessionOptions } from "express-session";
 
-export const sessionName = "flags.sid";
+export const sessionName = "sid";
 
 export const getSessionData = (redisSessionStore: RedisStore): SessionOptions => ({
   cookie: {

@@ -29,12 +29,16 @@ export default async function initialize(): ResultAsync<Initialize, InitializeEr
     return [null, { errors: routerErrors, service: "routes" }];
   }
 
-  console.group(`🌐 Routes (${allRoutes.size})`);
-  console.table(
-    [...allRoutes.values()],
-    ["method", "routePath", "hasRequestSchema", "hasResponseSchema"]
-  );
-  console.groupEnd();
+  if (process.env["NODE_ENV"] !== "production") {
+    console.group(`🌐 Routes (${allRoutes.size})`);
+    console.table(
+      [...allRoutes.values()],
+      ["method", "routePath", "hasRequestSchema", "hasResponseSchema"]
+    );
+    console.groupEnd();
+  } else {
+    console.log(`🌐 Routes (${allRoutes.size})`);
+  }
 
   // == Prisma == //
   const [prismaClient, prismaError] = await initializeORM();
