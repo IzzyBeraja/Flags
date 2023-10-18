@@ -1,11 +1,9 @@
-import type { PrismaClient } from "@prisma/client";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import type { RequestHandler } from "express";
 
 declare global {
   namespace Express {
     interface Request {
-      prisma: PrismaClient;
       db: PostgresJsDatabase;
     }
   }
