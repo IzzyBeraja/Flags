@@ -39,7 +39,7 @@ describe("@me.routes", () => {
 
     describe("when logged in", () => {
       it("returns user data w/o password", async () => {
-        getReq.session.userId = "1";
+        getReq.session.accountId = "1";
 
         mockPrisma.user.findUnique.mockResolvedValue({
           createdAt: new Date("1994-11-09T00:00:00"),
@@ -84,7 +84,7 @@ describe("@me.routes", () => {
 
     describe("when logged in", () => {
       it("updates user data", async () => {
-        patchReq.session.userId = "1";
+        patchReq.session.accountId = "1";
         patchReq.body = { name: "name2" };
 
         mockPrisma.user.update.mockResolvedValue({
@@ -111,7 +111,7 @@ describe("@me.routes", () => {
       });
 
       it("does not update null fields", async () => {
-        patchReq.session.userId = "1";
+        patchReq.session.accountId = "1";
         patchReq.body = { name: undefined };
 
         mockPrisma.user.update.mockResolvedValue({

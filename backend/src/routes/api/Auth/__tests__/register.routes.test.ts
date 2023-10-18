@@ -34,7 +34,7 @@ describe("/api/auth/register", () => {
 
     await Post(req, res, next);
 
-    expect(req.session.userId).toBe("1");
+    expect(req.session.accountId).toBe("1");
     expect(res.status).toHaveBeenCalledTimes(1);
     expect(res.status).toHaveBeenCalledWith(CREATED);
     expect(res.json).toHaveBeenCalledTimes(1);
@@ -48,7 +48,7 @@ describe("/api/auth/register", () => {
 
     await Post(req, res, next);
 
-    expect(req.session.userId).toBeUndefined();
+    expect(req.session.accountId).toBeUndefined();
     expect(res.status).toHaveBeenCalledTimes(1);
     expect(res.status).toHaveBeenCalledWith(BAD_REQUEST);
     expect(res.json).toHaveBeenCalledTimes(1);

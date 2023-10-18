@@ -33,7 +33,7 @@ export const Post: RouteHandler = async (req, res) => {
     return;
   }
 
-  req.session.userId = account.id;
+  req.session.accountId = account.id;
   res.status(OK);
   res.json({ message: "Login successful" });
 };

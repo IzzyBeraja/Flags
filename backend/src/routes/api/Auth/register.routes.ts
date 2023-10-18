@@ -42,7 +42,7 @@ export const Post: RouteHandler = async (req, res) => {
     return;
   }
 
-  req.session.userId = account.id;
+  req.session.accountId = account.id;
   res.status(CREATED);
   res.json({ createdUser: account });
 };

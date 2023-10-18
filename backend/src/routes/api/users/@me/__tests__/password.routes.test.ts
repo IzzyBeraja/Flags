@@ -38,7 +38,7 @@ describe("password.routes", () => {
 
   describe("when logged in", () => {
     it("has invalid credentials", async () => {
-      req.session.userId = "1";
+      req.session.accountId = "1";
       req.body = { newPassword: "newPassword", oldPassword: "badPassword" };
 
       mockPrisma.user.findUnique.mockResolvedValueOnce({
@@ -61,7 +61,7 @@ describe("password.routes", () => {
     });
 
     it("has valid credentials", async () => {
-      req.session.userId = "1";
+      req.session.accountId = "1";
       req.body = { newPassword: "newPassword", oldPassword: "oldPassword" };
 
       mockPrisma.user.findUnique.mockResolvedValueOnce({

@@ -22,7 +22,7 @@ describe("/api/auth/logout", () => {
 
   describe("when NOT logged in", () => {
     it("returns an error", async () => {
-      req.session.userId = undefined;
+      req.session.accountId = undefined;
 
       await Post(req, res, next);
 
@@ -34,7 +34,7 @@ describe("/api/auth/logout", () => {
 
   describe("when logged in", () => {
     it("logout is successful", async () => {
-      req.session.userId = "1";
+      req.session.accountId = "1";
       mockDestroy.mockImplementationOnce(cb => cb(null));
 
       await Post(req, res, next);
@@ -47,7 +47,7 @@ describe("/api/auth/logout", () => {
     });
 
     it("logout fails gracefully", async () => {
-      req.session.userId = "1";
+      req.session.accountId = "1";
       mockDestroy.mockImplementationOnce(cb => cb(new Error("error")));
 
       await Post(req, res, next);

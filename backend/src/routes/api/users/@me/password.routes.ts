@@ -1,8 +1,8 @@
-import type { UserWithoutPassword } from "../../../../queries/User.queries";
-import type { Params, RequestHandlerAsync } from "../../../../types/types";
+import type { Account } from "../../../../queries/account/updateAccountCredentials";
+import type { Error, Params, RequestHandlerAsync } from "../../../../types/types";
 
-import { NOT_FOUND, OK, UNAUTHORIZED } from "../../../../errors/errorCodes";
-import { compare, hash } from "../../../../utils/passwordFunctions";
+import { BAD_REQUEST, OK, UNAUTHORIZED } from "../../../../errors/errorCodes";
+import { updateAccountCredentials } from "../../../../queries/account/updateAccountCredentials";
 import { passwordSchema } from "../../../../validation/validationRules";
 
 export interface PutRequest {
@@ -10,7 +10,7 @@ export interface PutRequest {
   newPassword: string;
 }
 
-export type PutResponse = { error: string } | UserWithoutPassword;
+export type PutResponse = { account: Account };
 
 export const PutRequestSchema = {
   additionalProperties: false,
@@ -22,42 +22,26 @@ export const PutRequestSchema = {
   type: "object",
 };
 
-type PutHandler = RequestHandlerAsync<Params, PutResponse, PutRequest>;
+type PutHandler = RequestHandlerAsync<Params, PutResponse | Error, PutRequest>;
 
 export const Put: PutHandler = async (req, res) => {
-  if (req.session.userId == null) {
+  if (req.session.accountId == null) {
     res.status(UNAUTHORIZED);
-    res.json({ error: "You need to be logged in to access this route" });
+    res.json({ message: "You need to be logged in to access this route" });
     return;
   }
 
-  const user = await req.prisma.user.findUnique({
-    where: { id: req.session.userId },
+  const [account, error] = await updateAccountCredentials(req.db, {
+    accountId: req.session.accountId,
+    ...req.body,
   });
 
-  if (user == null) {
-    res.status(NOT_FOUND);
-    res.json({ error: "User not found" });
+  if (error != null) {
+    res.status(BAD_REQUEST);
+    res.json({ message: "Invalid email password combination" });
     return;
   }
-
-  const oldPasswordMatches = await compare(req.body.oldPassword, user.password);
-
-  if (!oldPasswordMatches) {
-    res.status(UNAUTHORIZED);
-    res.json({ error: "Incorrect password" });
-    return;
-  }
-
-  const newPasswordHash = await hash(req.body.newPassword);
-
-  const updatedUser = await req.prisma.user.update({
-    data: { password: newPasswordHash },
-    where: { id: req.session.userId, updatedAt: user.updatedAt },
-  });
-
-  const userWithoutPassword = { ...updatedUser, password: undefined };
 
   res.status(OK);
-  res.json(userWithoutPassword);
+  res.json({ account: account });
 };

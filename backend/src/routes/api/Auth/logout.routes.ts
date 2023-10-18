@@ -12,7 +12,7 @@ export interface PostResponse {
 type RouteHandler = RequestHandlerAsync<Params, PostResponse, PostRequest>;
 
 export const Post: RouteHandler = async (req, res) => {
-  if (req.session.userId == null) {
+  if (req.session.accountId == null) {
     res.status(UNAUTHORIZED);
     res.json({ message: "You must be logged in to logout" });
     return;

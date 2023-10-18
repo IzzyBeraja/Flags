@@ -3,7 +3,7 @@ import type { Error, Params, RequestHandlerAsync } from "../../types/types";
 
 import { BAD_REQUEST, CREATED, UNAUTHORIZED } from "../../errors/errorCodes";
 import { createSwitch } from "../../queries/switch/createSwitch";
-import { nameSchema } from "../../validation/validationRules";
+import { descriptionSchema, nameSchema } from "../../validation/validationRules";
 
 export interface PostRequest {
   name: string;
@@ -18,18 +18,18 @@ export type PostResponse = {
 export const PostRequestSchema = {
   additionalProperties: false,
   properties: {
-    description: { type: "string" },
+    description: descriptionSchema,
     name: nameSchema,
     status: { type: "boolean" },
   },
-  required: ["name", "description"],
+  required: ["name"],
   type: "object",
 };
 
 type PostHandler = RequestHandlerAsync<Params, PostResponse | Error, PostRequest>;
 
 export const Post: PostHandler = async (req, res) => {
-  if (req.session.userId == null) {
+  if (req.session.accountId == null) {
     res.status(UNAUTHORIZED);
     res.json({ message: "You must be logged in to access this route" });
     return;
@@ -37,7 +37,7 @@ export const Post: PostHandler = async (req, res) => {
 
   const [killswitch, error] = await createSwitch(req.db, {
     ...req.body,
-    userId: req.session.userId,
+    userId: req.session.accountId, //> TODO: use userId when added to session
   });
 
   if (error != null) {

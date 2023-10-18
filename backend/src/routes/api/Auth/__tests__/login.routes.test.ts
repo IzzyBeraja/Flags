@@ -35,7 +35,7 @@ describe("/api/auth/login", () => {
 
       await Post(req, res, next);
 
-      expect(req.session.userId).toBe("1");
+      expect(req.session.accountId).toBe("1");
       expect(res.status).toHaveBeenCalledTimes(1);
       expect(res.status).toHaveBeenCalledWith(OK);
       expect(res.json).toHaveBeenCalledTimes(1);
@@ -49,7 +49,7 @@ describe("/api/auth/login", () => {
 
       await Post(req, res, next);
 
-      expect(req.session.userId).toBeUndefined();
+      expect(req.session.accountId).toBeUndefined();
       expect(res.status).toHaveBeenCalledTimes(1);
       expect(res.status).toHaveBeenCalledWith(UNAUTHORIZED);
       expect(res.json).toHaveBeenCalledTimes(1);
