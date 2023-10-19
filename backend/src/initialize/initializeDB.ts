@@ -5,7 +5,7 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 
 export default function initializeDB(): Result<PostgresJsDatabase> {
-  const dbConnection = process.env["DATABASE_URL2"];
+  const dbConnection = process.env["DATABASE_URL"];
 
   if (!dbConnection) {
     return [null, { message: "No database connection string provided" }];
