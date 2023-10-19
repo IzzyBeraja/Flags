@@ -56,13 +56,19 @@ export const Patch: PatchHandler = async (req, res) => {
     return;
   }
 
-  const [user, error] = await updateUser(req.db, { accountId: req.session.accountId, ...req.body });
+  const [user, error] = await updateUser(req.db, {
+    accountId: req.session.accountId,
+    ...req.body,
+  });
 
   if (error != null) {
     res.status(NOT_FOUND);
     res.json({ message: "User was not found" });
     return;
   }
+
+  req.session.firstName = user.firstName;
+  req.session.lastName = user.lastName;
 
   res.status(OK);
   res.json({ user });
@@ -93,13 +99,20 @@ export const Post: PostHandler = async (req, res) => {
     return;
   }
 
-  const [user, error] = await createUser(req.db, { accountId: req.session.accountId, ...req.body });
+  const [user, error] = await createUser(req.db, {
+    accountId: req.session.accountId,
+    ...req.body,
+  });
 
   if (error != null) {
+    console.log(error);
     res.status(NOT_FOUND);
     res.json({ message: "User was not found" });
     return;
   }
+
+  req.session.firstName = user.firstName;
+  req.session.lastName = user.lastName;
 
   res.status(OK);
   res.json({ user });

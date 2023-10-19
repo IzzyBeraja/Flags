@@ -2,6 +2,7 @@ import type { Error, ResultAsync } from "../../types/types";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 import { accounts } from "../../db/schema/accounts";
+import { users } from "../../db/schema/users";
 import { compare } from "../../utils/passwordFunctions";
 
 import { eq } from "drizzle-orm";
@@ -12,42 +13,61 @@ export type LoginInput = {
   password: string;
 };
 
-export type Account = {
-  id: string;
+export type UserDetails = {
+  accountId: string;
   email: string;
-  createdAt: string;
+  firstName: string | null;
+  lastName: string | null;
   updatedAt: string;
+  userId: string;
 };
 
 export async function loginAccount(
   db: PostgresJsDatabase,
   input: LoginInput
-): ResultAsync<Account, postgres.PostgresError | Error> {
+): ResultAsync<UserDetails, postgres.PostgresError | Error> {
   try {
-    const [account] = await db
-      .select({
-        createdAt: accounts.created_at,
-        email: accounts.email,
-        id: accounts.id,
-        password: accounts.password,
-        updatedAt: accounts.updated_at,
-      })
-      .from(accounts)
-      .where(eq(accounts.email, input.email));
+    const [userDetails] = await db.transaction(async tx => {
+      const [accountCredentials] = await tx
+        .select({
+          email: accounts.email,
+          id: accounts.id,
+          password: accounts.password,
+        })
+        .from(accounts)
+        .where(eq(accounts.email, input.email));
 
-    if (account == null) {
-      return [null, { message: "No account found" }];
-    }
+      if (accountCredentials == null) {
+        return [null, { message: "Bad email and password combination" }];
+      }
 
-    const passwordMatch = await compare(input.password, account.password);
+      const passwordMatch = await compare(input.password, accountCredentials.password);
 
-    if (!passwordMatch) {
+      if (!passwordMatch) {
+        return [null, { message: "Bad email and password combination" }];
+      }
+
+      const [details] = await tx
+        .select({
+          accountId: accounts.id,
+          email: accounts.email,
+          firstName: users.first_name,
+          lastName: users.last_name,
+          updatedAt: accounts.updated_at,
+          userId: users.id,
+        })
+        .from(accounts)
+        .innerJoin(users, eq(accounts.id, users.account_id))
+        .where(eq(accounts.id, accountCredentials.id));
+
+      return [details, null];
+    });
+
+    if (userDetails == null) {
       return [null, { message: "Bad email and password combination" }];
     }
 
-    const accountWithoutPassword = { ...account, password: undefined };
-
-    return [accountWithoutPassword, null];
+    return [userDetails, null];
   } catch (error) {
     return error instanceof postgres.PostgresError
       ? [null, error]

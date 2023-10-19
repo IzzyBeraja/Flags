@@ -25,7 +25,7 @@ export const PostRequestSchema: JSONSchemaType<PostRequest> = {
 type RouteHandler = RequestHandlerAsync<Params, PostResponse | Error, PostRequest>;
 
 export const Post: RouteHandler = async (req, res) => {
-  const [account, error] = await loginAccount(req.db, req.body);
+  const [userDetails, error] = await loginAccount(req.db, req.body);
 
   if (error != null) {
     res.status(UNAUTHORIZED);
@@ -33,7 +33,15 @@ export const Post: RouteHandler = async (req, res) => {
     return;
   }
 
-  req.session.accountId = account.id;
+  req.session.accountId = userDetails.accountId;
+  req.session.email = userDetails.email;
+  req.session.firstName = userDetails.firstName;
+  req.session.lastName = userDetails.lastName;
+  req.session.userId = userDetails.userId;
+  req.session.ipAddress = req.ip;
+  req.session.loginDate = new Date().toISOString();
+  req.session.userAgent = req.get("user-agent") ?? "";
+
   res.status(OK);
   res.json({ message: "Login successful" });
 };
