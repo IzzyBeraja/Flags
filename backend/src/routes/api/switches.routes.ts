@@ -8,11 +8,11 @@ import { descriptionSchema, nameSchema } from "../../validation/validationRules"
 export interface PostRequest {
   name: string;
   description?: string;
-  status?: boolean;
+  state?: boolean;
 }
 
 export type PostResponse = {
-  killswitch: Switch;
+  fSwitch: Switch;
 };
 
 export const PostRequestSchema = {
@@ -20,7 +20,7 @@ export const PostRequestSchema = {
   properties: {
     description: descriptionSchema,
     name: nameSchema,
-    status: { type: "boolean" },
+    state: { type: "boolean" },
   },
   required: ["name"],
   type: "object",
@@ -29,15 +29,15 @@ export const PostRequestSchema = {
 type PostHandler = RequestHandlerAsync<Params, PostResponse | Error, PostRequest>;
 
 export const Post: PostHandler = async (req, res) => {
-  if (req.session.accountId == null) {
+  if (req.session.accountId == null || req.session.userId == null) {
     res.status(UNAUTHORIZED);
     res.json({ message: "You must be logged in to access this route" });
     return;
   }
 
-  const [killswitch, error] = await createSwitch(req.db, {
+  const [fSwitch, error] = await createSwitch(req.db, {
     ...req.body,
-    userId: req.session.accountId, //> TODO: use userId when added to session
+    userId: req.session.userId,
   });
 
   if (error != null) {
@@ -47,5 +47,5 @@ export const Post: PostHandler = async (req, res) => {
   }
 
   res.status(CREATED);
-  res.json({ killswitch });
+  res.json({ fSwitch });
 };

@@ -1,7 +1,7 @@
 import type { Error, ResultAsync } from "../../types/types";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
-import { killswitches } from "../../db/schema/killswitches";
+import { switches } from "../../db/schema/switches";
 
 import postgres from "postgres";
 
@@ -26,8 +26,8 @@ export async function createSwitch(
   input: CreateSwitchInput
 ): ResultAsync<Switch, postgres.PostgresError | Error> {
   try {
-    const [killswitch] = await db
-      .insert(killswitches)
+    const [fswitch] = await db
+      .insert(switches)
       .values({
         description: input.description ?? null,
         name: input.name,
@@ -35,15 +35,15 @@ export async function createSwitch(
         state: input.state,
       })
       .returning({
-        createdAt: killswitches.created_at,
-        description: killswitches.description,
-        name: killswitches.name,
-        state: killswitches.state,
-        updatedAt: killswitches.updated_at,
-        userId: killswitches.owned_by,
+        createdAt: switches.created_at,
+        description: switches.description,
+        name: switches.name,
+        state: switches.state,
+        updatedAt: switches.updated_at,
+        userId: switches.owned_by,
       });
 
-    return [killswitch, null];
+    return [fswitch, null];
   } catch (error) {
     return error instanceof postgres.PostgresError
       ? [null, error]

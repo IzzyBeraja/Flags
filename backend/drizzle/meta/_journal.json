@@ -8,6 +8,13 @@
       "when": 1697317779953,
       "tag": "0000_clumsy_war_machine",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1697757027393,
+      "tag": "0001_neat_sprite",
+      "breakpoints": true
     }
   ]
 }
