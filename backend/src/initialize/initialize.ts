@@ -38,7 +38,7 @@ export default async function initialize(): ResultAsync<Initialize, InitializeEr
   }
 
   // == Database == //
-  const [db, dbError] = initializeDB();
+  const [db, dbError] = await initializeDB();
 
   if (dbError != null) {
     return [null, { message: dbError.message, service: "database" }];

@@ -18,9 +18,9 @@ type Props = {
 };
 
 export default function middleware({ app, router, sessionStore, db }: Props) {
-  app.use(morgan(logFormatter));
   app.use(express.json());
   app.use(corsMiddleware);
+  app.use(morgan(logFormatter));
   app.use(sessionMiddleware(sessionStore));
   app.use(dbMiddleware(db));
   app.use(router);
