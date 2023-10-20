@@ -1,4 +1,4 @@
-import type { Error, Params, RequestHandlerAsync } from "../../../types/types";
+import type { ErrorType, Params, RequestHandlerAsync } from "../../../types/types";
 
 import { NOT_FOUND, OK, UNAUTHORIZED } from "../../../errors/errorCodes";
 import { createUser } from "../../../queries/user/createUser";
@@ -10,7 +10,7 @@ export interface GetRequest {}
 
 export type GetResponse = { user: User };
 
-export type GetHandler = RequestHandlerAsync<Params, GetResponse | Error, GetRequest>;
+export type GetHandler = RequestHandlerAsync<Params, GetResponse | ErrorType, GetRequest>;
 
 export const Get: GetHandler = async (req, res) => {
   if (req.session.accountId == null) {
@@ -47,7 +47,7 @@ export const PatchRequestSchema = {
   type: "object",
 };
 
-export type PatchHandler = RequestHandlerAsync<Params, PatchResponse | Error, PatchRequest>;
+export type PatchHandler = RequestHandlerAsync<Params, PatchResponse | ErrorType, PatchRequest>;
 
 export const Patch: PatchHandler = async (req, res) => {
   if (req.session.accountId == null) {
@@ -90,7 +90,7 @@ export const PostRequestSchema = {
   type: "object",
 };
 
-export type PostHandler = RequestHandlerAsync<Params, PostResponse | Error, PostRequest>;
+export type PostHandler = RequestHandlerAsync<Params, PostResponse | ErrorType, PostRequest>;
 
 export const Post: PostHandler = async (req, res) => {
   if (req.session.accountId == null) {

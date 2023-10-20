@@ -1,8 +1,7 @@
-import type { ResultAsync } from "../../types/types";
+import type { ErrorType, ResultAsync } from "../../types/types";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 import { accounts } from "../../db/schema/accounts";
-import { Error } from "../../types/types";
 import { compare, hash } from "../../utils/passwordFunctions";
 
 import { and, eq } from "drizzle-orm";
@@ -24,7 +23,7 @@ export type Account = {
 export async function updateAccountCredentials(
   db: PostgresJsDatabase,
   input: getAccountWithCredentialsInput
-): ResultAsync<Account, postgres.PostgresError | Error> {
+): ResultAsync<Account, postgres.PostgresError | ErrorType> {
   try {
     const updatedAccount = await db.transaction(async tx => {
       const [account] = await tx

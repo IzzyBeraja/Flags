@@ -1,4 +1,4 @@
-import type { Error, ResultAsync } from "../../types/types";
+import type { ErrorType, ResultAsync } from "../../types/types";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 import { accounts } from "../../db/schema/accounts";
@@ -21,7 +21,7 @@ export type Account = {
 export async function registerAccount(
   db: PostgresJsDatabase,
   input: AccountInput
-): ResultAsync<Account, postgres.PostgresError | Error> {
+): ResultAsync<Account, postgres.PostgresError | ErrorType> {
   const hashedPassword = await hash(input.password);
 
   try {

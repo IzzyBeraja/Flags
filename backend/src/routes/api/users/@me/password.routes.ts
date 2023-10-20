@@ -1,5 +1,5 @@
 import type { Account } from "../../../../queries/account/updateAccountCredentials";
-import type { Error, Params, RequestHandlerAsync } from "../../../../types/types";
+import type { ErrorType, Params, RequestHandlerAsync } from "../../../../types/types";
 
 import { BAD_REQUEST, OK, UNAUTHORIZED } from "../../../../errors/errorCodes";
 import { updateAccountCredentials } from "../../../../queries/account/updateAccountCredentials";
@@ -22,7 +22,7 @@ export const PutRequestSchema = {
   type: "object",
 };
 
-type PutHandler = RequestHandlerAsync<Params, PutResponse | Error, PutRequest>;
+type PutHandler = RequestHandlerAsync<Params, PutResponse | ErrorType, PutRequest>;
 
 export const Put: PutHandler = async (req, res) => {
   if (req.session.accountId == null) {

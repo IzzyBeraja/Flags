@@ -40,9 +40,9 @@ export interface Params {
   [key: string]: string;
 }
 
-export type Error = {
+export type ErrorType = {
   message: string;
 };
 
-export type Result<T, U = Error> = [T, null] | [null, U];
-export type ResultAsync<T, U = Error> = Promise<Result<T, U>>;
+export type Result<T, U = ErrorType> = [T, null] | [null, U];
+export type ResultAsync<T, U = ErrorType> = Promise<Result<T, U>>;

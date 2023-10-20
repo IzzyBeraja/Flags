@@ -1,4 +1,4 @@
-import type { Error, ResultAsync } from "../../types/types";
+import type { ErrorType, ResultAsync } from "../../types/types";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 import { switches } from "../../db/schema/switches";
@@ -24,7 +24,7 @@ export type Switch = {
 export async function createSwitch(
   db: PostgresJsDatabase,
   input: CreateSwitchInput
-): ResultAsync<Switch, postgres.PostgresError | Error> {
+): ResultAsync<Switch, postgres.PostgresError | ErrorType> {
   try {
     const [fswitch] = await db
       .insert(switches)

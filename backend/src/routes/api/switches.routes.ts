@@ -1,5 +1,5 @@
 import type { Switch } from "../../queries/switch/createSwitch";
-import type { Error, Params, RequestHandlerAsync } from "../../types/types";
+import type { ErrorType, Params, RequestHandlerAsync } from "../../types/types";
 
 import { BAD_REQUEST, CREATED, UNAUTHORIZED } from "../../errors/errorCodes";
 import { createSwitch } from "../../queries/switch/createSwitch";
@@ -26,7 +26,7 @@ export const PostRequestSchema = {
   type: "object",
 };
 
-type PostHandler = RequestHandlerAsync<Params, PostResponse | Error, PostRequest>;
+type PostHandler = RequestHandlerAsync<Params, PostResponse | ErrorType, PostRequest>;
 
 export const Post: PostHandler = async (req, res) => {
   if (req.session.accountId == null || req.session.userId == null) {

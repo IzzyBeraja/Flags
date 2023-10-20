@@ -1,4 +1,4 @@
-import type { Error, ResultAsync } from "../../types/types";
+import type { ErrorType, ResultAsync } from "../../types/types";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 import { accounts } from "../../db/schema/accounts";
@@ -25,7 +25,7 @@ export type UserDetails = {
 export async function loginAccount(
   db: PostgresJsDatabase,
   input: LoginInput
-): ResultAsync<UserDetails, postgres.PostgresError | Error> {
+): ResultAsync<UserDetails, postgres.PostgresError | ErrorType> {
   try {
     const [userDetails] = await db.transaction(async tx => {
       const [accountCredentials] = await tx
