@@ -22,14 +22,14 @@ declare module "express-session" {
   }
 }
 
-type UnwrapPromise<T> = T extends Promise<infer U> ? U : T;
+export type UnwrapPromise<T> = T extends Promise<infer U> ? U : T;
 
 /** Takes a type and makes all of its functions async */
-type Asyncify<T> = T extends (...args: infer U) => infer R
+export type Asyncify<T> = T extends (...args: infer U) => infer R
   ? (...args: U) => Promise<UnwrapPromise<R>>
   : T;
 
-type RequestHandlerAsync<
+export type RequestHandlerAsync<
   P = Params,
   ResBody = unknown,
   ReqBody = unknown,
@@ -40,7 +40,7 @@ export interface Params {
   [key: string]: string;
 }
 
-type Error = {
+export type Error = {
   message: string;
 };
 
