@@ -77,9 +77,10 @@ async function buildRoutes(
     const routeName = file.replace(".routes.js", "");
 
     // Example: /api/Auth/login
-    const routePath = `/${path
-      .relative(routesDirectory, cwd)
-      .replace(/\\/g, "/")}/${routeName}`.replace(/\/$/, "");
+    const routePath = `/${path.relative(routesDirectory, cwd).replace(/\\/g, "/")}/${routeName}`
+      .replace(/\/$/, "")
+      .replace("[", ":")
+      .replace("]", "");
 
     const routeUrl = pathToFileURL(fullPath).href;
 
