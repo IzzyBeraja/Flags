@@ -13,6 +13,7 @@ export type CreateSwitchInput = {
 };
 
 export type Switch = {
+  switchId: string;
   createdAt: string;
   description: string | null;
   name: string;
@@ -39,6 +40,7 @@ export async function createSwitch(
         description: switches.description,
         name: switches.name,
         state: switches.state,
+        switchId: switches.id,
         updatedAt: switches.updated_at,
         userId: switches.owned_by,
       });
