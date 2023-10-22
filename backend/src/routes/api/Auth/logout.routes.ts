@@ -1,17 +1,17 @@
-import type { Params, RequestHandlerAsync } from "../../../types/types";
+import type { EmptyObject, Params, RequestHandlerAsync } from "../../../types/types";
 
 import { INTERNAL_SERVER_ERROR, OK, UNAUTHORIZED } from "../../../errors/errorCodes";
 import { sessionName } from "../../../initialize/initializeSession";
 
-export interface PostRequest {}
+type PostRequest = EmptyObject;
 
-export interface PostResponse {
+type PostResponse = {
   message: string;
-}
+};
 
-type RouteHandler = RequestHandlerAsync<Params, PostResponse, PostRequest>;
+export type PostHandler = RequestHandlerAsync<Params, PostResponse, PostRequest>;
 
-export const Post: RouteHandler = async (req, res) => {
+export const Post: PostHandler = async (req, res) => {
   if (req.session.accountId == null) {
     res.status(UNAUTHORIZED);
     res.json({ message: "You must be logged in to logout" });

@@ -12,7 +12,7 @@ export type AccountInput = {
 };
 
 export type Account = {
-  id: string;
+  accountId: string;
   email: string;
   created_at: string;
   updated_at: string;
@@ -29,9 +29,9 @@ export async function registerAccount(
       .insert(accounts)
       .values({ email: input.email, password: hashedPassword })
       .returning({
+        accountId: accounts.id,
         created_at: accounts.created_at,
         email: accounts.email,
-        id: accounts.id,
         updated_at: accounts.updated_at,
       });
 

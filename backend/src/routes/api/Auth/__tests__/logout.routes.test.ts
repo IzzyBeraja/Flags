@@ -1,6 +1,4 @@
-import type { Params } from "../../../../types/types";
-import type { PostRequest, PostResponse } from "../logout.routes";
-import type { Request, Response } from "express";
+import type { PostHandler } from "../logout.routes";
 
 import { INTERNAL_SERVER_ERROR, OK, UNAUTHORIZED } from "../../../../errors/errorCodes";
 import { Post } from "../logout.routes";
@@ -11,52 +9,52 @@ const next = jest.fn();
 
 const mockDestroy = jest.fn();
 
-let req: Request<Params, PostResponse, PostRequest>;
-let res: Response<PostResponse>;
+let postReq: Parameters<PostHandler>[0];
+let postRes: Parameters<PostHandler>[1];
 
 describe("/api/auth/logout", () => {
   beforeEach(() => {
-    req = mock<Request>({ session: { destroy: mockDestroy } });
-    res = mock<Response>();
+    postReq = mock<typeof postReq>({ session: { destroy: mockDestroy } });
+    postRes = mock<typeof postRes>();
   });
 
   describe("when NOT logged in", () => {
     it("returns an error", async () => {
-      req.session.accountId = undefined;
+      postReq.session.accountId = undefined;
 
-      await Post(req, res, next);
+      await Post(postReq, postRes, next);
 
-      expect(res.status).toHaveBeenCalledTimes(1);
-      expect(res.status).toHaveBeenCalledWith(UNAUTHORIZED);
-      expect(res.json).toHaveBeenCalledTimes(1);
+      expect(postRes.status).toHaveBeenCalledTimes(1);
+      expect(postRes.status).toHaveBeenCalledWith(UNAUTHORIZED);
+      expect(postRes.json).toHaveBeenCalledTimes(1);
     });
   });
 
   describe("when logged in", () => {
     it("logout is successful", async () => {
-      req.session.accountId = "1";
+      postReq.session.accountId = "1";
       mockDestroy.mockImplementationOnce(cb => cb(null));
 
-      await Post(req, res, next);
+      await Post(postReq, postRes, next);
 
-      expect(req.session.destroy).toHaveBeenCalledTimes(1);
-      expect(res.clearCookie).toHaveBeenCalledTimes(1);
-      expect(res.status).toHaveBeenCalledTimes(1);
-      expect(res.status).toHaveBeenCalledWith(OK);
-      expect(res.json).toHaveBeenCalledTimes(1);
+      expect(postReq.session.destroy).toHaveBeenCalledTimes(1);
+      expect(postRes.clearCookie).toHaveBeenCalledTimes(1);
+      expect(postRes.status).toHaveBeenCalledTimes(1);
+      expect(postRes.status).toHaveBeenCalledWith(OK);
+      expect(postRes.json).toHaveBeenCalledTimes(1);
     });
 
     it("logout fails gracefully", async () => {
-      req.session.accountId = "1";
+      postReq.session.accountId = "1";
       mockDestroy.mockImplementationOnce(cb => cb(new Error("error")));
 
-      await Post(req, res, next);
+      await Post(postReq, postRes, next);
 
-      expect(req.session.destroy).toHaveBeenCalledTimes(1);
-      expect(res.clearCookie).not.toHaveBeenCalled();
-      expect(res.status).toHaveBeenCalledTimes(1);
-      expect(res.status).toHaveBeenCalledWith(INTERNAL_SERVER_ERROR);
-      expect(res.json).toHaveBeenCalledTimes(1);
+      expect(postReq.session.destroy).toHaveBeenCalledTimes(1);
+      expect(postRes.clearCookie).not.toHaveBeenCalled();
+      expect(postRes.status).toHaveBeenCalledTimes(1);
+      expect(postRes.status).toHaveBeenCalledWith(INTERNAL_SERVER_ERROR);
+      expect(postRes.json).toHaveBeenCalledTimes(1);
     });
   });
 });

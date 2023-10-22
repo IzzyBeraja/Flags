@@ -46,3 +46,5 @@ export type ErrorType = {
 
 export type Result<T, U = ErrorType> = [T, null] | [null, U];
 export type ResultAsync<T, U = ErrorType> = Promise<Result<T, U>>;
+
+export type EmptyObject = Record<PropertyKey, never>;

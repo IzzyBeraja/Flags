@@ -1,4 +1,4 @@
-import type { ErrorType, Params, RequestHandlerAsync } from "../../../types/types";
+import type { EmptyObject, ErrorType, Params, RequestHandlerAsync } from "../../../types/types";
 
 import { NOT_FOUND, OK, UNAUTHORIZED } from "../../../errors/errorCodes";
 import { createUser } from "../../../queries/user/createUser";
@@ -6,9 +6,13 @@ import { getUser } from "../../../queries/user/getUser";
 import { updateUser, type User } from "../../../queries/user/updateUser";
 import { nameSchema } from "../../../validation/validationRules";
 
-export interface GetRequest {}
+//#region GET
 
-export type GetResponse = { user: User };
+type GetRequest = EmptyObject;
+
+type GetResponse = {
+  user: User;
+};
 
 export type GetHandler = RequestHandlerAsync<Params, GetResponse | ErrorType, GetRequest>;
 
@@ -31,12 +35,18 @@ export const Get: GetHandler = async (req, res) => {
   res.json({ user });
 };
 
-export interface PatchRequest {
+//#endregion
+
+//#region PATCH
+
+type PatchRequest = {
   firstName?: string;
   lastName?: string;
-}
+};
 
-export type PatchResponse = { user: User };
+type PatchResponse = {
+  user: User;
+};
 
 export const PatchRequestSchema = {
   additionalProperties: false,
@@ -74,12 +84,18 @@ export const Patch: PatchHandler = async (req, res) => {
   res.json({ user });
 };
 
-export interface PostRequest {
+//#endregion
+
+//#region POST
+
+type PostRequest = {
   firstName?: string;
   lastName?: string;
-}
+};
 
-export type PostResponse = { user: User };
+type PostResponse = {
+  user: User;
+};
 
 export const PostRequestSchema = {
   additionalProperties: false,
@@ -117,3 +133,5 @@ export const Post: PostHandler = async (req, res) => {
   res.status(OK);
   res.json({ user });
 };
+
+//#endregion

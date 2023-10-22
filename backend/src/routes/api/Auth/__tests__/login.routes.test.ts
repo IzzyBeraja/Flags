@@ -1,58 +1,69 @@
-import type { Params } from "../../../../types/types";
-import type { PostRequest, PostResponse } from "../login.routes";
-import type { Request, Response } from "express";
+import type { PostHandler } from "../login.routes";
 
 import { OK, UNAUTHORIZED } from "../../../../errors/errorCodes";
-import * as UserQueries from "../../../../queries/User.queries";
+import * as LoginModule from "../../../../queries/account/loginAccount";
 import { Post } from "../login.routes";
 
 import { mock } from "jest-mock-extended";
 
-const loginUserMock = jest.spyOn(UserQueries, "loginUser");
+const mockLogin = jest.spyOn(LoginModule, "loginAccount");
 const next = jest.fn();
 
-let req: Request<Params, PostResponse, PostRequest>;
-let res: Response<PostResponse>;
+let postReq: Parameters<PostHandler>[0];
+let postRes: Parameters<PostHandler>[1];
 
 describe("/api/auth/login", () => {
   beforeEach(() => {
-    req = mock<Request>();
-    res = mock<Response>();
+    postReq = mock<typeof postReq>();
+    postRes = mock<typeof postRes>();
   });
 
   describe("when NOT logged in", () => {
     it("has valid credentials", async () => {
-      loginUserMock.mockResolvedValueOnce({
-        success: true,
-        user: {
-          createdAt: new Date("1994-11-09T00:00:00"),
-          email: "email@email.com",
-          id: "1",
-          name: "name",
-          updatedAt: new Date("1994-11-09T00:00:00"),
+      postReq.ip = "::1";
+
+      mockLogin.mockResolvedValueOnce([
+        {
+          accountId: "A1",
+          email: "fake@email.com",
+          firstName: "Fake",
+          lastName: "Account",
+          updatedAt: "1",
+          userId: "U1",
         },
-      });
+        null,
+      ]);
 
-      await Post(req, res, next);
+      await Post(postReq, postRes, next);
 
-      expect(req.session.accountId).toBe("1");
-      expect(res.status).toHaveBeenCalledTimes(1);
-      expect(res.status).toHaveBeenCalledWith(OK);
-      expect(res.json).toHaveBeenCalledTimes(1);
+      expect(postReq.session.accountId).toBe("A1");
+      expect(postReq.session.email).toBe("fake@email.com");
+      expect(postReq.session.firstName).toBe("Fake");
+      expect(postReq.session.lastName).toBe("Account");
+      expect(postReq.session.userId).toBe("U1");
+      expect(postReq.session.ipAddress).toBe("::1");
+
+      expect(postRes.status).toHaveBeenCalledTimes(1);
+      expect(postRes.status).toHaveBeenCalledWith(OK);
+      expect(postRes.json).toHaveBeenCalledTimes(1);
     });
 
     it("has invalid credentials", async () => {
-      loginUserMock.mockResolvedValueOnce({
-        error: "Bad email and password combination",
-        success: false,
-      });
+      mockLogin.mockResolvedValueOnce([null, new Error("Invalid credentials")]);
 
-      await Post(req, res, next);
+      await Post(postReq, postRes, next);
 
-      expect(req.session.accountId).toBeUndefined();
-      expect(res.status).toHaveBeenCalledTimes(1);
-      expect(res.status).toHaveBeenCalledWith(UNAUTHORIZED);
-      expect(res.json).toHaveBeenCalledTimes(1);
+      expect(postReq.session.accountId).toBeUndefined();
+      expect(postReq.session.email).toBeUndefined();
+      expect(postReq.session.firstName).toBeUndefined();
+      expect(postReq.session.lastName).toBeUndefined();
+      expect(postReq.session.userId).toBeUndefined();
+      expect(postReq.session.ipAddress).toBeUndefined();
+
+      expect(postRes.status).toHaveBeenCalledTimes(1);
+      expect(postRes.status).toHaveBeenCalledWith(UNAUTHORIZED);
+      expect(postRes.json).toHaveBeenCalledTimes(1);
+      expect(postRes.json).toHaveBeenCalledWith({ message: "Invalid credentials" });
     });
   });
 });

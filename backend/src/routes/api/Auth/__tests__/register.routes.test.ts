@@ -3,12 +3,12 @@ import type { PostRequest, PostResponse } from "../register.routes";
 import type { Request, Response } from "express";
 
 import { BAD_REQUEST, CREATED } from "../../../../errors/errorCodes";
-import * as UserQueries from "../../../../queries/User.queries";
+import * as RegisterModule from "../../../../queries/account/registerAccount";
 import { Post } from "../register.routes";
 
 import { mock } from "jest-mock-extended";
 
-const registerUserMock = jest.spyOn(UserQueries, "registerUser");
+const mockRegisterAccount = jest.spyOn(RegisterModule, "registerAccount");
 const next = jest.fn();
 
 let req: Request<Params, PostResponse, PostRequest>;
@@ -21,36 +21,34 @@ describe("/api/auth/register", () => {
   });
 
   it("registration successful", async () => {
-    registerUserMock.mockResolvedValueOnce({
-      createdUser: {
-        createdAt: new Date("1994-11-09T00:00:00"),
-        email: "email",
-        id: "1",
-        name: "name",
-        updatedAt: new Date("1994-11-09T00:00:00"),
+    mockRegisterAccount.mockResolvedValueOnce([
+      {
+        accountId: "A1",
+        created_at: "1",
+        email: "fake@email.com",
+        updated_at: "1",
       },
-      success: true,
-    });
+      null,
+    ]);
 
     await Post(req, res, next);
 
-    expect(req.session.accountId).toBe("1");
+    expect(req.session.accountId).toBe("A1");
     expect(res.status).toHaveBeenCalledTimes(1);
     expect(res.status).toHaveBeenCalledWith(CREATED);
     expect(res.json).toHaveBeenCalledTimes(1);
   });
 
   it("registration failed", async () => {
-    registerUserMock.mockResolvedValueOnce({
-      error: "Bad email and password combination",
-      success: false,
-    });
+    mockRegisterAccount.mockResolvedValueOnce([null, new Error("Invalid credentials")]);
 
     await Post(req, res, next);
 
     expect(req.session.accountId).toBeUndefined();
     expect(res.status).toHaveBeenCalledTimes(1);
     expect(res.status).toHaveBeenCalledWith(BAD_REQUEST);
+    expect(res.json).toHaveBeenCalledTimes(1);
+    expect(res.json).toHaveBeenCalledWith({ error: "Invalid credentials" });
     expect(res.json).toHaveBeenCalledTimes(1);
   });
 });

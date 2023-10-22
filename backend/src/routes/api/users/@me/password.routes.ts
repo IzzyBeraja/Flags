@@ -5,12 +5,14 @@ import { BAD_REQUEST, OK, UNAUTHORIZED } from "../../../../errors/errorCodes";
 import { updateAccountCredentials } from "../../../../queries/account/updateAccountCredentials";
 import { passwordSchema } from "../../../../validation/validationRules";
 
-export interface PutRequest {
+type PutRequest = {
   oldPassword: string;
   newPassword: string;
-}
+};
 
-export type PutResponse = { account: Account };
+type PutResponse = {
+  account: Account;
+};
 
 export const PutRequestSchema = {
   additionalProperties: false,
@@ -22,7 +24,7 @@ export const PutRequestSchema = {
   type: "object",
 };
 
-type PutHandler = RequestHandlerAsync<Params, PutResponse | ErrorType, PutRequest>;
+export type PutHandler = RequestHandlerAsync<Params, PutResponse | ErrorType, PutRequest>;
 
 export const Put: PutHandler = async (req, res) => {
   if (req.session.accountId == null) {

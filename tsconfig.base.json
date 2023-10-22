@@ -18,8 +18,8 @@
     "noPropertyAccessFromIndexSignature": true /* Enforces using indexed accessors for keys declared using an indexed type */,
     "skipLibCheck": true /* Skip type checking all .d.ts files. */,
     "resolveJsonModule": true,
-    "isolatedModules": true,
-    "verbatimModuleSyntax": true
+    "isolatedModules": true
+    // "verbatimModuleSyntax": true /* Allow `@types` style imports (ts-jest running into issues with this) */,
   },
   "exclude": ["node_modules"]
 }

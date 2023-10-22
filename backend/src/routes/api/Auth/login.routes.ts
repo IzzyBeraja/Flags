@@ -5,12 +5,14 @@ import { OK, UNAUTHORIZED } from "../../../errors/errorCodes";
 import { loginAccount } from "../../../queries/account/loginAccount.js";
 import { emailSchema, passwordSchema } from "../../../validation/validationRules";
 
-export interface PostRequest {
+type PostRequest = {
   email: string;
   password: string;
-}
+};
 
-export interface PostResponse {}
+type PostResponse = {
+  message: string;
+};
 
 export const PostRequestSchema: JSONSchemaType<PostRequest> = {
   additionalProperties: false,
@@ -22,9 +24,9 @@ export const PostRequestSchema: JSONSchemaType<PostRequest> = {
   type: "object",
 };
 
-type RouteHandler = RequestHandlerAsync<Params, PostResponse | ErrorType, PostRequest>;
+export type PostHandler = RequestHandlerAsync<Params, PostResponse | ErrorType, PostRequest>;
 
-export const Post: RouteHandler = async (req, res) => {
+export const Post: PostHandler = async (req, res) => {
   const [userDetails, error] = await loginAccount(req.db, req.body);
 
   if (error != null) {
