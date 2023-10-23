@@ -1,18 +1,20 @@
 import type { Switch } from "../../queries/switches/createSwitch";
-import type { ErrorType, Params, RequestHandlerAsync } from "../../types/types";
+import type { EmptyObject, ErrorType, Params, RequestHandlerAsync } from "../../types/types";
 
 import { BAD_REQUEST, CREATED, OK, UNAUTHORIZED } from "../../errors/errorCodes";
 import { createSwitch } from "../../queries/switches/createSwitch";
 import { getSwitches } from "../../queries/switches/getSwitch";
 import { descriptionSchema, nameSchema } from "../../validation/validationRules";
 
-export interface GetRequest {}
+//#region GET
 
-export type GetResponse = {
+type GetRequest = EmptyObject;
+
+type GetResponse = {
   switches: Switch[];
 };
 
-type GetHandler = RequestHandlerAsync<Params, GetResponse | ErrorType, GetRequest>;
+export type GetHandler = RequestHandlerAsync<Params, GetResponse | ErrorType, GetRequest>;
 
 export const Get: GetHandler = async (req, res) => {
   if (req.session.userId == null) {
@@ -35,13 +37,17 @@ export const Get: GetHandler = async (req, res) => {
   res.json({ switches });
 };
 
-export interface PostRequest {
+//#endregion
+
+//#region POST
+
+type PostRequest = {
   name: string;
   description?: string;
   state?: boolean;
-}
+};
 
-export type PostResponse = {
+type PostResponse = {
   fSwitch: Switch;
 };
 
@@ -56,7 +62,7 @@ export const PostRequestSchema = {
   type: "object",
 };
 
-type PostHandler = RequestHandlerAsync<Params, PostResponse | ErrorType, PostRequest>;
+export type PostHandler = RequestHandlerAsync<Params, PostResponse | ErrorType, PostRequest>;
 
 export const Post: PostHandler = async (req, res) => {
   if (req.session.userId == null) {
@@ -79,3 +85,5 @@ export const Post: PostHandler = async (req, res) => {
   res.status(CREATED);
   res.json({ fSwitch });
 };
+
+//#endregion

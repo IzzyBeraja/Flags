@@ -1,22 +1,24 @@
 import type { Switch } from "../../../queries/switches/createSwitch";
-import type { ErrorType, RequestHandlerAsync } from "../../../types/types";
+import type { EmptyObject, ErrorType, RequestHandlerAsync } from "../../../types/types";
 
-import { BAD_REQUEST, OK, UNAUTHORIZED } from "../../../errors/errorCodes";
+import { BAD_REQUEST, NOT_FOUND, OK, UNAUTHORIZED } from "../../../errors/errorCodes";
 import { getSwitch } from "../../../queries/switches/getSwitch";
 import { updateSwitch } from "../../../queries/switches/updateSwitch";
 import { descriptionSchema, nameSchema } from "../../../validation/validationRules";
 
-export interface Params {
+type Params = {
   switchId: string;
-}
+};
 
-export interface GetRequest {}
+//#region GET
 
-export type GetResponse = {
+type GetRequest = EmptyObject;
+
+type GetResponse = {
   fSwitch: Switch;
 };
 
-type GetHandler = RequestHandlerAsync<Params, GetResponse | ErrorType, GetRequest>;
+export type GetHandler = RequestHandlerAsync<Params, GetResponse | ErrorType, GetRequest>;
 
 export const Get: GetHandler = async (req, res) => {
   if (req.session.userId == null) {
@@ -31,7 +33,7 @@ export const Get: GetHandler = async (req, res) => {
   });
 
   if (error != null) {
-    res.status(BAD_REQUEST);
+    res.status(NOT_FOUND);
     res.json({ message: error.message });
     return;
   }
@@ -40,13 +42,17 @@ export const Get: GetHandler = async (req, res) => {
   res.json({ fSwitch });
 };
 
-export interface PatchRequest {
+//#endregion
+
+//#region PATCH
+
+type PatchRequest = {
   name?: string;
   description?: string;
   state?: boolean;
-}
+};
 
-export type PatchResponse = {
+type PatchResponse = {
   fSwitch: Switch;
 };
 
@@ -60,7 +66,7 @@ export const PatchRequestSchema = {
   type: "object",
 };
 
-type PatchHandler = RequestHandlerAsync<Params, PatchResponse | ErrorType, PatchRequest>;
+export type PatchHandler = RequestHandlerAsync<Params, PatchResponse | ErrorType, PatchRequest>;
 
 export const Patch: PatchHandler = async (req, res) => {
   if (req.session.userId == null) {
@@ -84,3 +90,5 @@ export const Patch: PatchHandler = async (req, res) => {
   res.status(OK);
   res.json({ fSwitch });
 };
+
+//#endregion
