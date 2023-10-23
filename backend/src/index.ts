@@ -1,5 +1,5 @@
-import initialize from "./initialize/initialize.js";
-import middleware from "./middleware/middleware.js";
+import { initialize } from "./initialize/initialize.js";
+import { middleware } from "./middleware/middleware.js";
 import { checkEnvironment } from "./utils/checkEnvironment.js";
 
 import chalk from "chalk";

@@ -159,7 +159,7 @@ function createRoute(
   });
 }
 
-export default async function initializeRoutes(
+export async function initializeRoutes(
   router?: Router,
   ajv?: Ajv
 ): ResultAsync<Router, RouteError[]> {

@@ -4,7 +4,7 @@ import expressSession from "express-session";
 
 export const sessionName = "sid";
 
-const sessionMiddleware = (redisStore: RedisStore) =>
+export const sessionMiddleware = (redisStore: RedisStore) =>
   expressSession({
     cookie: {
       httpOnly: true,
@@ -19,5 +19,3 @@ const sessionMiddleware = (redisStore: RedisStore) =>
     secret: process.env["SESSION_SECRET"] ?? "secret",
     store: redisStore,
   });
-
-export default sessionMiddleware;

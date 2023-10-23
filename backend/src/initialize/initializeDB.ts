@@ -5,7 +5,7 @@ import { sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 
-export default async function initializeDB(): ResultAsync<PostgresJsDatabase> {
+export async function initializeDB(): ResultAsync<PostgresJsDatabase> {
   const dbConnection = process.env["DATABASE_URL"];
 
   if (!dbConnection) {

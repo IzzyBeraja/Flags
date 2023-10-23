@@ -5,7 +5,7 @@ const frontend_port = Number.parseInt(process.env["FRONTEND_PORT"] ?? "3000");
 
 const allowedOrigins = [`http://localhost:${port}`, `http://localhost:${frontend_port}`];
 
-const corsOptions: cors.CorsOptions = {
+export const corsMiddleware = cors({
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
   maxAge: 3600,
@@ -14,6 +14,4 @@ const corsOptions: cors.CorsOptions = {
     origin == null || allowedOrigins.includes(origin ?? "")
       ? callback(null, true)
       : callback(new Error("Not allowed by CORS")),
-};
-
-export default cors(corsOptions);
+});

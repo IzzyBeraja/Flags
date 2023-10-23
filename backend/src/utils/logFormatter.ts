@@ -7,7 +7,7 @@ import chalk from "chalk";
 type FormatFn = MorganFormatFn<ExpressRequest, ExpressResponse>;
 type TokenIndexer = MorganTokenIndexer<ExpressRequest, ExpressResponse>;
 
-const logFormatter: FormatFn = (
+export const logFormatter: FormatFn = (
   tokens: TokenIndexer,
   req: IncomingMessage & ExpressRequest,
   res: ServerResponse & ExpressResponse
@@ -43,5 +43,3 @@ const logFormatter: FormatFn = (
     ` ${tokens["url"](req, res)}`,
   ].join("|");
 };
-
-export default logFormatter;

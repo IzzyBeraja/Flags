@@ -4,9 +4,9 @@ import type RedisStore from "connect-redis";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js/driver.js";
 import type { Router } from "express";
 
-import initializeDB from "./initializeDB.js";
-import initializeRoutes, { allRoutes } from "./initializeRoutes.js";
-import initializeSessionCache from "./initializeSessionCache.js";
+import { initializeDB } from "./initializeDB.js";
+import { allRoutes, initializeRoutes } from "./initializeRoutes.js";
+import { initializeSessionCache } from "./initializeSessionCache.js";
 
 type Initialize = {
   router: Router;
@@ -18,7 +18,7 @@ type InitializeError =
   | { service: "prisma" | "database" | "sessionCache"; message: string }
   | { service: "routes"; errors: RouteError[] };
 
-export default async function initialize(): ResultAsync<Initialize, InitializeError> {
+export async function initialize(): ResultAsync<Initialize, InitializeError> {
   // == Routing == //
   const [router, routerErrors] = await initializeRoutes();
 

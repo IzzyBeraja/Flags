@@ -3,7 +3,7 @@ import type { SessionOptions } from "express-session";
 
 export const sessionName = "sid";
 
-export const getSessionData = (redisSessionStore: RedisStore): SessionOptions => ({
+export const genSessionData = (redisSessionStore: RedisStore): SessionOptions => ({
   cookie: {
     httpOnly: true,
     maxAge: 7 * 24 * 60 * 60 * 1000,
