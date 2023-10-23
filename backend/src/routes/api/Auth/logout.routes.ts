@@ -12,7 +12,7 @@ type PostResponse = {
 export type PostHandler = RequestHandlerAsync<Params, PostResponse, PostRequest>;
 
 export const Post: PostHandler = async (req, res) => {
-  if (req.session.accountId == null) {
+  if (req.session.userId == null) {
     res.status(UNAUTHORIZED);
     res.json({ message: "You must be logged in to logout" });
     return;

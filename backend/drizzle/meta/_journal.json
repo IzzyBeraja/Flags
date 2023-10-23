@@ -15,6 +15,13 @@
       "when": 1697757027393,
       "tag": "0001_neat_sprite",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1698030003382,
+      "tag": "0002_chubby_post",
+      "breakpoints": true
     }
   ]
 }

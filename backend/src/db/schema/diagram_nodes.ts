@@ -2,7 +2,7 @@ import { diagrams } from "./diagrams";
 import { flags } from "./flags";
 
 import { sql } from "drizzle-orm";
-import { foreignKey, pgSchema, timestamp, uuid } from "drizzle-orm/pg-core";
+import { foreignKey, index, pgSchema, timestamp, uuid } from "drizzle-orm/pg-core";
 
 export const diagram_nodes = pgSchema("common").table(
   "diagram_nodes",
@@ -18,7 +18,10 @@ export const diagram_nodes = pgSchema("common").table(
   },
   table => ({
     diagram_id_fkey: foreignKey({ columns: [table.diagram_id], foreignColumns: [diagrams.id] }),
+    diagram_id_idx: index("diagram_id_idx").on(table.diagram_id),
     flag_id_fkey: foreignKey({ columns: [table.flag_id], foreignColumns: [flags.id] }),
+    flag_id_idx: index("flag_id_idx").on(table.flag_id),
     parent_id_fkey: foreignKey({ columns: [table.parent_id], foreignColumns: [table.id] }),
+    parent_id_idx: index("parent_id_idx").on(table.parent_id),
   })
 );

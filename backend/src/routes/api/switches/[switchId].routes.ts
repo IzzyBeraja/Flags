@@ -1,9 +1,9 @@
-import type { Switch } from "../../../queries/switch/createSwitch";
+import type { Switch } from "../../../queries/switches/createSwitch";
 import type { ErrorType, RequestHandlerAsync } from "../../../types/types";
 
 import { BAD_REQUEST, OK, UNAUTHORIZED } from "../../../errors/errorCodes";
-import { getSwitch } from "../../../queries/switch/getSwitch";
-import { updateSwitch } from "../../../queries/switch/updateSwitch";
+import { getSwitch } from "../../../queries/switches/getSwitch";
+import { updateSwitch } from "../../../queries/switches/updateSwitch";
 import { descriptionSchema, nameSchema } from "../../../validation/validationRules";
 
 export interface Params {
@@ -19,7 +19,7 @@ export type GetResponse = {
 type GetHandler = RequestHandlerAsync<Params, GetResponse | ErrorType, GetRequest>;
 
 export const Get: GetHandler = async (req, res) => {
-  if (req.session.accountId == null || req.session.userId == null) {
+  if (req.session.userId == null) {
     res.status(UNAUTHORIZED);
     res.json({ message: "You must be logged in to access this route" });
     return;
@@ -63,7 +63,7 @@ export const PatchRequestSchema = {
 type PatchHandler = RequestHandlerAsync<Params, PatchResponse | ErrorType, PatchRequest>;
 
 export const Patch: PatchHandler = async (req, res) => {
-  if (req.session.accountId == null || req.session.userId == null) {
+  if (req.session.userId == null) {
     res.status(UNAUTHORIZED);
     res.json({ message: "You must be logged in to access this route" });
     return;

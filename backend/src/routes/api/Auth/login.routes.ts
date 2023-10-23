@@ -2,7 +2,7 @@ import type { ErrorType, Params, RequestHandlerAsync } from "../../../types/type
 import type { JSONSchemaType } from "ajv";
 
 import { OK, UNAUTHORIZED } from "../../../errors/errorCodes";
-import { loginAccount } from "../../../queries/account/loginAccount.js";
+import { loginUser } from "../../../queries/users/loginUser.js";
 import { emailSchema, passwordSchema } from "../../../validation/validationRules";
 
 type PostRequest = {
@@ -27,7 +27,7 @@ export const PostRequestSchema: JSONSchemaType<PostRequest> = {
 export type PostHandler = RequestHandlerAsync<Params, PostResponse | ErrorType, PostRequest>;
 
 export const Post: PostHandler = async (req, res) => {
-  const [userDetails, error] = await loginAccount(req.db, req.body);
+  const [userDetails, error] = await loginUser(req.db, req.body);
 
   if (error != null) {
     res.status(UNAUTHORIZED);
@@ -35,7 +35,6 @@ export const Post: PostHandler = async (req, res) => {
     return;
   }
 
-  req.session.accountId = userDetails.accountId;
   req.session.email = userDetails.email;
   req.session.firstName = userDetails.firstName;
   req.session.lastName = userDetails.lastName;

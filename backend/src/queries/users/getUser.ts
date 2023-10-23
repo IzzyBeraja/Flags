@@ -6,34 +6,31 @@ import { users } from "../../db/schema/users";
 import { eq } from "drizzle-orm";
 import postgres from "postgres";
 
-export type UpdateUserInput =
-  | { accountId: string; userId?: never; firstName?: string; lastName?: string }
-  | { accountId?: never; userId: string; firstName?: string; lastName?: string };
+export type GetUserInput = {
+  userId: string;
+};
 
 export type User = {
   userId: string;
-  accountId: string;
+  email: string;
   firstName: string | null;
   lastName: string | null;
 };
 
-export async function updateUser(
+export async function getUser(
   db: PostgresJsDatabase,
-  input: UpdateUserInput
+  input: GetUserInput
 ): ResultAsync<User, postgres.PostgresError | ErrorType> {
   try {
     const [user] = await db
-      .update(users)
-      .set({ first_name: input.firstName, last_name: input.lastName })
-      .where(
-        input.accountId == null ? eq(users.id, input.userId) : eq(users.account_id, input.accountId)
-      )
-      .returning({
-        accountId: users.account_id,
+      .select({
+        email: users.email,
         firstName: users.first_name,
         lastName: users.last_name,
         userId: users.id,
-      });
+      })
+      .from(users)
+      .where(eq(users.id, input.userId));
 
     return [user, null];
   } catch (error) {

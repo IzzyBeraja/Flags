@@ -11,7 +11,6 @@ declare global {
 
 declare module "express-session" {
   interface SessionData {
-    accountId?: string;
     userId?: string;
     firstName?: string | null;
     lastName?: string | null;

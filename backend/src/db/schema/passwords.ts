@@ -1,11 +1,12 @@
-import { sql } from "drizzle-orm";
-import { pgSchema, timestamp, unique, uuid, varchar } from "drizzle-orm/pg-core";
+import { users } from "./users";
 
-export const accounts = pgSchema("common").table(
-  "accounts",
+import { sql } from "drizzle-orm";
+import { foreignKey, pgSchema, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
+
+export const passwords = pgSchema("common").table(
+  "passwords",
   {
     created_at: timestamp("created_at", { mode: "string" }).notNull().defaultNow(),
-    email: varchar("email", { length: 254 }).notNull(),
     id: uuid("id")
       .primaryKey()
       .default(sql`gen_random_uuid()`),
@@ -13,6 +14,6 @@ export const accounts = pgSchema("common").table(
     updated_at: timestamp("updated_at", { mode: "string" }).notNull().defaultNow(),
   },
   table => ({
-    email_unique: unique("email_unique").on(table.email),
+    users_id_fkey: foreignKey({ columns: [table.id], foreignColumns: [users.id] }),
   })
 );

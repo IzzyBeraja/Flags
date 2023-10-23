@@ -1,7 +1,7 @@
 import { users } from "./users";
 
 import { sql } from "drizzle-orm";
-import { foreignKey, pgSchema, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
+import { foreignKey, index, pgSchema, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 
 export const diagrams = pgSchema("common").table(
   "diagrams",
@@ -17,5 +17,6 @@ export const diagrams = pgSchema("common").table(
   },
   table => ({
     owned_by_fkey: foreignKey({ columns: [table.owned_by], foreignColumns: [users.id] }),
+    owned_by_idx: index("owned_by_idx").on(table.owned_by),
   })
 );

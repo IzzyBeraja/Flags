@@ -1,12 +1,12 @@
 import type { PostHandler } from "../login.routes";
 
 import { OK, UNAUTHORIZED } from "../../../../errors/errorCodes";
-import * as LoginModule from "../../../../queries/account/loginAccount";
+import * as LoginModule from "../../../../queries/users/loginUser";
 import { Post } from "../login.routes";
 
 import { mock } from "jest-mock-extended";
 
-const mockLogin = jest.spyOn(LoginModule, "loginAccount");
+const mockLogin = jest.spyOn(LoginModule, "loginUser");
 const next = jest.fn();
 
 let postReq: Parameters<PostHandler>[0];
@@ -24,11 +24,9 @@ describe("/api/auth/login", () => {
 
       mockLogin.mockResolvedValueOnce([
         {
-          accountId: "A1",
           email: "fake@email.com",
           firstName: "Fake",
-          lastName: "Account",
-          updatedAt: "1",
+          lastName: "User",
           userId: "U1",
         },
         null,
@@ -36,10 +34,9 @@ describe("/api/auth/login", () => {
 
       await Post(postReq, postRes, next);
 
-      expect(postReq.session.accountId).toBe("A1");
       expect(postReq.session.email).toBe("fake@email.com");
       expect(postReq.session.firstName).toBe("Fake");
-      expect(postReq.session.lastName).toBe("Account");
+      expect(postReq.session.lastName).toBe("User");
       expect(postReq.session.userId).toBe("U1");
       expect(postReq.session.ipAddress).toBe("::1");
 
@@ -53,7 +50,6 @@ describe("/api/auth/login", () => {
 
       await Post(postReq, postRes, next);
 
-      expect(postReq.session.accountId).toBeUndefined();
       expect(postReq.session.email).toBeUndefined();
       expect(postReq.session.firstName).toBeUndefined();
       expect(postReq.session.lastName).toBeUndefined();

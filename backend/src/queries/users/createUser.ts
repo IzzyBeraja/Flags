@@ -6,14 +6,14 @@ import { users } from "../../db/schema/users";
 import postgres from "postgres";
 
 export type CreateUserInput = {
-  accountId: string;
+  email: string;
   firstName?: string;
   lastName?: string;
 };
 
 export type User = {
   userId: string;
-  accountId: string;
+  email: string;
   firstName: string | null;
   lastName: string | null;
 };
@@ -26,12 +26,12 @@ export async function createUser(
     const [user] = await db
       .insert(users)
       .values({
-        account_id: input.accountId,
+        email: input.email,
         first_name: input.firstName,
         last_name: input.lastName,
       })
       .returning({
-        accountId: users.account_id,
+        email: users.email,
         firstName: users.first_name,
         lastName: users.last_name,
         userId: users.id,

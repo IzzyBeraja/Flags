@@ -1,9 +1,9 @@
-import type { Account } from "../../../queries/account/registerAccount";
+import type { User } from "../../../queries/users/registerUser";
 import type { Params, RequestHandlerAsync } from "../../../types/types";
 import type { JSONSchemaType } from "ajv";
 
 import { BAD_REQUEST, CREATED } from "../../../errors/errorCodes";
-import { registerAccount } from "../../../queries/account/registerAccount";
+import { registerUser } from "../../../queries/users/registerUser";
 import { emailSchema, passwordSchema } from "../../../validation/validationRules";
 
 export interface PostRequest {
@@ -12,7 +12,7 @@ export interface PostRequest {
 }
 
 type UserCreated = {
-  createdUser: Account;
+  createdUser: User;
 };
 
 type UserNotCreated = {
@@ -34,15 +34,15 @@ export const PostRequestSchema: JSONSchemaType<PostRequest> = {
 type RouteHandler = RequestHandlerAsync<Params, PostResponse, PostRequest>;
 
 export const Post: RouteHandler = async (req, res) => {
-  const [account, accountError] = await registerAccount(req.db, { ...req.body });
+  const [user, error] = await registerUser(req.db, { ...req.body });
 
-  if (accountError != null) {
+  if (error != null) {
     res.status(BAD_REQUEST);
-    res.json({ error: accountError.message });
+    res.json({ error: error.message });
     return;
   }
 
-  req.session.accountId = account.accountId;
+  req.session.userId = user.userId;
   res.status(CREATED);
-  res.json({ createdUser: account });
+  res.json({ createdUser: user });
 };

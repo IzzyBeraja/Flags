@@ -1,8 +1,8 @@
-import type { Account } from "../../../../queries/account/updateAccountCredentials";
+import type { User } from "../../../../queries/users/updateUserCredentials";
 import type { ErrorType, Params, RequestHandlerAsync } from "../../../../types/types";
 
 import { BAD_REQUEST, OK, UNAUTHORIZED } from "../../../../errors/errorCodes";
-import { updateAccountCredentials } from "../../../../queries/account/updateAccountCredentials";
+import { updateUserCredentials } from "../../../../queries/users/updateUserCredentials";
 import { passwordSchema } from "../../../../validation/validationRules";
 
 type PutRequest = {
@@ -11,7 +11,7 @@ type PutRequest = {
 };
 
 type PutResponse = {
-  account: Account;
+  user: User;
 };
 
 export const PutRequestSchema = {
@@ -27,14 +27,14 @@ export const PutRequestSchema = {
 export type PutHandler = RequestHandlerAsync<Params, PutResponse | ErrorType, PutRequest>;
 
 export const Put: PutHandler = async (req, res) => {
-  if (req.session.accountId == null) {
+  if (req.session.userId == null) {
     res.status(UNAUTHORIZED);
     res.json({ message: "You need to be logged in to access this route" });
     return;
   }
 
-  const [account, error] = await updateAccountCredentials(req.db, {
-    accountId: req.session.accountId,
+  const [user, error] = await updateUserCredentials(req.db, {
+    userId: req.session.userId,
     ...req.body,
   });
 
@@ -45,5 +45,5 @@ export const Put: PutHandler = async (req, res) => {
   }
 
   res.status(OK);
-  res.json({ account: account });
+  res.json({ user });
 };

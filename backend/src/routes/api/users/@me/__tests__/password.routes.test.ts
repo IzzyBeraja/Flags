@@ -1,15 +1,12 @@
 import type { PutHandler } from "./../password.routes";
 
 import { BAD_REQUEST, OK, UNAUTHORIZED } from "../../../../../errors/errorCodes";
-import * as UpadateAccountCredentialsModule from "../../../../../queries/account/updateAccountCredentials";
+import * as UpadateUserCredentialsModule from "../../../../../queries/users/updateUserCredentials";
 import { Put } from "../password.routes";
 
 import { mock } from "jest-mock-extended";
 
-const mockUpdateAccountCredentials = jest.spyOn(
-  UpadateAccountCredentialsModule,
-  "updateAccountCredentials"
-);
+const mockUpdateUserCredentials = jest.spyOn(UpadateUserCredentialsModule, "updateUserCredentials");
 
 const next = jest.fn();
 
@@ -34,18 +31,18 @@ describe("password.routes", () => {
 
   describe("when logged in", () => {
     it("has invalid credentials", async () => {
-      putReq.session.accountId = "A1";
+      putReq.session.userId = "U1";
       putReq.body = { newPassword: "newPassword", oldPassword: "badPassword" };
 
-      mockUpdateAccountCredentials.mockResolvedValueOnce([null, new Error("Invalid credentials")]);
+      mockUpdateUserCredentials.mockResolvedValueOnce([null, new Error("Invalid credentials")]);
 
       await Put(putReq, putRes, next);
 
-      expect(mockUpdateAccountCredentials).toHaveBeenCalledTimes(1);
-      expect(mockUpdateAccountCredentials).toHaveBeenCalledWith(putReq.db, {
-        accountId: "A1",
+      expect(mockUpdateUserCredentials).toHaveBeenCalledTimes(1);
+      expect(mockUpdateUserCredentials).toHaveBeenCalledWith(putReq.db, {
         newPassword: "newPassword",
         oldPassword: "badPassword",
+        userId: "U1",
       });
       expect(putRes.status).toHaveBeenCalledTimes(1);
       expect(putRes.status).toHaveBeenCalledWith(BAD_REQUEST);
@@ -54,36 +51,36 @@ describe("password.routes", () => {
     });
 
     it("has valid credentials", async () => {
-      putReq.session.accountId = "1";
+      putReq.session.userId = "U1";
       putReq.body = { newPassword: "newPassword", oldPassword: "oldPassword" };
 
-      mockUpdateAccountCredentials.mockResolvedValueOnce([
+      mockUpdateUserCredentials.mockResolvedValueOnce([
         {
-          accountId: "A1",
-          createdAt: "1",
           email: "email",
-          updatedAt: "U1",
+          firstName: "firstName",
+          lastName: "lastName",
+          userId: "U1",
         },
         null,
       ]);
 
       await Put(putReq, putRes, next);
 
-      expect(mockUpdateAccountCredentials).toHaveBeenCalledTimes(1);
-      expect(mockUpdateAccountCredentials).toHaveBeenCalledWith(putReq.db, {
-        accountId: "1",
+      expect(mockUpdateUserCredentials).toHaveBeenCalledTimes(1);
+      expect(mockUpdateUserCredentials).toHaveBeenCalledWith(putReq.db, {
         newPassword: "newPassword",
         oldPassword: "oldPassword",
+        userId: "U1",
       });
       expect(putRes.status).toHaveBeenCalledTimes(1);
       expect(putRes.status).toHaveBeenCalledWith(OK);
       expect(putRes.json).toHaveBeenCalledTimes(1);
       expect(putRes.json).toHaveBeenCalledWith({
-        account: {
-          accountId: "A1",
-          createdAt: "1",
+        user: {
           email: "email",
-          updatedAt: "U1",
+          firstName: "firstName",
+          lastName: "lastName",
+          userId: "U1",
         },
       });
     });
