@@ -4,6 +4,7 @@ import type { Application, Router } from "express";
 
 import { corsMiddleware } from "./cors.middleware";
 import { dbMiddleware } from "./db.middleware";
+import { helmetMiddleware } from "./helmet.middleware";
 import { sessionMiddleware } from "../middleware/session.middleware";
 import { logFormatter } from "../utils/logFormatter";
 
@@ -20,6 +21,7 @@ type Props = {
 export function middleware({ app, router, sessionStore, db }: Props) {
   app.use(express.json());
   app.use(corsMiddleware);
+  app.use(helmetMiddleware);
   app.use(morgan(logFormatter));
   app.use(sessionMiddleware(sessionStore));
   app.use(dbMiddleware(db));

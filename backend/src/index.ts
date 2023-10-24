@@ -10,6 +10,8 @@ config();
 
 const app = express();
 
+app.disable("x-powered-by");
+
 async function startServer() {
   console.log(chalk.blue("\nStarting server...\n"));
 
