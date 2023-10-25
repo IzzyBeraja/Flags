@@ -3,6 +3,7 @@ import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 import { passwords } from "../../db/schema/passwords";
 import { users } from "../../db/schema/users";
+import { hash } from "../../utils/passwordFunctions";
 
 import postgres from "postgres";
 
@@ -40,9 +41,11 @@ export async function registerUser(
           userId: users.id,
         });
 
+      const hashedPassword = await hash(input.password);
+
       await tx.insert(passwords).values({
         id: user.userId,
-        password: input.password,
+        password: hashedPassword,
       });
 
       return [user, null];
