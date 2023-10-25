@@ -1,12 +1,16 @@
+import type { IsAuthenticated } from "./../../middleware/route/isAuthenticated";
 import type { Switch } from "../../queries/switches/createSwitch";
-import type { EmptyObject, ErrorType, Params, RequestHandlerAsync } from "../../types/types";
+import type { AsyncHandler, EmptyObject, ErrorType, Params } from "../../types/types";
 
-import { BAD_REQUEST, CREATED, OK, UNAUTHORIZED } from "../../errors/errorCodes";
+import { BAD_REQUEST, CREATED, OK } from "../../errors/errorCodes";
+import { isAuthenticated } from "../../middleware/route/isAuthenticated";
 import { createSwitch } from "../../queries/switches/createSwitch";
 import { getSwitches } from "../../queries/switches/getSwitch";
 import { descriptionSchema, nameSchema } from "../../validation/validationRules";
 
 //#region GET
+
+export const GetMiddleware = [isAuthenticated];
 
 type GetRequest = EmptyObject;
 
@@ -14,15 +18,15 @@ type GetResponse = {
   switches: Switch[];
 };
 
-export type GetHandler = RequestHandlerAsync<Params, GetResponse | ErrorType, GetRequest>;
+export type GetHandler = AsyncHandler<
+  Params,
+  GetResponse | ErrorType,
+  GetRequest,
+  EmptyObject,
+  IsAuthenticated
+>;
 
 export const Get: GetHandler = async (req, res) => {
-  if (req.session.userId == null) {
-    res.status(UNAUTHORIZED);
-    res.json({ message: "You must be logged in to access this route" });
-    return;
-  }
-
   const [switches, error] = await getSwitches(req.db, {
     userId: req.session.userId,
   });
@@ -40,6 +44,8 @@ export const Get: GetHandler = async (req, res) => {
 //#endregion
 
 //#region POST
+
+export const PostMiddleware = [isAuthenticated];
 
 type PostRequest = {
   name: string;
@@ -62,15 +68,15 @@ export const PostRequestSchema = {
   type: "object",
 };
 
-export type PostHandler = RequestHandlerAsync<Params, PostResponse | ErrorType, PostRequest>;
+export type PostHandler = AsyncHandler<
+  Params,
+  PostResponse | ErrorType,
+  PostRequest,
+  EmptyObject,
+  IsAuthenticated
+>;
 
 export const Post: PostHandler = async (req, res) => {
-  if (req.session.userId == null) {
-    res.status(UNAUTHORIZED);
-    res.json({ message: "You must be logged in to access this route" });
-    return;
-  }
-
   const [fSwitch, error] = await createSwitch(req.db, {
     ...req.body,
     userId: req.session.userId,

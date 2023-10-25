@@ -1,7 +1,9 @@
+import type { IsAuthenticated } from "../../../middleware/route/isAuthenticated";
 import type { Switch } from "../../../queries/switches/createSwitch";
-import type { EmptyObject, ErrorType, RequestHandlerAsync } from "../../../types/types";
+import type { AsyncHandler, EmptyObject, ErrorType } from "../../../types/types";
 
-import { BAD_REQUEST, NOT_FOUND, OK, UNAUTHORIZED } from "../../../errors/errorCodes";
+import { BAD_REQUEST, NOT_FOUND, OK } from "../../../errors/errorCodes";
+import { isAuthenticated } from "../../../middleware/route/isAuthenticated";
 import { getSwitch } from "../../../queries/switches/getSwitch";
 import { updateSwitch } from "../../../queries/switches/updateSwitch";
 import { descriptionSchema, nameSchema } from "../../../validation/validationRules";
@@ -12,21 +14,23 @@ type Params = {
 
 //#region GET
 
+export const GetMiddleware = [isAuthenticated];
+
 type GetRequest = EmptyObject;
 
 type GetResponse = {
   fSwitch: Switch;
 };
 
-export type GetHandler = RequestHandlerAsync<Params, GetResponse | ErrorType, GetRequest>;
+export type GetHandler = AsyncHandler<
+  Params,
+  GetResponse | ErrorType,
+  GetRequest,
+  EmptyObject,
+  IsAuthenticated
+>;
 
 export const Get: GetHandler = async (req, res) => {
-  if (req.session.userId == null) {
-    res.status(UNAUTHORIZED);
-    res.json({ message: "You must be logged in to access this route" });
-    return;
-  }
-
   const [fSwitch, error] = await getSwitch(req.db, {
     switchId: req.params.switchId,
     userId: req.session.userId,
@@ -45,6 +49,8 @@ export const Get: GetHandler = async (req, res) => {
 //#endregion
 
 //#region PATCH
+
+export const PatchMiddleware = [isAuthenticated];
 
 type PatchRequest = {
   name?: string;
@@ -66,15 +72,15 @@ export const PatchRequestSchema = {
   type: "object",
 };
 
-export type PatchHandler = RequestHandlerAsync<Params, PatchResponse | ErrorType, PatchRequest>;
+export type PatchHandler = AsyncHandler<
+  Params,
+  PatchResponse | ErrorType,
+  PatchRequest,
+  EmptyObject,
+  IsAuthenticated
+>;
 
 export const Patch: PatchHandler = async (req, res) => {
-  if (req.session.userId == null) {
-    res.status(UNAUTHORIZED);
-    res.json({ message: "You must be logged in to access this route" });
-    return;
-  }
-
   const [fSwitch, error] = await updateSwitch(req.db, {
     ...req.body,
     switchId: req.params.switchId,

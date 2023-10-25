@@ -1,9 +1,13 @@
+import type { IsAuthenticated } from "../../../../middleware/route/isAuthenticated";
 import type { User } from "../../../../queries/users/updateUserCredentials";
-import type { ErrorType, Params, RequestHandlerAsync } from "../../../../types/types";
+import type { AsyncHandler, EmptyObject, ErrorType, Params } from "../../../../types/types";
 
-import { BAD_REQUEST, OK, UNAUTHORIZED } from "../../../../errors/errorCodes";
+import { BAD_REQUEST, OK } from "../../../../errors/errorCodes";
+import { isAuthenticated } from "../../../../middleware/route/isAuthenticated";
 import { updateUserCredentials } from "../../../../queries/users/updateUserCredentials";
 import { passwordSchema } from "../../../../validation/validationRules";
+
+export const PutMiddleware = [isAuthenticated];
 
 type PutRequest = {
   oldPassword: string;
@@ -24,15 +28,15 @@ export const PutRequestSchema = {
   type: "object",
 };
 
-export type PutHandler = RequestHandlerAsync<Params, PutResponse | ErrorType, PutRequest>;
+export type PutHandler = AsyncHandler<
+  Params,
+  PutResponse | ErrorType,
+  PutRequest,
+  EmptyObject,
+  IsAuthenticated
+>;
 
 export const Put: PutHandler = async (req, res) => {
-  if (req.session.userId == null) {
-    res.status(UNAUTHORIZED);
-    res.json({ message: "You need to be logged in to access this route" });
-    return;
-  }
-
   const [user, error] = await updateUserCredentials(req.db, {
     userId: req.session.userId,
     ...req.body,

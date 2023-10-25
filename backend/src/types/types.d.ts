@@ -1,5 +1,6 @@
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import type { RequestHandler } from "express";
+import type { Query } from "express-serve-static-core";
 
 declare global {
   namespace Express {
@@ -47,3 +48,19 @@ export type Result<T, U = ErrorType> = [T, null] | [null, U];
 export type ResultAsync<T, U = ErrorType> = Promise<Result<T, U>>;
 
 export type EmptyObject = Record<PropertyKey, never>;
+
+type RemoveOptional<T> = {
+  [K in keyof T]-?: T[K];
+};
+
+export type AsyncHandler<
+  P = Params,
+  ResBody = unknown,
+  ReqBody = unknown,
+  ReqQuery = Query,
+  Ext = unknown // Additional extension types
+> = (
+  req: Request<P, ResBody, ReqBody, ReqQuery> & Ext,
+  res: Response<ResBody>,
+  next?: NextFunction
+) => Promise<void>;

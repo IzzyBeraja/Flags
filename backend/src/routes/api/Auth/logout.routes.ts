@@ -1,7 +1,11 @@
-import type { EmptyObject, Params, RequestHandlerAsync } from "../../../types/types";
+import type { IsAuthenticated } from "../../../middleware/route/isAuthenticated";
+import type { AsyncHandler, EmptyObject, Params } from "../../../types/types";
 
-import { INTERNAL_SERVER_ERROR, OK, UNAUTHORIZED } from "../../../errors/errorCodes";
+import { INTERNAL_SERVER_ERROR, OK } from "../../../errors/errorCodes";
 import { sessionName } from "../../../initialize/initializeSession";
+import { isAuthenticated } from "../../../middleware/route/isAuthenticated";
+
+export const PostMiddleware = [isAuthenticated];
 
 type PostRequest = EmptyObject;
 
@@ -9,16 +13,16 @@ type PostResponse = {
   message: string;
 };
 
-export type PostHandler = RequestHandlerAsync<Params, PostResponse, PostRequest>;
+export type PostHandler = AsyncHandler<
+  Params,
+  PostResponse,
+  PostRequest,
+  EmptyObject,
+  IsAuthenticated
+>;
 
 export const Post: PostHandler = async (req, res) => {
-  if (req.session.userId == null) {
-    res.status(UNAUTHORIZED);
-    res.json({ message: "You must be logged in to logout" });
-    return;
-  }
-
-  req.session.destroy(err => {
+  req.session.destroy((err: unknown) => {
     if (err) {
       res.status(INTERNAL_SERVER_ERROR);
       res.json({ message: "Something went wrong" });

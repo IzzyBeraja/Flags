@@ -24,12 +24,14 @@ type RouteFunctions<T, Name extends string = ""> = {
 
 export type RouteModule = RouteFunctions<RouteSchema, "RequestSchema"> &
   RouteFunctions<RouteSchema, "ResponseSchema"> &
+  RouteFunctions<RequestHandler[], "Middleware"> &
   RouteFunctions<RequestHandler>;
 
 export type RouteDetails = {
   method: Lowercase<Method>;
-  requestSchema?: RouteSchema | undefined;
-  responseSchema?: RouteSchema | undefined;
+  middleware?: RequestHandler[];
+  requestSchema?: RouteSchema;
+  responseSchema?: RouteSchema;
   route: RequestHandler;
 };
 
@@ -102,6 +104,7 @@ async function buildRoutes(
 
       routeDetails.push({
         method: method.toLowerCase() as Lowercase<Method>,
+        middleware: routeModule[`${method}Middleware`],
         requestSchema: routeModule[`${method}RequestSchema`],
         responseSchema: routeModule[`${method}ResponseSchema`],
         route,
@@ -133,7 +136,7 @@ function createRoute(
   //> Not including ResponseSchema until I add docs as it's not used for
   //> route generation currently
   routeDetails.forEach(routeDetail => {
-    const { method, route, requestSchema, responseSchema } = routeDetail;
+    const { method, route, requestSchema, responseSchema, middleware } = routeDetail;
     const requestHandlers: Array<RequestHandler> = [];
     const routeMetadata = {
       hasRequestSchema: requestSchema != null,
@@ -147,6 +150,10 @@ function createRoute(
     if (allRoutes.get(key)) {
       errors.push({ message: `Duplicate route method combination: (${key})`, routePath });
       return;
+    }
+
+    if (middleware != null) {
+      requestHandlers.push(...middleware);
     }
 
     const requestValidator = requestSchema != null && ajv.compile(requestSchema);

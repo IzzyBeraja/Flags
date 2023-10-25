@@ -1,11 +1,15 @@
-import type { EmptyObject, ErrorType, Params, RequestHandlerAsync } from "../../../types/types";
+import type { IsAuthenticated } from "../../../middleware/route/isAuthenticated";
+import type { AsyncHandler, EmptyObject, ErrorType, Params } from "../../../types/types";
 
-import { NOT_FOUND, OK, UNAUTHORIZED } from "../../../errors/errorCodes";
+import { NOT_FOUND, OK } from "../../../errors/errorCodes";
+import { isAuthenticated } from "../../../middleware/route/isAuthenticated";
 import { getUser } from "../../../queries/users/getUser";
 import { updateUser, type User } from "../../../queries/users/updateUser";
 import { emailSchema, nameSchema } from "../../../validation/validationRules";
 
 //#region GET
+
+export const GetMiddleware = [isAuthenticated];
 
 type GetRequest = EmptyObject;
 
@@ -13,15 +17,15 @@ type GetResponse = {
   user: User;
 };
 
-export type GetHandler = RequestHandlerAsync<Params, GetResponse | ErrorType, GetRequest>;
+export type GetHandler = AsyncHandler<
+  Params,
+  GetResponse | ErrorType,
+  GetRequest,
+  EmptyObject,
+  IsAuthenticated
+>;
 
 export const Get: GetHandler = async (req, res) => {
-  if (req.session.userId == null) {
-    res.status(UNAUTHORIZED);
-    res.json({ message: "You need to be logged in to access this route" });
-    return;
-  }
-
   const [user, error] = await getUser(req.db, { userId: req.session.userId });
 
   if (error != null) {
@@ -37,6 +41,8 @@ export const Get: GetHandler = async (req, res) => {
 //#endregion
 
 //#region PATCH
+
+export const PatchMiddleware = [isAuthenticated];
 
 type PatchRequest = {
   email?: string;
@@ -58,15 +64,15 @@ export const PatchRequestSchema = {
   type: "object",
 };
 
-export type PatchHandler = RequestHandlerAsync<Params, PatchResponse | ErrorType, PatchRequest>;
+export type PatchHandler = AsyncHandler<
+  Params,
+  PatchResponse | ErrorType,
+  PatchRequest,
+  EmptyObject,
+  IsAuthenticated
+>;
 
 export const Patch: PatchHandler = async (req, res) => {
-  if (req.session.userId == null) {
-    res.status(UNAUTHORIZED);
-    res.json({ message: "You need to be logged in to access this route" });
-    return;
-  }
-
   const [user, error] = await updateUser(req.db, {
     userId: req.session.userId,
     ...req.body,
