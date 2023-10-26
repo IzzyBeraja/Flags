@@ -22,15 +22,15 @@ type GetResponse = {
   fSwitch: Switch;
 };
 
-export type GetHandler = AsyncHandler<
-  Params,
-  GetResponse | ErrorType,
-  GetRequest,
-  EmptyObject,
-  IsAuthenticated
->;
+export type GetHandler = {
+  Params: Params;
+  Response: GetResponse;
+  Error: ErrorType;
+  Request: GetRequest;
+  Middleware: IsAuthenticated;
+};
 
-export const Get: GetHandler = async (req, res) => {
+export const Get: AsyncHandler<GetHandler> = async (req, res) => {
   const [fSwitch, error] = await getSwitch(req.db, {
     switchId: req.params.switchId,
     userId: req.session.userId,
@@ -72,15 +72,15 @@ export const PatchRequestSchema = {
   type: "object",
 };
 
-export type PatchHandler = AsyncHandler<
-  Params,
-  PatchResponse | ErrorType,
-  PatchRequest,
-  EmptyObject,
-  IsAuthenticated
->;
+export type PatchHandler = {
+  Params: Params;
+  Response: PatchResponse;
+  Request: PatchRequest;
+  Error: ErrorType;
+  Middleware: IsAuthenticated;
+};
 
-export const Patch: PatchHandler = async (req, res) => {
+export const Patch: AsyncHandler<PatchHandler> = async (req, res) => {
   const [fSwitch, error] = await updateSwitch(req.db, {
     ...req.body,
     switchId: req.params.switchId,

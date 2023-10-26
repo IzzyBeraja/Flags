@@ -1,5 +1,5 @@
 import type { IsAuthenticated } from "../../../middleware/route/isAuthenticated";
-import type { AsyncHandler, EmptyObject, Params } from "../../../types/types";
+import type { AsyncHandler, EmptyObject, ErrorType } from "../../../types/types";
 
 import { INTERNAL_SERVER_ERROR, OK } from "../../../errors/errorCodes";
 import { sessionName } from "../../../initialize/initializeSession";
@@ -13,15 +13,14 @@ type PostResponse = {
   message: string;
 };
 
-export type PostHandler = AsyncHandler<
-  Params,
-  PostResponse,
-  PostRequest,
-  EmptyObject,
-  IsAuthenticated
->;
+export type PostHandler = {
+  Response: PostResponse;
+  Request: PostRequest;
+  Error: ErrorType;
+  Middleware: IsAuthenticated;
+};
 
-export const Post: PostHandler = async (req, res) => {
+export const Post: AsyncHandler<PostHandler> = async (req, res) => {
   req.session.destroy((err: unknown) => {
     if (err) {
       res.status(INTERNAL_SERVER_ERROR);

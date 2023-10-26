@@ -1,6 +1,6 @@
 import type { IsAuthenticated } from "../../../../middleware/route/isAuthenticated";
 import type { User } from "../../../../queries/users/updateUserCredentials";
-import type { AsyncHandler, EmptyObject, ErrorType, Params } from "../../../../types/types";
+import type { AsyncHandler, ErrorType } from "../../../../types/types";
 
 import { BAD_REQUEST, OK } from "../../../../errors/errorCodes";
 import { isAuthenticated } from "../../../../middleware/route/isAuthenticated";
@@ -28,15 +28,14 @@ export const PutRequestSchema = {
   type: "object",
 };
 
-export type PutHandler = AsyncHandler<
-  Params,
-  PutResponse | ErrorType,
-  PutRequest,
-  EmptyObject,
-  IsAuthenticated
->;
+export type PutHandler = {
+  Request: PutRequest;
+  Response: PutResponse;
+  Error: ErrorType;
+  Middleware: IsAuthenticated;
+};
 
-export const Put: PutHandler = async (req, res) => {
+export const Put: AsyncHandler<PutHandler> = async (req, res) => {
   const [user, error] = await updateUserCredentials(req.db, {
     userId: req.session.userId,
     ...req.body,

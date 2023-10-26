@@ -1,5 +1,5 @@
 import type { IsAuthenticated } from "../../../middleware/route/isAuthenticated";
-import type { AsyncHandler, EmptyObject, ErrorType, Params } from "../../../types/types";
+import type { AsyncHandler, EmptyObject, ErrorType } from "../../../types/types";
 
 import { NOT_FOUND, OK } from "../../../errors/errorCodes";
 import { isAuthenticated } from "../../../middleware/route/isAuthenticated";
@@ -17,15 +17,14 @@ type GetResponse = {
   user: User;
 };
 
-export type GetHandler = AsyncHandler<
-  Params,
-  GetResponse | ErrorType,
-  GetRequest,
-  EmptyObject,
-  IsAuthenticated
->;
+export type GetHandler = {
+  Response: GetResponse;
+  Request: GetRequest;
+  Error: ErrorType;
+  Middleware: IsAuthenticated;
+};
 
-export const Get: GetHandler = async (req, res) => {
+export const Get: AsyncHandler<GetHandler> = async (req, res) => {
   const [user, error] = await getUser(req.db, { userId: req.session.userId });
 
   if (error != null) {
@@ -64,15 +63,14 @@ export const PatchRequestSchema = {
   type: "object",
 };
 
-export type PatchHandler = AsyncHandler<
-  Params,
-  PatchResponse | ErrorType,
-  PatchRequest,
-  EmptyObject,
-  IsAuthenticated
->;
+export type PatchHandler = {
+  Response: PatchResponse;
+  Error: ErrorType;
+  Request: PatchRequest;
+  Middleware: IsAuthenticated;
+};
 
-export const Patch: PatchHandler = async (req, res) => {
+export const Patch: AsyncHandler<PatchHandler> = async (req, res) => {
   const [user, error] = await updateUser(req.db, {
     userId: req.session.userId,
     ...req.body,

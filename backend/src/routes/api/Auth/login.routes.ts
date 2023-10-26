@@ -1,4 +1,5 @@
-import type { ErrorType, Params, RequestHandlerAsync } from "../../../types/types.js";
+import type { AsyncHandler } from "./../../../types/types.d";
+import type { ErrorType } from "../../../types/types.js";
 import type { JSONSchemaType } from "ajv";
 
 import { OK, UNAUTHORIZED } from "../../../errors/errorCodes";
@@ -24,9 +25,13 @@ export const PostRequestSchema: JSONSchemaType<PostRequest> = {
   type: "object",
 };
 
-export type PostHandler = RequestHandlerAsync<Params, PostResponse | ErrorType, PostRequest>;
+export type PostHandler = {
+  Response: PostResponse;
+  Error: ErrorType;
+  Request: PostRequest;
+};
 
-export const Post: PostHandler = async (req, res) => {
+export const Post: AsyncHandler<PostHandler> = async (req, res) => {
   const [userDetails, error] = await loginUser(req.db, req.body);
 
   if (error != null) {

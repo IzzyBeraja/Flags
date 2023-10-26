@@ -1,6 +1,6 @@
 import type { IsAuthenticated } from "./../../middleware/route/isAuthenticated";
 import type { Switch } from "../../queries/switches/createSwitch";
-import type { AsyncHandler, EmptyObject, ErrorType, Params } from "../../types/types";
+import type { AsyncHandler, EmptyObject, ErrorType } from "../../types/types";
 
 import { BAD_REQUEST, CREATED, OK } from "../../errors/errorCodes";
 import { isAuthenticated } from "../../middleware/route/isAuthenticated";
@@ -18,15 +18,14 @@ type GetResponse = {
   switches: Switch[];
 };
 
-export type GetHandler = AsyncHandler<
-  Params,
-  GetResponse | ErrorType,
-  GetRequest,
-  EmptyObject,
-  IsAuthenticated
->;
+export type GetHandler = {
+  Response: GetResponse;
+  Error: ErrorType;
+  Request: GetRequest;
+  Middleware: IsAuthenticated;
+};
 
-export const Get: GetHandler = async (req, res) => {
+export const Get: AsyncHandler<GetHandler> = async (req, res) => {
   const [switches, error] = await getSwitches(req.db, {
     userId: req.session.userId,
   });
@@ -68,15 +67,13 @@ export const PostRequestSchema = {
   type: "object",
 };
 
-export type PostHandler = AsyncHandler<
-  Params,
-  PostResponse | ErrorType,
-  PostRequest,
-  EmptyObject,
-  IsAuthenticated
->;
+export type PostHandler = {
+  Request: PostRequest;
+  Response: PostResponse | ErrorType;
+  Middleware: IsAuthenticated;
+};
 
-export const Post: PostHandler = async (req, res) => {
+export const Post: AsyncHandler<PostHandler> = async (req, res) => {
   const [fSwitch, error] = await createSwitch(req.db, {
     ...req.body,
     userId: req.session.userId,

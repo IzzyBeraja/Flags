@@ -1,25 +1,19 @@
 import type { User } from "../../../queries/users/registerUser";
-import type { Params, RequestHandlerAsync } from "../../../types/types";
+import type { AsyncHandler, ErrorType } from "../../../types/types";
 import type { JSONSchemaType } from "ajv";
 
 import { BAD_REQUEST, CREATED } from "../../../errors/errorCodes";
 import { registerUser } from "../../../queries/users/registerUser";
 import { emailSchema, passwordSchema } from "../../../validation/validationRules";
 
-export interface PostRequest {
+type PostRequest = {
   email: string;
   password: string;
-}
-
-type UserCreated = {
-  createdUser: User;
 };
 
-type UserNotCreated = {
-  error: string;
+type PostResponse = {
+  user: User;
 };
-
-export type PostResponse = UserCreated | UserNotCreated;
 
 export const PostRequestSchema: JSONSchemaType<PostRequest> = {
   additionalProperties: false,
@@ -31,18 +25,22 @@ export const PostRequestSchema: JSONSchemaType<PostRequest> = {
   type: "object",
 };
 
-type RouteHandler = RequestHandlerAsync<Params, PostResponse, PostRequest>;
+export type PostHandler = {
+  Response: PostResponse;
+  Error: ErrorType;
+  Request: PostRequest;
+};
 
-export const Post: RouteHandler = async (req, res) => {
+export const Post: AsyncHandler<PostHandler> = async (req, res) => {
   const [user, error] = await registerUser(req.db, { ...req.body });
 
   if (error != null) {
     res.status(BAD_REQUEST);
-    res.json({ error: error.message });
+    res.json({ message: error.message });
     return;
   }
 
   req.session.userId = user.userId;
   res.status(CREATED);
-  res.json({ createdUser: user });
+  res.json({ user: user });
 };
