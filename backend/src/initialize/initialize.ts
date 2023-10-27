@@ -15,7 +15,7 @@ type Initialize = {
 };
 
 type InitializeError =
-  | { service: "prisma" | "database" | "sessionCache"; message: string }
+  | { service: "database" | "sessionCache"; message: string }
   | { service: "routes"; errors: RouteError[] };
 
 export async function initialize(): ResultAsync<Initialize, InitializeError> {
@@ -29,7 +29,7 @@ export async function initialize(): ResultAsync<Initialize, InitializeError> {
   if (process.env["NODE_ENV"] !== "production") {
     console.group(`🌐 Routes (${allRoutes.size})`);
     console.table(
-      [...allRoutes.values()],
+      [...allRoutes.values()].sort((a, b) => a.routePath.localeCompare(b.routePath)),
       ["method", "routePath", "hasRequestSchema", "hasResponseSchema"]
     );
     console.groupEnd();

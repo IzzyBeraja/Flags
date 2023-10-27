@@ -1,11 +1,11 @@
-import type { IsAuthenticated } from "../../../middleware/route/isAuthenticated";
-import type { AsyncHandler, EmptyObject, ErrorType } from "../../../types/types";
+import type { IsAuthenticated } from "../../../../middleware/route/isAuthenticated";
+import type { AsyncHandler, EmptyObject, ErrorType } from "../../../../types/types";
 
-import { NOT_FOUND, OK } from "../../../errors/errorCodes";
-import { isAuthenticated } from "../../../middleware/route/isAuthenticated";
-import { getUser } from "../../../queries/users/getUser";
-import { updateUser, type User } from "../../../queries/users/updateUser";
-import { emailSchema, nameSchema } from "../../../validation/validationRules";
+import { NOT_FOUND, OK } from "../../../../errors/errorCodes";
+import { isAuthenticated } from "../../../../middleware/route/isAuthenticated";
+import { getUser } from "../../../../queries/users/getUser";
+import { updateUser, type User } from "../../../../queries/users/updateUser";
+import { emailSchema, nameSchema } from "../../../../validation/validationRules";
 
 //#region GET
 

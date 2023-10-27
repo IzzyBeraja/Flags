@@ -40,16 +40,19 @@ type RouteMetadata = {
   hasRequestSchema: boolean;
   hasResponseSchema: boolean;
   routePath: string;
+  fullPath: string;
 };
 
 type NewRouteData = {
   routePath: string;
   routeDetails: RouteDetails[];
+  fullPath: string;
 };
 
 export type RouteError = {
   message: string;
   routePath: string;
+  fullPath: string;
 };
 
 const currentDir = path.dirname(fileURLToPath(import.meta.url));
@@ -72,17 +75,19 @@ async function buildRoutes(
       continue;
     }
 
-    if (!file.endsWith(".routes.js")) {
-      continue;
-    }
+    if (!file.endsWith(".routes.js")) continue;
 
     const routeName = file.replace(".routes.js", "");
 
-    // Example: /api/Auth/login
-    const routePath = `/${path.relative(routesDirectory, cwd).replace(/\\/g, "/")}/${routeName}`
-      .replace(/\/$/, "")
-      .replace("[", ":")
-      .replace("]", "");
+    // Example: routes/api/users/@me/index/ -> /api/users/@me
+    // Example: routes/api/switches/[switchId] -> /api/switches/:switchId
+    const routePath = `/${path
+      .relative(routesDirectory, cwd) /* Get relative path from routes directory */
+      .replace(/\\/g, "/")}/${routeName}` /* Replace backslash with forward slash */
+      .replace("[", ":") /* Replace [ with : for params */
+      .replace("]", "") /* Remove ] */
+      .replace(/index$/, "") /* Remove training index */
+      .replace(/\/+$/, ""); /* Remove trailing slashes */
 
     const routeUrl = pathToFileURL(fullPath).href;
 
@@ -93,12 +98,10 @@ async function buildRoutes(
     validMethods.forEach(method => {
       const route = routeModule[method];
 
-      if (route == null) {
-        return;
-      }
+      if (route == null) return;
 
       if (typeof route !== "function") {
-        errors.push({ message: `${method} route must be a function`, routePath });
+        errors.push({ fullPath, message: `${method} route must be a function`, routePath });
         return;
       }
 
@@ -112,14 +115,11 @@ async function buildRoutes(
     });
 
     if (routeDetails.length === 0) {
-      errors.push({ message: `No valid routes found`, routePath });
+      errors.push({ fullPath, message: `No valid routes found`, routePath });
       continue;
     }
 
-    const newRouteData: NewRouteData = {
-      routeDetails,
-      routePath,
-    };
+    const newRouteData: NewRouteData = { fullPath, routeDetails, routePath };
 
     createRoute(expressRouter, ajv, newRouteData, errors);
   }
@@ -131,14 +131,15 @@ function createRoute(
   routeData: NewRouteData,
   errors: Array<RouteError>
 ) {
-  const { routePath, routeDetails } = routeData;
+  const { routePath, routeDetails, fullPath } = routeData;
 
   //> Not including ResponseSchema until I add docs as it's not used for
   //> route generation currently
   routeDetails.forEach(routeDetail => {
     const { method, route, requestSchema, responseSchema, middleware } = routeDetail;
     const requestHandlers: Array<RequestHandler> = [];
-    const routeMetadata = {
+    const routeMetadata: RouteMetadata = {
+      fullPath,
       hasRequestSchema: requestSchema != null,
       hasResponseSchema: responseSchema != null,
       method,
@@ -148,7 +149,7 @@ function createRoute(
     const key = `${method} ${routePath}`;
 
     if (allRoutes.get(key)) {
-      errors.push({ message: `Duplicate route method combination: (${key})`, routePath });
+      errors.push({ fullPath, message: `Duplicate route method combination: (${key})`, routePath });
       return;
     }
 

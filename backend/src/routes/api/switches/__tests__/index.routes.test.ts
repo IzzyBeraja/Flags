@@ -1,7 +1,7 @@
-import { BAD_REQUEST, CREATED, OK } from "../../../errors/errorCodes";
-import * as CreateSwitchModule from "../../../queries/switches/createSwitch";
-import * as GetSwitchModule from "../../../queries/switches/getSwitch";
-import { Get, Post } from "../switches.routes";
+import { BAD_REQUEST, CREATED, OK } from "../../../../errors/errorCodes";
+import * as CreateSwitchModule from "../../../../queries/switches/createSwitch";
+import * as GetSwitchModule from "../../../../queries/switches/getSwitch";
+import { Get, Post } from "../index.routes";
 
 import { mock } from "jest-mock-extended";
 

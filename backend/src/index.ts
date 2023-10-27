@@ -35,7 +35,12 @@ async function startServer() {
   if (error != null) {
     console.error(chalk.bgRed("Initialization errors:"));
     console.error(
-      chalk.red(error.service, error.service === "routes" ? error.errors : error.message)
+      chalk.red(
+        error.service,
+        error.service === "routes"
+          ? error.errors.map(({ message, routePath }) => `${message} ${routePath}`)
+          : error.message
+      )
     );
     return;
   }

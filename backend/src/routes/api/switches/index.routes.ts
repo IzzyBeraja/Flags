@@ -1,12 +1,12 @@
-import type { IsAuthenticated } from "./../../middleware/route/isAuthenticated";
-import type { Switch } from "../../queries/switches/createSwitch";
-import type { AsyncHandler, EmptyObject, ErrorType } from "../../types/types";
+import type { IsAuthenticated } from "../../../middleware/route/isAuthenticated";
+import type { Switch } from "../../../queries/switches/createSwitch";
+import type { AsyncHandler, EmptyObject, ErrorType } from "../../../types/types";
 
-import { BAD_REQUEST, CREATED, OK } from "../../errors/errorCodes";
-import { isAuthenticated } from "../../middleware/route/isAuthenticated";
-import { createSwitch } from "../../queries/switches/createSwitch";
-import { getSwitches } from "../../queries/switches/getSwitch";
-import { descriptionSchema, nameSchema } from "../../validation/validationRules";
+import { BAD_REQUEST, CREATED, OK } from "../../../errors/errorCodes";
+import { isAuthenticated } from "../../../middleware/route/isAuthenticated";
+import { createSwitch } from "../../../queries/switches/createSwitch";
+import { getSwitches } from "../../../queries/switches/getSwitch";
+import { descriptionSchema, nameSchema } from "../../../validation/validationRules";
 
 //#region GET
 

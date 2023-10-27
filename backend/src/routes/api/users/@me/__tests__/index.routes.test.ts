@@ -1,7 +1,7 @@
-import { NOT_FOUND, OK } from "../../../../errors/errorCodes";
-import * as GetUserModule from "../../../../queries/users/getUser";
-import * as UpdateUserModule from "../../../../queries/users/updateUser";
-import { Get, Patch } from "../@me.routes";
+import { NOT_FOUND, OK } from "../../../../../errors/errorCodes";
+import * as GetUserModule from "../../../../../queries/users/getUser";
+import * as UpdateUserModule from "../../../../../queries/users/updateUser";
+import { Get, Patch } from "../index.routes";
 
 import { mock } from "jest-mock-extended";
 
