@@ -13,9 +13,10 @@ const jestConfig: JestConfigWithTsJest = {
   transform: {
     // '^.+\\.[tj]sx?$' to process js/ts with `ts-jest`
     // '^.+\\.m?[tj]sx?$' to process js/ts/mjs/mts with `ts-jest`
-    "^.+\\.tsx?$": [
+    "^.+\\.[tj]sx?$": [
       "ts-jest",
       {
+        isolatedModules: true,
         tsconfig: "tsconfig.json",
         useESM: true,
       },

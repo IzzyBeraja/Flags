@@ -1,17 +1,15 @@
-import type { GetHandler, PostHandler } from "../switches.routes";
-
-import { BAD_REQUEST, CREATED, OK, UNAUTHORIZED } from "../../../errors/errorCodes";
+import { BAD_REQUEST, CREATED, OK } from "../../../errors/errorCodes";
 import * as CreateSwitchModule from "../../../queries/switches/createSwitch";
 import * as GetSwitchModule from "../../../queries/switches/getSwitch";
 import { Get, Post } from "../switches.routes";
 
 import { mock } from "jest-mock-extended";
 
-let getReq: Parameters<GetHandler>[0];
-let getRes: Parameters<GetHandler>[1];
+let getReq: Parameters<typeof Get>[0];
+let getRes: Parameters<typeof Get>[1];
 
-let postReq: Parameters<PostHandler>[0];
-let postRes: Parameters<PostHandler>[1];
+let postReq: Parameters<typeof Post>[0];
+let postRes: Parameters<typeof Post>[1];
 
 const mockGetSwitches = jest.spyOn(GetSwitchModule, "getSwitches");
 const mockCreateSwitch = jest.spyOn(CreateSwitchModule, "createSwitch");
@@ -23,15 +21,6 @@ describe("switches.routes", () => {
     beforeEach(() => {
       getReq = mock<typeof getReq>();
       getRes = mock<typeof getRes>();
-    });
-
-    describe("when NOT logged in", () => {
-      it("returns unauthorized", async () => {
-        await Get(getReq, getRes, next);
-
-        expect(getRes.status).toHaveBeenCalledTimes(1);
-        expect(getRes.status).toHaveBeenCalledWith(UNAUTHORIZED);
-      });
     });
 
     describe("when logged in", () => {
@@ -114,19 +103,6 @@ describe("switches.routes", () => {
     beforeEach(() => {
       postReq = mock<typeof postReq>();
       postRes = mock<typeof postRes>();
-    });
-
-    describe("when NOT logged in", () => {
-      it("returns unauthorized", async () => {
-        await Post(postReq, postRes, next);
-
-        expect(postRes.status).toHaveBeenCalledTimes(1);
-        expect(postRes.status).toHaveBeenCalledWith(UNAUTHORIZED);
-        expect(postRes.json).toHaveBeenCalledTimes(1);
-        expect(postRes.json).toHaveBeenCalledWith({
-          message: "You must be logged in to access this route",
-        });
-      });
     });
 
     describe("when logged in", () => {

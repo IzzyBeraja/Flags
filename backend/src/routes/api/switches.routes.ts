@@ -18,7 +18,7 @@ type GetResponse = {
   switches: Switch[];
 };
 
-export type GetHandler = {
+type GetHandler = {
   Response: GetResponse;
   Error: ErrorType;
   Request: GetRequest;
@@ -67,7 +67,7 @@ export const PostRequestSchema = {
   type: "object",
 };
 
-export type PostHandler = {
+type PostHandler = {
   Request: PostRequest;
   Response: PostResponse | ErrorType;
   Middleware: IsAuthenticated;

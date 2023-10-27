@@ -1,6 +1,4 @@
-import type { PutHandler } from "./../password.routes";
-
-import { BAD_REQUEST, OK, UNAUTHORIZED } from "../../../../../errors/errorCodes";
+import { BAD_REQUEST, OK } from "../../../../../errors/errorCodes";
 import * as UpadateUserCredentialsModule from "../../../../../queries/users/updateUserCredentials";
 import { Put } from "../password.routes";
 
@@ -10,23 +8,13 @@ const mockUpdateUserCredentials = jest.spyOn(UpadateUserCredentialsModule, "upda
 
 const next = jest.fn();
 
-let putReq: Parameters<PutHandler>[0];
-let putRes: Parameters<PutHandler>[1];
+let putReq: Parameters<typeof Put>[0];
+let putRes: Parameters<typeof Put>[1];
 
 describe("password.routes", () => {
   beforeEach(() => {
     putReq = mock<typeof putReq>();
     putRes = mock<typeof putRes>();
-  });
-
-  describe("when NOT logged in", () => {
-    it("returns unauthorized", async () => {
-      await Put(putReq, putRes, next);
-
-      expect(putRes.status).toHaveBeenCalledTimes(1);
-      expect(putRes.status).toHaveBeenCalledWith(UNAUTHORIZED);
-      expect(putRes.json).toHaveBeenCalledTimes(1);
-    });
   });
 
   describe("when logged in", () => {

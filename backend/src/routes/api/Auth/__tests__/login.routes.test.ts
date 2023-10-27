@@ -1,5 +1,3 @@
-import type { PostHandler } from "../login.routes";
-
 import { OK, UNAUTHORIZED } from "../../../../errors/errorCodes";
 import * as LoginModule from "../../../../queries/users/loginUser";
 import { Post } from "../login.routes";
@@ -9,8 +7,8 @@ import { mock } from "jest-mock-extended";
 const mockLogin = jest.spyOn(LoginModule, "loginUser");
 const next = jest.fn();
 
-let postReq: Parameters<PostHandler>[0];
-let postRes: Parameters<PostHandler>[1];
+let postReq: Parameters<typeof Post>[0];
+let postRes: Parameters<typeof Post>[1];
 
 describe("/api/auth/login", () => {
   beforeEach(() => {

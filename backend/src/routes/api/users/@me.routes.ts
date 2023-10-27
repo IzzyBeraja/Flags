@@ -17,7 +17,7 @@ type GetResponse = {
   user: User;
 };
 
-export type GetHandler = {
+type GetHandler = {
   Response: GetResponse;
   Request: GetRequest;
   Error: ErrorType;
@@ -63,7 +63,7 @@ export const PatchRequestSchema = {
   type: "object",
 };
 
-export type PatchHandler = {
+type PatchHandler = {
   Response: PatchResponse;
   Error: ErrorType;
   Request: PatchRequest;

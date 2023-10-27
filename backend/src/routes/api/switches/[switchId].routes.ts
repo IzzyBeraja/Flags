@@ -22,7 +22,7 @@ type GetResponse = {
   fSwitch: Switch;
 };
 
-export type GetHandler = {
+type GetHandler = {
   Params: Params;
   Response: GetResponse;
   Error: ErrorType;
@@ -72,7 +72,7 @@ export const PatchRequestSchema = {
   type: "object",
 };
 
-export type PatchHandler = {
+type PatchHandler = {
   Params: Params;
   Response: PatchResponse;
   Request: PatchRequest;

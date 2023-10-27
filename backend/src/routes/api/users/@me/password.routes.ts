@@ -28,7 +28,7 @@ export const PutRequestSchema = {
   type: "object",
 };
 
-export type PutHandler = {
+type PutHandler = {
   Request: PutRequest;
   Response: PutResponse;
   Error: ErrorType;

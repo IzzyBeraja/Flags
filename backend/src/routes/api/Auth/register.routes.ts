@@ -25,7 +25,7 @@ export const PostRequestSchema: JSONSchemaType<PostRequest> = {
   type: "object",
 };
 
-export type PostHandler = {
+type PostHandler = {
   Response: PostResponse;
   Error: ErrorType;
   Request: PostRequest;

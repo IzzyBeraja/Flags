@@ -13,7 +13,7 @@ type PostResponse = {
   message: string;
 };
 
-export type PostHandler = {
+type PostHandler = {
   Response: PostResponse;
   Request: PostRequest;
   Error: ErrorType;
