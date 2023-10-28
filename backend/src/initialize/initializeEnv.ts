@@ -2,6 +2,8 @@ import { checkEnvironment } from "../utils/checkEnvironment";
 
 import { SecretManagerServiceClient } from "@google-cloud/secret-manager";
 import chalk from "chalk";
+import { appendFileSync } from "fs";
+import path from "path";
 
 export async function initializeEnv(): Promise<[null | string[]]> {
   const projectId = "flags-403201";
@@ -14,6 +16,8 @@ export async function initializeEnv(): Promise<[null | string[]]> {
   ].filter(secretName => process.env[secretName] == null);
 
   if (secretNames.length > 0) {
+    const envPath = path.join(process.cwd(), ".env");
+
     console.log(
       chalk.blue(`Fetching (${secretNames.length}) secret(s) from Google Cloud Secret Manager...`)
     );
@@ -31,6 +35,9 @@ export async function initializeEnv(): Promise<[null | string[]]> {
         if (secret == null) {
           throw new Error(`Secret ${secretName} not found`);
         }
+
+        appendFileSync(envPath, `\n${secretName}=${secret}`);
+        console.log(chalk.green(`Added ${secretName} to .env file`));
 
         process.env[secretName] = secret;
       }
