@@ -5,8 +5,11 @@ import type { PostgresJsDatabase } from "drizzle-orm/postgres-js/driver.js";
 import type { Router } from "express";
 
 import { initializeDB } from "./initializeDB.js";
+import { initializeEnv } from "./initializeEnv.js";
 import { allRoutes, initializeRoutes } from "./initializeRoutes.js";
 import { initializeSessionCache } from "./initializeSessionCache.js";
+
+import chalk from "chalk";
 
 type Initialize = {
   router: Router;
@@ -16,9 +19,24 @@ type Initialize = {
 
 type InitializeError =
   | { service: "database" | "sessionCache"; message: string }
-  | { service: "routes"; errors: RouteError[] };
+  | { service: "routes"; errors: RouteError[] }
+  | { service: "env variables"; errors: string[] };
 
 export async function initialize(): ResultAsync<Initialize, InitializeError> {
+  // == Environment Variables == //
+  const [envErrors] = await initializeEnv();
+
+  if (envErrors != null) {
+    return [null, { errors: envErrors, service: "env variables" }];
+  }
+
+  console.log(chalk.blue("Environment variables properly set!\n"));
+  console.log(
+    process.env["NODE_ENV"] === "production"
+      ? chalk.white.bgRed("===== PRODUCTION MODE =====\n")
+      : chalk.bgGreen("===== DEVELOPMENT MODE =====\n")
+  );
+
   // == Routing == //
   const [router, routerErrors] = await initializeRoutes();
 

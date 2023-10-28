@@ -1,5 +1,5 @@
 export const checkEnvironment = () => {
-  const environmentErrors = [];
+  const environmentErrors: string[] = [];
 
   process.env["DATABASE_URL"] == null && environmentErrors.push("DATABASE_URL is not defined");
 
