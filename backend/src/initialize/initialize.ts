@@ -20,14 +20,14 @@ type Initialize = {
 type InitializeError =
   | { service: "database" | "sessionCache"; message: string }
   | { service: "routes"; errors: RouteError[] }
-  | { service: "env variables"; errors: string[] };
+  | { service: "env"; errors: string[] };
 
 export async function initialize(): ResultAsync<Initialize, InitializeError> {
   // == Environment Variables == //
   const [envErrors] = await initializeEnv();
 
   if (envErrors != null) {
-    return [null, { errors: envErrors, service: "env variables" }];
+    return [null, { errors: envErrors, service: "env" }];
   }
 
   console.log(chalk.blue("Environment variables properly set!\n"));

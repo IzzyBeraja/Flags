@@ -1,45 +1,48 @@
-import { checkEnvironment } from "../utils/checkEnvironment";
-
 import { SecretManagerServiceClient } from "@google-cloud/secret-manager";
 import chalk from "chalk";
 import { appendFileSync } from "fs";
 import path from "path";
 
+const allSecrets = [
+  { cloud: true, name: "DATABASE_URL" },
+  { cloud: true, name: "REDIS_PORT" },
+  { cloud: true, name: "REDIS_HOST" },
+  { cloud: true, name: "REDIS_PASSWORD" },
+  { cloud: true, name: "SESSION_SECRET" },
+  { cloud: false, name: "NODE_ENV" },
+  { cloud: false, name: "BACKEND_PORT" },
+  { cloud: false, name: "FRONTEND_PORT" },
+];
+
 export async function initializeEnv(): Promise<[null | string[]]> {
   const projectId = "flags-403201";
-  const secretNames = [
-    "DATABASE_URL",
-    "REDIS_PORT",
-    "REDIS_HOST",
-    "REDIS_PASSWORD",
-    "SESSION_SECRET",
-  ].filter(secretName => process.env[secretName] == null);
+  const gcpSecrets = allSecrets.filter(({ name, cloud }) => cloud && process.env[name] == null);
 
-  if (secretNames.length > 0) {
+  if (gcpSecrets.length > 0) {
     const envPath = path.join(process.cwd(), ".env");
 
     console.log(
-      chalk.blue(`Fetching (${secretNames.length}) secret(s) from Google Cloud Secret Manager...`)
+      chalk.blue(`Fetching (${gcpSecrets.length}) secret(s) from Google Cloud Secret Manager...`)
     );
 
     try {
       const client = new SecretManagerServiceClient();
 
-      for (const secretName of secretNames) {
+      for (const { name } of gcpSecrets) {
         const [version] = await client.accessSecretVersion({
-          name: `projects/${projectId}/secrets/${secretName}/versions/latest`,
+          name: `projects/${projectId}/secrets/${name}/versions/latest`,
         });
 
         const secret = version.payload?.data?.toString();
 
         if (secret == null) {
-          throw new Error(`Secret ${secretName} not found`);
+          throw new Error(`Secret ${name} not found`);
         }
 
-        appendFileSync(envPath, `\n${secretName}=${secret}`);
-        console.log(chalk.green(`Added ${secretName} to .env file`));
+        appendFileSync(envPath, `\n${name}=${secret}`);
+        console.log(chalk.green(`Added ${name} to .env file`));
 
-        process.env[secretName] = secret;
+        process.env[name] = secret;
       }
     } catch (error) {
       console.log(chalk.red(error));
@@ -48,7 +51,13 @@ export async function initializeEnv(): Promise<[null | string[]]> {
     console.log(chalk.green("All secrets found in environment variables"));
   }
 
-  const errors = checkEnvironment();
+  const errors = allSecrets.reduce((acc: string[], { name }) => {
+    if (process.env[name] == null) {
+      acc.push(`${name} is not defined`);
+    }
+
+    return acc;
+  }, []);
 
   if (errors.length > 0) return [errors];
 

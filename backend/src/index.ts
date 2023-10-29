@@ -17,14 +17,13 @@ async function startServer() {
   const [services, error] = await initialize();
 
   if (error != null) {
-    console.error(chalk.bgRed("Initialization errors:"));
+    console.error(chalk.bgRed(`Initialization errors in ${error.service}:`));
     console.error(
       chalk.red(
-        error.service,
         error.service === "routes"
-          ? error.errors.map(({ message, routePath }) => `${message} ${routePath}`)
-          : error.service === "env variables"
-          ? error.errors.map(message => `${message}`)
+          ? error.errors.map(({ message, routePath }) => `${message} ${routePath}`).join("\n")
+          : error.service === "env"
+          ? error.errors.map(message => `${message}`).join("\n")
           : error.message
       )
     );
