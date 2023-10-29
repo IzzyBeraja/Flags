@@ -9,6 +9,7 @@ const allSecrets = [
   { cloud: true, name: "REDIS_HOST" },
   { cloud: true, name: "REDIS_PASSWORD" },
   { cloud: true, name: "SESSION_SECRET" },
+  { cloud: true, name: "API_KEY_ENCRYPTION_KEY" },
   { cloud: false, name: "NODE_ENV" },
   { cloud: false, name: "BACKEND_PORT" },
   { cloud: false, name: "FRONTEND_PORT" },

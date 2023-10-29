@@ -4,21 +4,21 @@ import type RedisStore from "connect-redis";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js/driver.js";
 import type { Router } from "express";
 
+import { initializeCache } from "./initializeCache.js";
 import { initializeDB } from "./initializeDB.js";
 import { initializeEnv } from "./initializeEnv.js";
 import { allRoutes, initializeRoutes } from "./initializeRoutes.js";
-import { initializeSessionCache } from "./initializeSessionCache.js";
 
 import chalk from "chalk";
 
 type Initialize = {
   router: Router;
-  sessionStore: RedisStore;
+  cache: RedisStore;
   db: PostgresJsDatabase;
 };
 
 type InitializeError =
-  | { service: "database" | "sessionCache"; message: string }
+  | { service: "database" | "cache"; message: string }
   | { service: "routes"; errors: RouteError[] }
   | { service: "env"; errors: string[] };
 
@@ -65,13 +65,13 @@ export async function initialize(): ResultAsync<Initialize, InitializeError> {
   console.log("📦 Database connected successfully");
 
   // == Session Cache == //
-  const [sessionStore, sessionError] = await initializeSessionCache();
+  const [sessionStore, sessionError] = await initializeCache();
 
   if (sessionError != null) {
-    return [null, { message: sessionError.message, service: "sessionCache" }];
+    return [null, { message: sessionError.message, service: "cache" }];
   }
 
   console.log("⏩ Session Cache connected succesesfully");
 
-  return [{ db, router, sessionStore }, null];
+  return [{ cache: sessionStore, db, router }, null];
 }

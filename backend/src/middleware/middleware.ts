@@ -14,11 +14,11 @@ import morgan from "morgan";
 type Props = {
   app: Application;
   router: Router;
-  sessionStore: RedisStore;
+  cache: RedisStore;
   db: PostgresJsDatabase;
 };
 
-export function middleware({ app, router, sessionStore, db }: Props) {
+export function middleware({ app, router, cache: sessionStore, db }: Props) {
   app.use(morgan(logFormatter));
   app.use(express.json());
   app.use(corsMiddleware);

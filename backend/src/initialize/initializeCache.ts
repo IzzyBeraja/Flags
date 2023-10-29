@@ -3,7 +3,7 @@ import type { ResultAsync } from "../types/types";
 import RedisStore from "connect-redis";
 import ioredis from "ioredis";
 
-export async function initializeSessionCache(): ResultAsync<RedisStore> {
+export async function initializeCache(): ResultAsync<RedisStore> {
   const port = Number.parseInt(process.env["REDIS_PORT"] ?? "5000");
   const host = process.env["REDIS_HOST"] ?? "localhost";
   const password = process.env["REDIS_PASSWORD"] ?? "password";
