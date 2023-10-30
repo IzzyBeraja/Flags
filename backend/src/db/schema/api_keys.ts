@@ -1,7 +1,15 @@
 import { users } from "./users";
 
 import { sql } from "drizzle-orm";
-import { foreignKey, index, pgSchema, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
+import {
+  foreignKey,
+  index,
+  pgSchema,
+  timestamp,
+  uniqueIndex,
+  uuid,
+  varchar,
+} from "drizzle-orm/pg-core";
 
 export const api_keys = pgSchema("common").table(
   "api_keys",
@@ -16,7 +24,7 @@ export const api_keys = pgSchema("common").table(
     updated_at: timestamp("updated_at", { mode: "string" }).notNull().defaultNow(),
   },
   table => ({
-    api_key_idx: index("api_key_idx").on(table.api_key),
+    api_key_idx: uniqueIndex("api_key_idx").on(table.api_key),
     owned_by_fkey: foreignKey({ columns: [table.owned_by], foreignColumns: [users.id] }),
     owned_by_idx: index("owned_by_idx").on(table.owned_by),
   })

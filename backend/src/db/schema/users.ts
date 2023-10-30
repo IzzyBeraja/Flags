@@ -14,6 +14,6 @@ export const users = pgSchema("common").table(
     updated_at: timestamp("updated_at", { mode: "string" }).notNull().defaultNow(),
   },
   table => ({
-    email_unique: uniqueIndex("email_unique_id").on(table.email),
+    email_unique: uniqueIndex("email_idx").on(table.email),
   })
 );
