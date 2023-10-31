@@ -77,7 +77,7 @@ export const Post: AsyncHandler<PostHandler> = async (req, res) => {
   do {
     const generatedKey = generateApiKey("fk_");
 
-    const [apiKey, error] = await createApiKey(req.db, {
+    const [apiKey, _error] = await createApiKey(req.db, {
       apiKey: encryptApiKey(generatedKey),
       userId: req.session.userId,
     });
@@ -89,7 +89,7 @@ export const Post: AsyncHandler<PostHandler> = async (req, res) => {
     }
 
     tries++;
-    console.log(error); //> TODO: Log this somewhere
+    //> TODO: Log this somewhere
   } while (tries < maxRetries);
 
   res.status(BAD_REQUEST);
