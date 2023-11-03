@@ -1,10 +1,11 @@
-import type RedisStore from "connect-redis";
+import type { Redis } from "ioredis";
 
+import RedisStore from "connect-redis";
 import expressSession from "express-session";
 
 export const sessionName = "sid";
 
-export const sessionMiddleware = (redisStore: RedisStore) =>
+export const sessionMiddleware = (client: Redis) =>
   expressSession({
     cookie: {
       httpOnly: true,
@@ -17,5 +18,5 @@ export const sessionMiddleware = (redisStore: RedisStore) =>
     rolling: true,
     saveUninitialized: false,
     secret: process.env["SESSION_SECRET"] ?? "secret",
-    store: redisStore,
+    store: new RedisStore({ client }),
   });

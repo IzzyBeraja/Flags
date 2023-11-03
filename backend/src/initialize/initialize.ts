@@ -1,8 +1,8 @@
 import type { RouteError } from "./initializeRoutes.js";
 import type { ResultAsync } from "../types/types.js";
-import type RedisStore from "connect-redis";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js/driver.js";
 import type { Router } from "express";
+import type { Redis } from "ioredis";
 
 import { initializeCache } from "./initializeCache.js";
 import { initializeDB } from "./initializeDB.js";
@@ -13,7 +13,7 @@ import chalk from "chalk";
 
 type Initialize = {
   router: Router;
-  cache: RedisStore;
+  cache: Redis;
   db: PostgresJsDatabase;
 };
 
@@ -65,13 +65,13 @@ export async function initialize(): ResultAsync<Initialize, InitializeError> {
   console.log("📦 Database connected successfully");
 
   // == Session Cache == //
-  const [sessionStore, sessionError] = await initializeCache();
+  const [cache, cacheError] = await initializeCache();
 
-  if (sessionError != null) {
-    return [null, { message: sessionError.message, service: "cache" }];
+  if (cacheError != null) {
+    return [null, { message: cacheError.message, service: "cache" }];
   }
 
   console.log("⏩ Session Cache connected succesesfully");
 
-  return [{ cache: sessionStore, db, router }, null];
+  return [{ cache, db, router }, null];
 }
